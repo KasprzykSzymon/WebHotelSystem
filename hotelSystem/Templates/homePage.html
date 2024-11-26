@@ -1,4 +1,3 @@
-<!-- myapp/Templates/homePage.html -->
 <!DOCTYPE html>
 {% load static %}
 <html lang="pl">
@@ -9,7 +8,80 @@
     <title>Strona hotelu x</title>
 </head>
 <body>
-    <h1>Witam na stronie hotelu!</h1>
-    <p>Prosta strona hotelu</p>
+    <div class="naglowek">
+        <div class="lewoNaglowek"> 
+            <a href=""></a>          
+            <p>Last Minute !</p>
+            <p>Wydarzenia w hotelu</p>
+        </div>
+        <div class="zdjecie">
+            <img src="{% static 'images/logoPNG.png' %}" alt="Logo Hotelu">
+        </div>
+        <div class="prawoNaglowek">
+            <p style="left: 15px;">Kontakt</p>
+            <p>Zaloguj się</p>
+        </div>
+    </div>
+    <h1>Witamy w hotelu Scyzoryk</h1>
+    <p>U nas zaśniesz spokojnie</p>
+    <div class="formularze-container">
+        <div class="formularz1">
+            <span>Wybierz swoją datę przyjazdu</span><br>
+            <input type="date">
+        </div>
+        <div class="formularz2">
+            <span>Wybierz swoją datę odjazdu</span><br>
+            <input type="date">
+        </div>
+        <div class="select1-dorosli">
+            <span>Liczba dorosłych:</span><br>
+            <select>
+                {% for i in range_10x %}
+                <option>{{ i }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="select1-dzieci">
+            <span>Liczba dzieci:</span><br>
+            <select>
+                {% for i in range_10 %}
+                <option>{{ i }}</option>
+                {% endfor %}
+            </select>
+        </div><br>
+        <div class="guzik-container">
+            <button type="button" class="guzik">Szukaj pokoju</button>
+        </div>
+    </div>
+
+    <div class="kontener-zdjec">
+        <div>
+            <img id="zdj1" src="{% static 'images/Gory.jpg' %}" alt="GorySw">
+            <div class="pod-zdjeciem">
+                <p>Wspaniałe widoki Gór Świętokrzyskich w hotelu Scyzoryk.</p>
+            </div>
+        </div>
+        <div>
+            <img id="zdj2" src="{% static 'images/Kielce.jpg' %}" alt="Kielce">
+            <div class="pod-zdjeciem">
+                <p>Odwiedź nasze miasto Kielce i ciesz się jego atrakcjami.</p>
+            </div>
+        </div>
+        <div>
+            <img id="zdj3" src="{% static 'images/Hotel.jpg' %}" alt="Hotel">
+            <div class="pod-zdjeciem">
+                <p>Oferujemy spotakania biznesowe dla firm!</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="hotel-info">
+        <img id="hotelZdjecie" src="{% static 'images/zdjHotelu.png' %}" alt="Hotel Scyzoryk">
+        <p class="hotelOpis">Hotel Scyzoryk to miejsce, które łączy tradycję z nowoczesnością. Położony w malowniczej okolicy Świętokrzyskich Gór, oferuje komfortowy wypoczynek w otoczeniu natury. Każdy pokój zapewnia gościom wygodę, a bogata oferta spa oraz restauracja z lokalnymi specjałami dopełniają wrażenia.</p>
+    </div>
+
+    <footer class="stopka">
+        <p>© 2024 Hotel Scyzoryk | Wszystkie prawa zastrzeżone</p>
+    </footer>
 </body>
 </html>
