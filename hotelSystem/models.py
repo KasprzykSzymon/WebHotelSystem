@@ -14,7 +14,3 @@ from django.db import models
 #         self.login = login
 #         self.password = password
 #         self.client_e_mail = client_e_mail
-
-
-
-

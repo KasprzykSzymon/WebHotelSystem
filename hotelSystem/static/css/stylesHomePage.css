@@ -5,7 +5,9 @@ body {
     margin: 0; 
     padding: 0;
 }
-
+a{
+color: darkorange;    
+} 
 .naglowek {
     display: flex;
     align-items: center;
@@ -166,8 +168,17 @@ select {
     width: 50%; 
     height: auto;
     border-radius: 15px;
+    animation-name: Zdjeciehotelu;
 }
 
+@keyframes Zdjeciehotelu{
+    0%{
+        opacity: 0%;
+    }
+    100%{
+        opacity: 100%;
+    }
+}
 .hotelOpis {
     margin-top: 15px;
     font-size: 16px;
@@ -185,5 +196,4 @@ footer.stopka {
     text-align: center;
     position: relative;
     bottom: 0;
-    width: 100%;
-}
+    width: 100%;}
