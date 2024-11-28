@@ -1,6 +1,6 @@
 from django.shortcuts import render
 
-def homePage(request):
+def home_page(request):
     # Łączenie obu słowników w jeden
     context = {
         'range_10': range(0, 11),
@@ -14,16 +14,16 @@ def homePage(request):
             'lat': 50.8882347,  # Szerokość geograficzna
             'lng': 20.8720543   # Długość geograficzna
         },
-        'Search' : "{% url 'searchRoom' %}"
+        'search' : "{% url 'search_room' %}"
     }
-    return render(request, 'homePage.html', context)
+    return render(request, 'home_page.html', context)
 
-def lastMinute(request):
+def last_minute(request):
     context = {
         'range_10': range(0, 11),
         'range_10x': range(1, 11),
     }
-    return render(request, 'lastMinute.html', context)
+    return render(request, 'last_minute.html', context)
 
 def news(request):
     context = {
@@ -36,16 +36,16 @@ def news(request):
 def contact(request):
     return render(request, 'contact.html')
 
-def signIn(request):
+def sign_in(request):
     context = {
         'range_10': range(0, 11),
         'range_10x': range(1, 11),
     }
-    return render(request, 'signIn.html', context)
+    return render(request, 'sign_in.html', context)
 
-def searchRoom(request):
+def search_room(request):
     context = {
         'range_10': range(0, 11),
         'range_10x': range(1, 11),
     }
-    return render(request, 'searchRoom.html')
+    return render(request, 'search_room.html', context)

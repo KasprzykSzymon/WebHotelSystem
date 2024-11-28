@@ -50,7 +50,7 @@ body {
 h1 {
     font-family: fantasy;
 }
-<<<<<<< HEAD
+
 .info-pokoj{
     float: left;
     position: relative;
@@ -69,9 +69,6 @@ h1 {
     width: 300px;
     height: 300px;
 }
-=======
-
->>>>>>> d58cfee (Add news views in navigate homepage)
 
 .stopka {
     background-color: #D8C3A5;
@@ -83,10 +80,6 @@ h1 {
     position: relative;
     bottom: 0;
     width: 100%;
-<<<<<<< HEAD
-    
-=======
->>>>>>> d58cfee (Add news views in navigate homepage)
 }
 
 
@@ -101,7 +94,6 @@ h1 {
     margin-right: auto;
 }
 
-<<<<<<< HEAD
 .main-container {
     display: flex;
     flex-grow: 1;
@@ -216,21 +208,13 @@ h1 {
 }
 
 /* Stopka */
-=======
->>>>>>> d58cfee (Add news views in navigate homepage)
 footer.stopka {
     background-color: #D8C3A5;
     padding: 10px;
     text-align: center;
-<<<<<<< HEAD
     color: #333;
     font-size: 14px;
     width: 100%;
     margin-top: auto; /* Przesunięcie na dół */
 }
-=======
-    position: relative;
-    bottom: 0;
-    width: 100%;
-}
->>>>>>> d58cfee (Add news views in navigate homepage)
+
