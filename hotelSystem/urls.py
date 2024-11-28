@@ -6,7 +6,7 @@ urlpatterns = [
     path('lastminute/', views.last_minute, name='last_minute'),
     path('news/', views.news, name='news'),
     path('contact/', views.contact, name='contact'),
-    path('signin/', views.sign_in, name='sign_rn'),
+    path('signin/', views.sign_in, name='sign_in'),
     path('searchroom/', views.search_room, name='search_room'),
 
 ]
