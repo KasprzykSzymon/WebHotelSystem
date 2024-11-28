@@ -5,21 +5,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'css/stylesHomePage.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Protest+Revolution&display=swap" rel="stylesheet">
     <title>Strona hotelu x</title>
 </head>
 <body>
     <div class="naglowek">
         <div class="lewoNaglowek"> 
-            <a href=""></a>          
+            <a href="{% url 'last_minute' %}">
             <p>Last Minute !</p>
+            </a>
+            <a href="{% url 'news' %}"> 
             <p>Wydarzenia w hotelu</p>
+            </a>
         </div>
         <div class="zdjecie">
+            <a href="{% url 'home_page' %}">
             <img src="{% static 'images/logoPNG.png' %}" alt="Logo Hotelu">
+            </a>
         </div>
         <div class="prawoNaglowek">
+            <a href="{% url 'contact' %}"> 
             <p style="left: 15px;">Kontakt</p>
+            </a>
+            <a href="{% url 'sign_in' %}">
             <p>Zaloguj się</p>
+            </a>
         </div>
     </div>
     <h1>Witamy w hotelu Scyzoryk</h1>
@@ -50,7 +62,7 @@
             </select>
         </div><br>
         <div class="guzik-container">
-            <button type="button" class="guzik">Szukaj pokoju</button>
+            <button type="button" class="guzik" onclick={search}>Szukaj pokoju</button>
         </div>
     </div>
 
@@ -85,3 +97,8 @@
     </footer>
 </body>
 </html>
+Czesc chcialbym aby moje zdjęcia pojawiły się tylko wtedy kiedy będą widoczne na stronie . Pisze w Django, css i html. Obniż mi prosze te zdjęcia aby nie były początkowo widocznie na stronie i prosze Cie abys dodał jeszcze google maps na dole strony i zaznaczył punkt taki 50.888234, 20.874148
+
+
+
+

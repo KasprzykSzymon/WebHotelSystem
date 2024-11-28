@@ -10,16 +10,25 @@
 <body>
     <div class="naglowek">
         <div class="lewoNaglowek">
-            <a href=""></a>
+            <a href="{% url 'last_minute' %}">
             <p>Last Minute !</p>
+            </a>
+            <a href="{% url 'news' %}">
             <p>Wydarzenia w hotelu</p>
+            </a>
         </div>
         <div class="zdjecie">
+            <a href="{% url 'home_page' %}">
             <img src="{% static 'images/logoPNG.png' %}" alt="Logo Hotelu">
+            </a>
         </div>
         <div class="prawoNaglowek">
+            <a href="{% url 'contact' %}">
             <p style="left: 15px;">Kontakt</p>
+            </a>
+            <a href="{% url 'sign_in' %}">
             <p>Zaloguj się</p>
+            </a>
         </div>
     </div>
     <div class="hotel-info">
