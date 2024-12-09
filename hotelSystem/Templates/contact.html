@@ -5,36 +5,75 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'css/stylesContact.css' %}">
-    <title>Kontakt</title>
+    
+    <!-- Ładowanie czcionek z Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Parisienne&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Parisienne&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">       
+
+    <title>KONTAKT</title>
 </head>
 <body>
     <div class="naglowek">
         <div class="lewoNaglowek">
             <a href="{% url 'last_minute' %}">
-            <p>Last Minute !</p>
+                <p>LAST MINUTE!</p>
             </a>
             <a href="{% url 'news' %}">
-            <p>Wydarzenia w hotelu</p>
+                <p>WYDARZENIA W HOTELU</p>
             </a>
         </div>
         <div class="zdjecie">
             <a href="{% url 'home_page' %}">
-            <img src="{% static 'images/logoPNG.png' %}" alt="Logo Hotelu">
+                <img src="{% static 'images/logoPNG.png' %}" alt="Logo Hotelu">
             </a>
         </div>
         <div class="prawoNaglowek">
             <a href="{% url 'contact' %}">
-            <p style="left: 15px;">Kontakt</p>
+                <p style="left: 15px;">KONTAKT</p>
             </a>
             <a href="{% url 'sign_in' %}">
-            <p>Zaloguj się</p>
+                <p>ZALOGUJ SIĘ</p>
             </a>
         </div>
     </div>
-    <div class="hotel-info">
-        <H1>Kontakt</H1>
+    
+    <div class="kontakt-container">
+        <h1>Kontakt</h1>
+        <p class="subheader">Jesteśmy tu dla Ciebie!</p>
+    
+        <div class="hotel-info">
+                <h2>Hotel Scyzoryk</h2>
+                <p>ul. Turystyczna 5</p>
+                <p>25-100 Kielce, Świętokrzyskie, Polska</p>
+                <p>Nr konta: 91 8493 0000 0000 0061 8188 0001</p>
+                <p>Bank Spółdzielczy II Kielce</p>
+                <p>Email: <a href="mailto:hotel@scyzoryk.pl">hotel@scyzoryk.pl</a></p>
+                <p>Telefon: <a href="tel:+48412345678">+48 41 23 45 678</a></p>
+            </div>
+        </div>
     </div>
 
+    <!-- Sekcja Lokalizacji -->
+    <div class="lokalizacja-section">
+        <div class="lokalizacja-content">
+            <div class="lokalizacja-text">
+                <h2>Nasza lokalizacja</h2>
+                <p class="opis-lokalizacji">
+                    Wypocznij w Górach Świętokrzyskich! Wyjątkowa lokalizacja Hotelu Scyzoryk gwarantuje położenie w środku lasu, 
+                    na obrzeżach Kielc, z dala od miejskiego zgiełku. Dzięki temu możesz w ciszy i spokoju cieszyć się niepowtarzalnymi widokami, które zapamiętasz na długo.
+                </p>
+                <a href="#" class="lokalizacja-button">Pokaż na mapie</a>
+            </div>
+            <div class="lokalizacja-img-container">
+                <img src="{% static 'images/mapa.jpg' %}" alt="Mapa Lokalizacji" class="lokalizacja-img">
+            </div>
+        </div>
+    </div>
+    
     <footer class="stopka">
         <p>© 2024 Hotel Scyzoryk | Wszystkie prawa zastrzeżone</p>
     </footer>
