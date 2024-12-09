@@ -1,5 +1,5 @@
 /* Ogólne style dla body */
-body {
+body, html {
     font-family: "Nunito Sans", sans-serif;
     font-weight: 500;
     font-size: 1em;
@@ -7,6 +7,11 @@ body {
     text-align: center;
     margin: 0;
     padding: 0;
+    height: 100%;
+}
+
+h1 {
+    font-family: fantasy;
 }
 
 /* Styl dla nagłówka */
@@ -72,8 +77,6 @@ body {
     text-decoration: underline;
 }
 
-
-
 /* Dodatkowe style linków */
 a {
     color: #4A4A4A;
@@ -82,7 +85,6 @@ a {
 a:hover {
     color: #D8C3A5;
 }
-
 
 /* Styles footer*/
 footer.stopka {

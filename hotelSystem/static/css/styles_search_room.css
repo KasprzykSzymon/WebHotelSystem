@@ -1,56 +1,3 @@
-body, html {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-}
-body {
-    font-family: Arial, sans-serif;
-    background-color: #EAE7DC;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh; /* Wysokość pełnego okna przeglądarki */
-}
-
-.naglowek {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background-color: #D8C3A5;
-    padding: 10px 20px;
-    width: 100%;
-    box-sizing: border-box;
-    position: sticky;
-    top: 0;
-    z-index: 10;
-}
-
-.lewoNaglowek,
-.prawoNaglowek {
-    flex: 1;
-    text-align: center;
-}
-
-.lewoNaglowek p,
-.prawoNaglowek p {
-    margin: 0 220px;
-    padding: 10px;
-    display: inline-block;
-}
-
-.zdjecie {
-    flex: 0;
-    text-align: center;
-}
-
-.naglowek img {
-    width: 100px;
-    height: auto;
-}
-
-h1 {
-    font-family: fantasy;
-}
-
 .info-pokoj{
     float: left;
     position: relative;
@@ -69,19 +16,6 @@ h1 {
     width: 300px;
     height: 300px;
 }
-
-.stopka {
-    background-color: #D8C3A5;
-    padding: 20px;
-    text-align: center;
-    margin-top: 50px;
-    font-size: 14px;
-    color: #333;
-    position: relative;
-    bottom: 0;
-    width: 100%;
-}
-
 
 .hotelOpis {
     margin-top: 15px;
@@ -103,7 +37,7 @@ h1 {
     position: fixed;
     width: 150px;
     height: 100%; /* Automatyczna wysokość */
-    background-color: #D8C3A5;
+    background-color: darkgrey;
     padding: 15px;
     z-index: 1000; /* Wyższy indeks z-index dla widoczności */
 }
@@ -206,15 +140,3 @@ h1 {
 .room-info .btn:hover {
     background-color: #E85A4F;
 }
-
-/* Stopka */
-footer.stopka {
-    background-color: #D8C3A5;
-    padding: 10px;
-    text-align: center;
-    color: #333;
-    font-size: 14px;
-    width: 100%;
-    margin-top: auto; /* Przesunięcie na dół */
-}
-

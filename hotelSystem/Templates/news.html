@@ -1,10 +1,14 @@
 {% extends 'base.html' %}
 
+{% block header %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles_news.css' %}">
+    <title>Aktualności</title>
+{% endblock %}
 
 {% block content %}
-<div class="hotel-info">
-    <H1>Aktualności</H1>
-</div>
-
+    <div class="hotel-info">
+        <H1>Aktualności</H1>
+    </div>
 
 {% endblock %}
