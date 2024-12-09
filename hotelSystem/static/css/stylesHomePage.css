@@ -147,18 +147,6 @@ select {
 }
 
 
-.stopka {
-    background-color: #D8C3A5;
-    padding: 20px;
-    text-align: center;
-    margin-top: 50px;
-    font-size: 14px;
-    color: #333;
-    position: relative;
-    bottom: 0;
-    width: 100%;
-}
-
 .hotel-info {
     text-align: center;
     margin-top: 30px;
@@ -190,10 +178,3 @@ select {
     margin-right: auto;
 }
 
-footer.stopka {
-    background-color: #D8C3A5;
-    padding: 10px;
-    text-align: center;
-    position: relative;
-    bottom: 0;
-    width: 100%;}
