@@ -1,0 +1,96 @@
+/* Kontener logowania */
+.login-container {
+    text-align: center;
+    margin: 60px auto;
+    font-family: 'Nunito Sans', sans-serif;
+    padding: 40px 20px;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7)), url('/static/images/login_background.jpg') no-repeat center center;
+    background-size: cover;
+    border-radius: 10px;
+    max-width: 700px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    font-weight: 600;
+    font-size: 1em;
+    color: #555;
+}
+
+.login-container h1 {
+    font-family: "Playfair Display", serif;
+    font-weight: 900;
+    font-size: 3em;
+    color: #333;
+    margin-bottom: 20px;
+    text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
+}
+
+.login-container p {
+    font-family: "Nunito Sans", sans-serif;
+    font-weight: 600;
+    font-size: 1em;
+    color: #555;
+    margin-bottom: 30px;
+}
+
+/* Formularz */
+.input-container {
+    margin-bottom: 20px;
+}
+
+.input-container input[type="text"],
+.input-container input[type="password"] {
+    width: 80%;
+    padding: 15px;
+    font-size: 1em;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: border 0.3s, box-shadow 0.3s;
+}
+
+.input-container input:focus {
+    border: 1px solid #D2B48C;
+    box-shadow: 0 0 5px rgba(210, 180, 140, 0.5);
+    outline: none;
+}
+
+/* Przycisk */
+.button-container {
+    margin-top: 20px;
+}
+
+.btn-login {
+    padding: 15px 30px;
+    background-color: #D2B48C;
+    color: white;
+    font-size: 1.2em;
+    font-weight: bold;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    box-shadow: 0 5px 15px rgba(210, 180, 140, 0.3);
+}
+
+.btn-login:hover {
+    background-color: #ebd8bf;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(210, 180, 140, 0.4);
+}
+
+/* Link do rejestracji */
+.login-container .register-link {
+    margin-top: 20px;
+    font-family: "Nunito Sans", sans-serif;
+    font-size: 0.9em;
+    color: #555;
+}
+
+.login-container .register-link a {
+    color: #D2B48C;
+    text-decoration: none;
+}
+
+.login-container .register-link a:hover {
+    text-decoration: underline;
+}

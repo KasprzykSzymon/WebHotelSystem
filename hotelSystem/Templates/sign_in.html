@@ -2,10 +2,39 @@
 
 {% block header %}
     {% load static %}
-    <link rel="stylesheet" href="{% static 'css/styles_sign_in.css' %}">
-    <title>Zaloguj się</title>
+    <link rel="stylesheet" href="{% static 'css/styles_login.css' %}">
+
+    <!-- Ładowanie czcionek -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@200;400;600;900&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <title>Logowanie</title>
 {% endblock %}
 
 {% block content %}
-    <h1> Zaloguj się </h1>
+<div class="login-container">
+    <h1>Logowanie</h1>
+    <p class="subheader">Zaloguj się do swojego konta</p>
+
+    <form method="post" action="POST">
+        {% csrf_token %}
+        <div class="input-container">
+            <label for="login">Login</label><br>
+            <input type="text" id="login" name="username" placeholder="Wpisz swój login" required>
+        </div>
+
+        <div class="input-container">
+            <label for="password">Hasło</label><br>
+            <input type="password" id="password" name="password" placeholder="Wpisz swoje hasło" required>
+        </div>
+
+        <div class="button-container">
+            <button type="submit" class="btn-login">ZALOGUJ SIĘ</button>
+        </div>
+    </form>
+
+    <div class="register-link">
+        <p>Nie masz konta? <a href="{% url 'register' %}">Zarejestruj się</a></p>
+    </div>
+</div>
 {% endblock %}

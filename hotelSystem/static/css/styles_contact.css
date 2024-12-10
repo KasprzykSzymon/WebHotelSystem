@@ -22,8 +22,14 @@
     margin: 30px 0;
     color: #D2B48C;
 }
-
-
+.kontakt-container .hotel-info {
+    display: flex;
+    flex-direction: column; /* Upewnij się, że elementy układają się w kolumnie */
+    align-items: center;    /* Wyśrodkowanie w poziomie */
+    justify-content: center; /* Wyśrodkowanie w pionie */
+    height: 100%;           /* Aby zadziałało, wysokość kontenera powinna być ustawiona */
+    text-align: center;     /* Wyśrodkowanie tekstu */
+}
 
 /* Styl dla sekcji lokalizacji */
 .lokalizacja-section {

@@ -49,3 +49,10 @@ def search_room(request):
         'range_10x': range(1, 11),
     }
     return render(request, 'search_room.html', context)
+
+def register(request):
+    context = {
+        'range_10': range(0, 11),
+        'range_10x': range(1, 11),
+    }
+    return render(request, 'register.html', context)
