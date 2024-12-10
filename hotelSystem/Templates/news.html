@@ -3,12 +3,25 @@
 {% block header %}
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/styles_news.css' %}">
-    <title>Aktualności</title>
+
+    <!-- Ładowanie czcionek -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@200;400;600;900&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <title>Wydarzenia w Hotelu</title>
 {% endblock %}
 
 {% block content %}
-    <div class="hotel-info">
-        <H1>Aktualności</H1>
+<div class="wydarzenia-container">
+    <h1>Wydarzenia w hotelu</h1>
+    <p class="subheader">Zobacz naszą ofertę</p>
+
+    <div class="kalendarz">
+        <input type="date" id="data-wydarzenia" name="data-wydarzenia">
     </div>
 
+    <div class="button-container">
+        <button class="btn-rezerwuj">REZERWUJ ONLINE</button>
+    </div>
+</div>
 {% endblock %}

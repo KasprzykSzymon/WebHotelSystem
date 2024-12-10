@@ -1,0 +1,84 @@
+/* Kontener wydarzeń */
+.wydarzenia-container {
+    text-align: center;
+    margin: 60px auto;
+    font-family: 'Nunito Sans', sans-serif;
+    padding: 40px 20px;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7)), url('/static/images/background.jpg') no-repeat center center;
+    background-size: cover;
+    border-radius: 10px;
+    max-width: 800px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.wydarzenia-container h1 {
+    font-family: "Playfair Display", serif;
+    height: 300px;
+    font-weight: 100;
+    font-size: 4em;
+    color: #333;
+    margin-bottom: 20px;
+    text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
+}
+
+.wydarzenia-container .subheader {
+    font-family: "Parisienne", serif;
+    font-weight: 500;
+    font-size: 3em;
+    color: #D2B48C;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Kalendarz */
+.kalendarz {
+    font-family: "Nunito Sans", sans-serif;
+    font-weight: 500;
+    font-size: 1em;
+    margin: 20px auto;
+    display: flex;
+    justify-content: center;
+}
+
+.kalendarz input[type="date"] {
+    font-family: "Nunito Sans", sans-serif;
+    font-weight: 500;
+    font-size: 1em;
+    padding: 15px;
+    font-size: 1.1em;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: inset 0 1px 3px #D2B48C(0, 0, 0, 0.1);
+    transition: border 0.3s, box-shadow 0.3s;
+    background-color: #fff;
+}
+
+.kalendarz input[type="date"]:focus {
+    border: 1px solid #D2B48C;
+    box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+    outline: none;
+}
+
+/* Przycisk */
+.button-container {
+    margin-top: 30px;
+}
+
+.btn-rezerwuj {
+    padding: 15px 30px;
+    background-color: #D2B48C;
+    color: white;
+    font-size: 1.2em;
+    font-weight: bold;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+}
+
+.btn-rezerwuj:hover {
+    background-color: #ebd8bf; /* podświetlenie po kliknięciu rezerwuj */
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(41, 128, 185, 0.4);
+}
