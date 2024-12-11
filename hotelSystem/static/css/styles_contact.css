@@ -1,14 +1,17 @@
-/* Styl dla sekcji kontaktowej */
+/* Styl dla seckji nagłówka */
 .kontakt-container {
-    padding: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 70vh; /* Pełna wysokość widoku */
     background-color: #FFFFFF;
     text-align: center;
 }
 
 .kontakt-container h1 {
     font-family: "Playfair Display", serif;
-    height: 300px;
-    line-height: 10;
+    margin: 0 0 10px 0; 
     font-weight: 100;
     font-size: 4em;
     color: #333;
@@ -16,24 +19,21 @@
 
 .kontakt-container .subheader {
     font-family: "Parisienne", serif;
-    line-height: 1.5;
+    margin: 0; 
+    padding: 0; 
     font-weight: 500;
     font-size: 3em;
-    margin: 30px 0;
     color: #D2B48C;
 }
-.kontakt-container .hotel-info {
-    display: flex;
-    flex-direction: column; /* Upewnij się, że elementy układają się w kolumnie */
-    align-items: center;    /* Wyśrodkowanie w poziomie */
-    justify-content: center; /* Wyśrodkowanie w pionie */
-    height: 100%;           /* Aby zadziałało, wysokość kontenera powinna być ustawiona */
-    text-align: center;     /* Wyśrodkowanie tekstu */
+
+.kontakt-container .subheader-wrapper {
+    margin-top: 20px; 
+    margin-bottom: 200px; 
 }
 
 /* Styl dla sekcji lokalizacji */
 .lokalizacja-section {
-    background-color: #faf4ed; /* Kolor tła sekcji */
+    background-color: #fbf8f4; /* Kolor tła sekcji */
     padding: 50px 20px;
     display: flex;
     justify-content: space-between;
@@ -56,30 +56,39 @@
 
 .lokalizacja-text h2 {
     font-family: "Playfair Display", serif;
-    font-size: 3em;
+    font-size: 3.5em;
     font-weight: 100;
     color: #333;
 }
 
 .opis-lokalizacji {
-    font-size: 1em;
+    font-family: "Red Hat Display", sans-serif; 
+    font-weight: 400;
+    font-size: 1.2em;
     line-height: 1.6;
-    color: #555;
+    color: #000000;
 }
 
+/* Styl przycisku */
 .lokalizacja-button {
+    font-family: "Red Hat Display", sans-serif; 
+    font-weight: 500; 
+    font-size: 1.2em;
     display: inline-block;
-    margin-top: 20px;
-    padding: 10px 20px;
-    background-color: #D2B48C;
-    color: #fff;
+    margin-top: 40px;
+    padding: 20px 60px; /* padding 20px góra-dół, 60px lewo-prawo */
+    background-color: transparent; /* Przycisk pusty w środku */
+    color: #D2B48C; /* Kolor tekstu */
     text-decoration: none;
-    border-radius: 5px;
-    font-weight: bold;
+    border: 2px solid #D2B48C; /* Cienka ramka */
+    text-align: center;
 }
+
 
 .lokalizacja-button:hover {
-    background-color: #C9A27C;
+    background-color: transparent; /* Wypełnienie puste */
+    color: #74573a; 
+    border-color: #74573a; /* kolor ramki */
 }
 
 .lokalizacja-img-container {
@@ -88,7 +97,14 @@
 }
 
 .lokalizacja-img {
-    max-width: 100%;
+    max-width: 150%;
     height: auto;
     border-radius: 10px;
 }
+
+/* Styl dla informacji hotelu */
+.kontakt-container .hotel-info {
+    height: 100%;           
+    text-align: left;     
+}
+
