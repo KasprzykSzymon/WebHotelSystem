@@ -26,6 +26,16 @@
     color: #D2B48C;
 }
 
+.hotel-info {
+    display: flex;
+    flex-direction: column;     /* Układ w kolumnie */
+    align-items: center;        /* Wyśrodkowanie w poziomie */
+    justify-content: center;    /* Wyśrodkowanie w pionie */
+    height: 100%;               /* Wysokość kontenera */
+    text-align: center;         /* Wyśrodkowanie tekstu */
+    margin-bottom: 50px;        /* Dodanie marginesu na dole */
+}
+
 .kontakt-container .subheader-wrapper {
     margin-top: 20px; 
     margin-bottom: 200px; 

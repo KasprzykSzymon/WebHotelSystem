@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block header %}
+    {% load static %}
+    <title>Profil Użytkownika</title>
+    <link rel="stylesheet" href="{% static 'css/styles_profile.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="profile-container">
+        <h1>Profil Użytkownika</h1>
+
+<div class="user-info">
+    <p><strong>Imię:</strong> {{ user.first_name }}</p>
+    <p><strong>Nazwisko:</strong> {{ user.last_name }}</p>
+    <p><strong>Email:</strong> <a href="mailto:{{ user.email }}">{{ user.email }}</a></p>
+    <p><strong>Numer telefonu:</strong> {{ user.profile.phone_number }}</p>
+
+    <a href="{% url 'edit_profile' %}" class="btn-edit-profile">Zmień dane</a>
+</div>
+
+        <div class="reservations">
+            <h2>Twoje rezerwacje</h2>
+        </div>
+    </div>
+{% endblock %}

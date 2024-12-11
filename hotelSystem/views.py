@@ -1,5 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import logout
+from .forms import UserProfileForm  
+from django.contrib.auth.decorators import login_required
 
 def home_page(request):
     # Łączenie obu słowników w jeden
@@ -58,6 +60,25 @@ def register(request):
     }
     return render(request, 'register.html', context)
 
+def profile(request):
+    context = {
+        'range_10': range(0, 11),
+        'range_10x': range(1, 11),
+    }
+    return render(request, 'profile.html', context)
+
 def logout_view(request):
     logout(request)
     return redirect("/")
+
+@login_required
+def edit_profile(request):
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('profile')
+    else:
+        form = UserProfileForm(instance=request.user)
+
+    return render(request, 'edit_profile.html', {'form': form})

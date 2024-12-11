@@ -32,14 +32,14 @@
     display: flex;
     flex-grow: 1;
 }
-/* Stylizacja filtra (przyklejony do prawej strony, wymiary 100x500px) */
+
 .filters {
     position: fixed;
     width: 150px;
-    height: 100%; /* Automatyczna wysokość */
+    height: 100%;
     background-color: darkgrey;
     padding: 15px;
-    z-index: 1000; /* Wyższy indeks z-index dla widoczności */
+    z-index: 1000; 
 }
 
 .filters h3 {
@@ -57,7 +57,7 @@
 
 .filters select,
 .filters input {
-    width: calc(100% - 10px); /* Dopasowanie do szerokości kontenera */
+    width: calc(100% - 10px); 
     padding: 4px;
     margin-bottom: 8px;
     border: 1px solid #8E8D8A;
@@ -82,7 +82,7 @@
     background-color: #E85A4F;
 }
 
-/* Stylizacja listy pokoi */
+
 .rooms-list {
     display: flex;
     flex-direction: column;

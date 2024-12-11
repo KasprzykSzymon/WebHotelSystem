@@ -30,6 +30,10 @@
             <p style="left: 15px;">Kontakt</p>
             </a>
             {% if user.is_authenticated %}
+            <a href="{% url 'profile' %}">
+                <p>Profil</p>
+            </a>
+
                 <a href="logout">
                     <p>Wyloguj się</p>
                 </a>

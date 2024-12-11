@@ -1,0 +1,69 @@
+
+.form-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #fff;
+    padding: 40px 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 50%;
+    margin: 50px auto 0;
+    transition: padding 0.3s ease;
+}
+
+.form-container h1 {
+    font-family: "Playfair Display", serif;
+    font-size: 2.5em;
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center; 
+    width: 100%; 
+    max-width: 600px;
+}
+
+.form-container div {
+    width: 100%;
+    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 12px; 
+}
+
+.form-container label {
+    font-family: "Red Hat Display", sans-serif;
+    font-size: 1.2em;
+    margin-bottom: 8px; 
+    color: #333;
+    text-align: left;
+    width: 100%; 
+}
+
+.form-container input {
+    font-family: "Red Hat Display", sans-serif;
+    font-size: 1.1em;
+    padding: 12px;
+    border: 2px solid #D2B48C;
+    border-radius: 5px;
+    width: 100%;
+    max-width: 600px;
+    background-color: #f7f7f7;
+    transition: all 0.3s ease;
+}
+
+.form-container button {
+    font-family: "Red Hat Display", sans-serif;
+    font-weight: 500;
+    font-size: 1.2em;
+    padding: 15px 50px;
+    background-color: #D2B48C;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+    width: 100%;
+    max-width: 600px; 
+    transition: all 0.3s ease;
+}

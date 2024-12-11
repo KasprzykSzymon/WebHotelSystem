@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block header %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/styles_edit_profile.css' %}">
+    <title>Edytuj profil</title>
+{% endblock %}
+
+{% block content %}
+    <div class="edit-profile-container">
+        <form method="POST" class="form-container">
+            {% csrf_token %}
+            <h1>Edytuj profil</h1>
+            {{ form.non_field_errors }}
+            <div>
+                <label for="{{ form.email.id_for_label }}">Email</label>
+                {{ form.email }}
+            </div>
+            <div>
+                <label for="{{ form.first_name.id_for_label }}">First Name</label>
+                {{ form.first_name }}
+            </div>
+            <div>
+                <label for="{{ form.last_name.id_for_label }}">Last Name</label>
+                {{ form.last_name }}
+            </div>
+            <div>
+                <div>
+                    <label for="{{ form.phone_number.id_for_label }}">Phone Number</label>
+                    <input type="text" name="phone_number" value="{{ form.phone_number.value }}" readonly />
+                </div>
+            </div>
+            <button type="submit">Zapisz zmiany</button>
+        </form>
+{% endblock %}
