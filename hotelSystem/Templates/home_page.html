@@ -11,7 +11,11 @@
 {% endblock %}
 
 {% block content %}
-    <h1>Witamy w hotelu Scyzoryk</h1>
+{% if user.is_authenticated %}
+    <h1>Witaj {{user.username}} </h1> 
+    {% else %}
+    <h1>Witaj w hotelu Scyzoryk! </h1> 
+    {% endif %}
     <p>U nas zaśniesz spokojnie</p>
     <div class="formularze-container">
         <div class="formularz1">

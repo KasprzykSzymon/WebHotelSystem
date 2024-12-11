@@ -1,4 +1,5 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.contrib.auth import logout
 
 def home_page(request):
     # Łączenie obu słowników w jeden
@@ -56,3 +57,7 @@ def register(request):
         'range_10x': range(1, 11),
     }
     return render(request, 'register.html', context)
+
+def logout_view(request):
+    logout(request)
+    return redirect("/")
