@@ -3,7 +3,7 @@ from django.contrib.auth import logout
 from .forms import UserProfileForm  
 from django.contrib.auth.decorators import login_required
 
-def home_page(request):
+def home_page_view(request):
     # Łączenie obu słowników w jeden
     context = {
         'range_10': range(0, 11),
@@ -21,14 +21,14 @@ def home_page(request):
     }
     return render(request, 'home_page.html', context)
 
-def last_minute(request):
+def last_minute_view(request):
     context = {
         'range_10': range(0, 11),
         'range_10x': range(1, 11),
     }
     return render(request, 'last_minute.html', context)
 
-def news(request):
+def news_view(request):
     context = {
         'range_10': range(0, 11),
         'range_10x': range(1, 11),
@@ -36,31 +36,31 @@ def news(request):
     return render(request, 'news.html', context)
 
 
-def contact(request):
+def contact_view(request):
     return render(request, 'contact.html')
 
-def sign_in(request):
+def sign_in_view(request):
     context = {
         'range_10': range(0, 11),
         'range_10x': range(1, 11),
     }
     return render(request, 'sign_in.html', context)
 
-def search_room(request):
+def search_room_view(request):
     context = {
         'range_10': range(0, 11),
         'range_10x': range(1, 11),
     }
     return render(request, 'search_room.html', context)
 
-def register(request):
+def register_view(request):
     context = {
         'range_10': range(0, 11),
         'range_10x': range(1, 11),
     }
     return render(request, 'register.html', context)
 
-def profile(request):
+def profile_view(request):
     context = {
         'range_10': range(0, 11),
         'range_10x': range(1, 11),
@@ -72,7 +72,7 @@ def logout_view(request):
     return redirect("/")
 
 @login_required
-def edit_profile(request):
+def edit_profile_view(request):
     if request.method == 'POST':
         form = UserProfileForm(request.POST, instance=request.user)
         if form.is_valid():
