@@ -3,6 +3,9 @@ from django.contrib.auth import logout
 from .forms import UserProfileForm  
 from django.contrib.auth.decorators import login_required
 
+from .last_minute import generate_last_minute_offer
+
+
 def home_page_view(request):
     # Łączenie obu słowników w jeden
     context = {
@@ -22,10 +25,14 @@ def home_page_view(request):
     return render(request, 'home_page.html', context)
 
 def last_minute_view(request):
+    offers = generate_last_minute_offer(days_to_last_minute=7, max_discount=30)
+
     context = {
+        'offers': offers, # Lista ofert last minute
         'range_10': range(0, 11),
         'range_10x': range(1, 11),
     }
+
     return render(request, 'last_minute.html', context)
 
 def news_view(request):
