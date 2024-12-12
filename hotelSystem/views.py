@@ -7,18 +7,6 @@ from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .models import Room, Reservation, Payment
-from django.urls import reverse
-from django.contrib.auth.models import User
-import requests
-import json
-import hmac
-import hashlib
-import base64
-from dotenv import load_dotenv
-import os
-from .payment_helpers import new_payment, check_payment
-
 
 def home_page_view(request):
     arrival_date = request.GET.get('arrival_date')
@@ -72,11 +60,10 @@ def last_minute_view(request):
     offers = generate_last_minute_offer(days_to_last_minute=7, max_discount=30)
 
     context = {
-        'offers': offers,
         'range_10': range(0, 11),
         'range_10x': range(1, 11),
     }
-    return render(request, 'last_minute.html', {'offers': offers})
+    return render(request, 'last_minute.html', context)
 
 def news_view(request):
     context = {

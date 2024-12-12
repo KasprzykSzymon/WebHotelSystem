@@ -9,6 +9,32 @@
 {% block content %}
      <div class="hotel-info">
         <H1>Last Minute</H1>
+     {% if offers %}
+    <table>
+        <thead>
+            <tr>
+                <th>Room Number</th>
+                <th>Room Type</th>
+                <th>Original Price</th>
+                <th>Discounted Price</th>
+                <th>Discount (%)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for offer in offers %}
+            <tr>
+                <td>{{ offer.room.number }}</td>
+                <td>{{ offer.room.get_room_type_display }}</td>
+                <td>${{ offer.original_price }}</td>
+                <td>${{ offer.discounted_price }}</td>
+                <td>{{ offer.discount }}%</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>Brak dostepnych ofert Last minute. Odwiedź nas za jakiś czas.</p>
+{% endif %}
     </div>
     
     
