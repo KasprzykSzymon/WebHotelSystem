@@ -24,6 +24,10 @@ class Room(models.Model):
      def __str__(self):
         return f"Room {self.number} ({self.get_room_type_display()})"
 
+     class Meta:
+         verbose_name = "Pokój"
+         verbose_name_plural = "Pokoje"
+
 class Guest(models.Model):
      first_name = models.CharField(max_length=50)
      last_name = models.CharField(max_length=50)
@@ -32,6 +36,10 @@ class Guest(models.Model):
 
      def __str__(self):
          return f"{self.first_name} {self.last_name}"
+
+     class Meta:
+         verbose_name = "Klient"
+         verbose_name_plural = "Klienci"
 
 class Reservation(models.Model):
      room = models.ForeignKey(Room, on_delete=models.CASCADE)
@@ -48,13 +56,16 @@ class Reservation(models.Model):
      def __str__(self):
          return f"Reservation for {self.guest} in Room {self.room.number}"
 
+     class Meta:
+         verbose_name = "Rezerwacja"
+         verbose_name_plural = "Rezerwacje"
+
 
 class SocialApp(models.Model):
     PROVIDERS = [
         ('google', 'Google'),
         ('facebook', 'Facebook'),
         ('github', 'GitHub'),
-        # Dodaj inne dostawców, jeśli to potrzebne
     ]
 
     provider = models.CharField(max_length=50, choices=PROVIDERS)
@@ -65,6 +76,8 @@ class SocialApp(models.Model):
 
     class Meta:
         unique_together = ('provider', 'client_id')
+        verbose_name = "Aplikacja społecznościowa"
+        verbose_name_plural = "Aplikacje społecznościowe"
 
     def __str__(self):
         return f"{self.name} ({self.provider})"
