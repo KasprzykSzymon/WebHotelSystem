@@ -15,7 +15,7 @@ class Room(models.Model):
      price_per_night = models.DecimalField(max_digits=6, decimal_places=2)
      is_available = models.BooleanField(default=True)
      last_minute_discount = models.DecimalField(max_digits=5, decimal_places=2, default=0) #Last minute discount in percent
-
+     # image = models.ImageField(upload_to='images/room_images/')
      def discounted_price(self):
 
          "Oblicza cene po znizce"
