@@ -47,6 +47,8 @@ class Reservation(models.Model):
      check_in_date = models.DateField()
      check_out_date = models.DateField()
      total_price = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
+     def is_in_last_minute_period(self, threshold_date):
+         return threshold_date >= self.check_in_date >= date.today()
 
      def save(self, *args, **kwargs):
          nights = (self.check_out_date - self.check_in_date).days
@@ -83,7 +85,9 @@ class SocialApp(models.Model):
         return f"{self.name} ({self.provider})"
 
 
-
+class RoomImage(models.Model):
+    room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='images')
+    image = models.ImageField(upload_to='room_images/')
 
 #
 #def room_list(request):

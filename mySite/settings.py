@@ -144,5 +144,8 @@ AUTHENTICATION_BACKENDS = (
     "allauth.account.auth_backends.AuthenticationBackend"
 )
 
+MEDIA_URL = '/images/'
+MEDIA_ROOT = BASE_DIR / 'hotelSystem/static/images/'
+
 LOGIN_DIRECT_URL = "/"
 LOGIN_REDIRECT_URL = "/" 

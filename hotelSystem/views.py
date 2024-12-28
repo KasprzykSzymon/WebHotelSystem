@@ -23,13 +23,14 @@ def home_page_view(request):
     return render(request, 'home_page.html', context)
 
 def last_minute_view(request):
-    offers = generate_last_minute_offer(7, 30)
+    offers = generate_last_minute_offer(days_to_last_minute=5, max_discount=20)
     context = {
         'offers': offers,  # Lista ofert last minute
         'range_10': range(0, 11),
         'range_10x': range(1, 11),
+
     }
-    return render(request, 'last_minute.html', context)
+    return render(request, 'last_minute.html', {'offers': offers})
 
 def news_view(request):
     context = {
