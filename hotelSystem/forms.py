@@ -4,6 +4,4 @@ from django.contrib.auth.models import User
 class UserProfileForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'email','phone_number']
-
-    phone_number = forms.CharField(max_length=15)
+        fields = ['first_name', 'last_name', 'email', 'phone_number']
