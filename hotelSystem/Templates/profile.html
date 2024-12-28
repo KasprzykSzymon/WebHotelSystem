@@ -14,7 +14,7 @@
     <p><strong>Imię:</strong> {{ user.first_name }}</p>
     <p><strong>Nazwisko:</strong> {{ user.last_name }}</p>
     <p><strong>Email:</strong> <a href="mailto:{{ user.email }}">{{ user.email }}</a></p>
-    <p><strong>Numer telefonu:</strong> {{ user.profile.phone_number }}</p>
+    <p><strong>Numer telefonu:</strong> {{ user.phone_number }}</p>
 
     <a href="{% url 'edit_profile' %}" class="btn-edit-profile">Zmień dane</a>
 </div>

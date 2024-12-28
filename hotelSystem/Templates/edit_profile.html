@@ -27,7 +27,7 @@
             <div>
                 <div>
                     <label for="{{ form.phone_number.id_for_label }}">Phone Number</label>
-                    <input type="text" name="phone_number" value="{{ form.phone_number.value }}" readonly />
+                    {{ form.phone_number }}
                 </div>
             </div>
             <button type="submit">Zapisz zmiany</button>
