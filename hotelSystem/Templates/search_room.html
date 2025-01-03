@@ -28,6 +28,11 @@
 
         <div class="rooms-list">
             <h1>Szukanie pokoju</h1>
+            <h1>Wyniki wyszukiwania pokoi</h1>
+<p>Data przyjazdu: {{ arrival_date }}</p>
+<p>Data odjazdu: {{ departure_date }}</p>
+<p>Liczba dorosłych: {{ adults }}</p>
+<p>Liczba dzieci: {{ children }}</p>
             {% for room in rooms %}
             <div class="room">
                 <img src="{{ room.image.url }}" alt="{{ room.name }}">

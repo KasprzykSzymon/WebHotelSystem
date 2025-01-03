@@ -12,41 +12,48 @@
 
 {% block content %}
 {% if user.is_authenticated %}
-    <h1>Witaj {{user.username}} </h1> 
+    <h1>Witaj {{user.first_name}} </h1> 
     {% else %}
     <h1>Witaj w hotelu Scyzoryk! </h1> 
     {% endif %}
     <p>U nas zaśniesz spokojnie</p>
+    {% if error_message %}
+    <div class="error-message" style="color: red; font-weight: bold;">
+        {{ error_message }}
+    </div>
+{% endif %}
+
+<form action="{% url 'search_room' %}" method="get" class="formularz">
     <div class="formularze-container">
         <div class="formularz1">
             <span>Wybierz swoją datę przyjazdu</span><br>
-            <input type="date">
+            <input type="date" name="arrival_date" required>
         </div>
         <div class="formularz2">
             <span>Wybierz swoją datę odjazdu</span><br>
-            <input type="date">
+            <input type="date" name="departure_date" required>
         </div>
         <div class="select1-dorosli">
             <span>Liczba dorosłych:</span><br>
-            <select>
+            <select name="adults" required>
                 {% for i in range_10x %}
-                <option>{{ i }}</option>
+                <option value="{{ i }}">{{ i }}</option>
                 {% endfor %}
             </select>
         </div>
         <div class="select1-dzieci">
             <span>Liczba dzieci:</span><br>
-            <select>
+            <select name="children" required>
                 {% for i in range_10 %}
-                <option>{{ i }}</option>
+                <option value="{{ i }}">{{ i }}</option>
                 {% endfor %}
             </select>
         </div><br>
         <div class="guzik-container">
-            <button type="button" class="guzik" onclick={search}>Szukaj pokoju</button>
+            <button type="submit" class="guzik">Szukaj pokoju</button>
         </div>
     </div>
-
+</form>
     <div class="kontener-zdjec">
         <div>
             <img id="zdj1" src="{% static 'images/Gory.jpg' %}" alt="GorySw">
@@ -74,9 +81,5 @@
     </div>
 
 {% endblock %}
-
-Czesc chcialbym aby moje zdjęcia pojawiły się tylko wtedy kiedy będą widoczne na stronie . Pisze w Django, css i html. Obniż mi prosze te zdjęcia aby nie były początkowo widocznie na stronie i prosze Cie abys dodał jeszcze google maps na dole strony i zaznaczył punkt taki 50.888234, 20.874148
-
-
 
 
