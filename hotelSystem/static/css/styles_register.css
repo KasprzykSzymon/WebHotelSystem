@@ -105,3 +105,24 @@
     transform: translateY(-3px);
     box-shadow: 0 10px 20px rgba(210, 180, 140, 0.4);
 }
+.messages {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.message {
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid;
+}
+
+.message.error {
+    border-color: red;
+    color: red;
+}
+
+.message.success {
+    border-color: green;
+    color: green;
+}

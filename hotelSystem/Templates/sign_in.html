@@ -16,7 +16,7 @@
     <h1>Logowanie</h1>
     <p class="subheader">Zaloguj się do swojego konta</p>
 
-    <form method="post" action="POST">
+    <form action="{% url 'sign_in' %}" method="post">
         {% csrf_token %}
         <div class="input-container">
             <label for="login">Login</label><br>
@@ -32,8 +32,17 @@
             <button type="submit" class="btn-login">ZALOGUJ SIĘ</button>
         </div>
     </form>
-        {% load socialaccount %}
-        <a href="{% provider_login_url 'google' %}?next=/">Login with Google</a>
+
+    {% if messages %}
+        <span class="messages">
+            {% for message in messages %}
+                <p class="message {% if message.tags == 'error' %}error{% else %}success{% endif %}">{{ message }}</p>
+            {% endfor %}
+        </span>
+    {% endif %}
+
+    {% load socialaccount %}
+    <a href="{% provider_login_url 'google' %}?next=/">Login with Google</a>
     <div class="register-link">
         <p>Nie masz konta? <a href="{% url 'register' %}">Zarejestruj się</a></p>
     </div>

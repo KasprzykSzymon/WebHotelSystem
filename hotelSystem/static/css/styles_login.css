@@ -94,3 +94,53 @@
 .login-container .register-link a:hover {
     text-decoration: underline;
 }
+/* Styl dla kontenera komunikatów */
+.messages {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    text-align: center;  /* Wyśrodkowanie tekstu */
+    position: relative;  /* Zmiana na relative, aby nie był to absolutny kontener */
+    width: 100%;
+    max-width: 400px;  /* Możesz ustawić maksymalną szerokość */
+    margin-left: auto;
+    margin-right: auto;
+    z-index: 1;
+}
+
+/* Styl dla komunikatów */
+.message {
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    margin-bottom: 10px;
+    transition: opacity 0.5s ease-in-out;
+    display: inline-block;
+    width: 100%;
+}
+
+/* Kolor zielony dla sukcesu */
+.message.success {
+    background-color: #4CAF50;
+}
+
+/* Kolor czerwony dla błędów */
+.message.error {
+    background-color: #f44336;
+}
+
+
+/* Animacja znikania komunikatów */
+.messages .message {
+    animation: fadeOut 5s forwards; /* Znikanie komunikatu po 5 sekundach */
+}
+
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}

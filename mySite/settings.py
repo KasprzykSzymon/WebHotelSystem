@@ -29,6 +29,14 @@ ALLOWED_HOSTS = []
 
 SITE_ID = 2
 
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+SESSION_CACHE_ALIAS = 'default'
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    }
+}
 # Application definition
 
 INSTALLED_APPS = [
@@ -148,4 +156,4 @@ MEDIA_URL = '/images/'
 MEDIA_ROOT = BASE_DIR / 'hotelSystem/static/images/'
 
 LOGIN_DIRECT_URL = "/"
-LOGIN_REDIRECT_URL = "/" 
+LOGIN_REDIRECT_URL = "/signin/" 
