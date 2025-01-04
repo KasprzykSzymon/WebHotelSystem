@@ -13,13 +13,16 @@
 {% block content %}
 {% if user.is_authenticated %}
     <h1>Witaj {{user.first_name}} </h1> 
-    {% else %}
+{% else %}
     <h1>Witaj w hotelu Scyzoryk! </h1> 
-    {% endif %}
-    <p>U nas zaśniesz spokojnie</p>
-    {% if error_message %}
+{% endif %}
+<p>U nas zaśniesz spokojnie</p>
+
+{% if messages %}
     <div class="error-message" style="color: red; font-weight: bold;">
-        {{ error_message }}
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
     </div>
 {% endif %}
 
@@ -54,32 +57,31 @@
         </div>
     </div>
 </form>
-    <div class="kontener-zdjec">
-        <div>
-            <img id="zdj1" src="{% static 'images/Gory.jpg' %}" alt="GorySw">
-            <div class="pod-zdjeciem">
-                <p>Wspaniałe widoki Gór Świętokrzyskich w hotelu Scyzoryk.</p>
-            </div>
-        </div>
-        <div>
-            <img id="zdj2" src="{% static 'images/Kielce.jpg' %}" alt="Kielce">
-            <div class="pod-zdjeciem">
-                <p>Odwiedź nasze miasto Kielce i ciesz się jego atrakcjami.</p>
-            </div>
-        </div>
-        <div>
-            <img id="zdj3" src="{% static 'images/Hotel.jpg' %}" alt="Hotel">
-            <div class="pod-zdjeciem">
-                <p>Oferujemy spotakania biznesowe dla firm!</p>
-            </div>
-        </div>
-    </div>
 
-    <div class="hotel-info">
-        <img id="hotelZdjecie" src="{% static 'images/zdjHotelu.png' %}" alt="Hotel Scyzoryk">
-        <p class="hotelOpis">Hotel Scyzoryk to miejsce, które łączy tradycję z nowoczesnością. Położony w malowniczej okolicy Świętokrzyskich Gór, oferuje komfortowy wypoczynek w otoczeniu natury. Każdy pokój zapewnia gościom wygodę, a bogata oferta spa oraz restauracja z lokalnymi specjałami dopełniają wrażenia.</p>
+<div class="kontener-zdjec">
+    <div>
+        <img id="zdj1" src="{% static 'images/Gory.jpg' %}" alt="GorySw">
+        <div class="pod-zdjeciem">
+            <p>Wspaniałe widoki Gór Świętokrzyskich w hotelu Scyzoryk.</p>
+        </div>
     </div>
+    <div>
+        <img id="zdj2" src="{% static 'images/Kielce.jpg' %}" alt="Kielce">
+        <div class="pod-zdjeciem">
+            <p>Odwiedź nasze miasto Kielce i ciesz się jego atrakcjami.</p>
+        </div>
+    </div>
+    <div>
+        <img id="zdj3" src="{% static 'images/Hotel.jpg' %}" alt="Hotel">
+        <div class="pod-zdjeciem">
+            <p>Oferujemy spotkania biznesowe dla firm!</p>
+        </div>
+    </div>
+</div>
+
+<div class="hotel-info">
+    <img id="hotelZdjecie" src="{% static 'images/zdjHotelu.png' %}" alt="Hotel Scyzoryk">
+    <p class="hotelOpis">Hotel Scyzoryk to miejsce, które łączy tradycję z nowoczesnością. Położony w malowniczej okolicy Świętokrzyskich Gór, oferuje komfortowy wypoczynek w otoczeniu natury. Każdy pokój zapewnia gościom wygodę, a bogata oferta spa oraz restauracja z lokalnymi specjałami dopełniają wrażenia.</p>
+</div>
 
 {% endblock %}
-
-

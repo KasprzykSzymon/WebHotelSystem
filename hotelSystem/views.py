@@ -14,27 +14,44 @@ import uuid
 import requests
 from paypal.standard.forms import PayPalPaymentsForm
 from django.conf import settings
+from django.contrib import messages
+from datetime import datetime
+
+from django.contrib import messages
+from datetime import datetime
+
+from django.contrib import messages
+from datetime import datetime
 
 def home_page_view(request):
-    error_message = None
     arrival_date = request.GET.get('arrival_date')
     departure_date = request.GET.get('departure_date')
 
     print(f"Arrival Date: {arrival_date}, Departure Date: {departure_date}")
 
+    today = datetime.today().date()  # dzisiejsza data
+
     if arrival_date and departure_date:
         try:
-            arrival_date_obj = datetime.strptime(arrival_date, '%Y-%m-%d')
-            departure_date_obj = datetime.strptime(departure_date, '%Y-%m-%d')
+            # Parsowanie dat
+            arrival_date_obj = datetime.strptime(arrival_date, '%Y-%m-%d').date()
+            departure_date_obj = datetime.strptime(departure_date, '%Y-%m-%d').date()
 
             print(f"Parsed Dates: Arrival: {arrival_date_obj}, Departure: {departure_date_obj}")
 
-            if departure_date_obj < arrival_date_obj:
-                error_message = "Data odjazdu nie może być wcześniejsza niż data przyjazdu."
+            # Sprawdzanie, czy data przyjazdu nie jest wcześniejsza niż dzisiejsza data
+            if arrival_date_obj < today:
+                messages.error(request, "Data przyjazdu nie może być wcześniejsza niż dzisiejsza data.")
+            
+            # Sprawdzanie, czy data odjazdu nie jest wcześniejsza niż data przyjazdu
+            elif departure_date_obj < arrival_date_obj:
+                messages.error(request, "Data odjazdu nie może być wcześniejsza niż data przyjazdu.")
+
         except ValueError as e:
-            error_message = f"Podano nieprawidłowy format daty: {e}"
+            messages.error(request, f"Podano nieprawidłowy format daty: {e}")
             print(f"ValueError: {e}")
 
+    # Kontekst przekazywany do szablonu
     context = {
         'range_10': range(0, 11),
         'range_10x': range(1, 11),
@@ -48,9 +65,9 @@ def home_page_view(request):
             'lng': 20.8720543
         },
         'search': "{% url 'search_room' %}",
-        'error_message': error_message,
     }
     return render(request, 'home_page.html', context)
+
 
 
 def last_minute_view(request):
@@ -96,21 +113,43 @@ def sign_in_view(request):
     # Wyświetlenie formularza logowania
     return render(request, 'sign_in.html')
 
+from django.db.models import Q
+
 def search_room_view(request):
-
-
     arrival_date = request.GET.get('arrival_date')
     departure_date = request.GET.get('departure_date')
-    adults = request.GET.get('adults')
-    children = request.GET.get('children')
+    adults = int(request.GET.get('adults', 0))
+    children = int(request.GET.get('children', 0))
+    total_guests = adults + children
 
+    rooms = Room.objects.all()
+
+    if arrival_date and departure_date:
+        try:
+            arrival_date_obj = datetime.strptime(arrival_date, '%Y-%m-%d').date()
+            departure_date_obj = datetime.strptime(departure_date, '%Y-%m-%d').date()
+
+            if arrival_date_obj >= departure_date_obj:
+                messages.error(request, "Data odjazdu musi być późniejsza niż data przyjazdu.")
+            else:
+                reserved_rooms = Reservation.objects.filter(
+                    Q(check_in_date__lte=departure_date_obj, check_out_date__gte=arrival_date_obj)
+                ).values_list('room_id', flat=True)
+
+                # Filtracja dostępnych pokoi na podstawie liczby gości
+                rooms = rooms.exclude(id__in=reserved_rooms).filter(capacity__gte=total_guests)
+
+        except ValueError as e:
+            messages.error(request, f"Nieprawidłowy format daty: {e}")
 
     return render(request, 'search_room.html', {
         'arrival_date': arrival_date,
         'departure_date': departure_date,
         'adults': adults,
         'children': children,
+        'rooms': rooms,
     })
+
 
 
 def register_view(request):
@@ -170,11 +209,11 @@ def edit_profile_view(request):
 
 def room_list(request):
     rooms = Room.objects.filter(is_available=True)
-    return render(request, 'hotel/room_list.html', {'rooms': rooms})
+    return render(request, 'room_list.html', {'rooms': rooms})
 
 def room_detail(request, pk):
     room = get_object_or_404(Room, pk=pk)
-    return render(request, 'hotel/room_detail.html', {'room': room})
+    return render(request, 'room_detail.html', {'room': room})
 
 def make_reservation(request, pk):
     room = get_object_or_404(Room, pk=pk)
@@ -185,11 +224,11 @@ def make_reservation(request, pk):
             reservation.room = room
             reservation.user = request.user  # przypisujemy zalogowanego użytkownika
             reservation.save()
-            return render(request, 'hotel/reservation_success.html', {'reservation': reservation})
+            return render(request, 'reservation_success.html', {'reservation': reservation})
     else:
         form = ReservationForm()
 
-    return render(request, 'hotel/make_reservation.html', {'room': room, 'form': form})
+    return render(request, 'make_reservation.html', {'room': room, 'form': form})
 
 # Konfiguracja PayPal SDK
 paypalrestsdk.configure({

@@ -25,22 +25,48 @@ class SocialApp(models.Model):
     def __str__(self):
         return f"{self.name} ({self.provider})"
 
+from django.db import models
+
 class Room(models.Model):
     ROOM_TYPES = [
         ('single', 'Single'),
         ('double', 'Double'),
         ('suite', 'Suite'),
+        ('family', 'Family'),
+        ('special', 'Special'),
+        ('party', 'Party'),
+        ('marriage', 'Marriage'),
+        ('triple', 'Triple'),
+        ('triple_marriage', 'Triple Marriage'),
     ]
 
     number = models.CharField(max_length=10, unique=True)
-    room_type = models.CharField(max_length=10, choices=ROOM_TYPES)
+    room_type = models.CharField(max_length=20, choices=ROOM_TYPES)
     price_per_night = models.DecimalField(max_digits=6, decimal_places=2)
     is_available = models.BooleanField(default=True)
-    last_minute_discount = models.DecimalField(max_digits=5, decimal_places=2, default=0)  # Last minute discount in percent
+    last_minute_discount = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    capacity = models.IntegerField(default=1)  # Domyślna wartość
 
     def discounted_price(self):
         "Oblicza cene po znizce"
         return self.price_per_night * (1 - self.last_minute_discount / 100)
+
+    def save(self, *args, **kwargs):
+        # Mapowanie typu pokoju na pojemność
+        type_to_capacity = {
+            'single': 1,
+            'double': 2,
+            'suite': 4,
+            'family': 5,
+            'special': 8,
+            'party': 10,
+            'marriage': 2,
+            'triple': 3,
+            'triple_marriage': 3,
+        }
+        # Ustawienie capacity na podstawie room_type
+        self.capacity = type_to_capacity.get(self.room_type, 1)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"Room {self.number} ({self.get_room_type_display()})"
@@ -48,6 +74,8 @@ class Room(models.Model):
     class Meta:
         verbose_name = "Pokój"
         verbose_name_plural = "Pokoje"
+
+
 
 class RoomImage(models.Model):
     room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='images')
