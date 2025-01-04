@@ -63,6 +63,7 @@ def home_page_view(request):
         'hotel_location': {
             'lat': 50.8882347,
             'lng': 20.8720543
+            
         },
         'search': "{% url 'search_room' %}",
     }
