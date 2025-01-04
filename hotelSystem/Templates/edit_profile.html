@@ -13,6 +13,10 @@
             <h1>Edytuj profil</h1>
             {{ form.non_field_errors }}
             <div>
+                <label for="{{ form.username.id_for_label }}">Username</label>
+                {{ form.username }}
+            </div>
+            <div>
                 <label for="{{ form.email.id_for_label }}">Email</label>
                 {{ form.email }}
             </div>

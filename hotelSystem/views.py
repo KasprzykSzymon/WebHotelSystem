@@ -1,10 +1,19 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth import logout
-from .forms import UserProfileForm  
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.urls import reverse
+from django.http import JsonResponse
+from .forms import UserProfileForm
 from hotelSystem.logic.last_minute import generate_last_minute_offer
 from datetime import datetime
-from django.contrib import messages
+from paypalrestsdk import Payment
+from .models import Room, Reservation
+import paypalrestsdk
+import uuid
+import requests
+from paypal.standard.forms import PayPalPaymentsForm
+from django.conf import settings
 
 def home_page_view(request):
     error_message = None
@@ -66,24 +75,26 @@ def contact_view(request):
     return render(request, 'contact.html')
 
 def sign_in_view(request):
-
+    # Sprawdzenie, czy użytkownik jest już zalogowany
     if request.user.is_authenticated:
-        return redirect('home_page') 
+        messages.info(request, 'Jesteś już zalogowany.')  # Informacyjny komunikat
+        return redirect('home_page')  # Przekierowanie na stronę główną
 
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
 
-
+        # Autentykacja użytkownika
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect('home_page')  
+            messages.success(request, f'Witaj, {user.username}! Pomyślnie zalogowano.')  # Komunikat sukcesu
+            return redirect('home_page')  # Przekierowanie na stronę główną
         else:
-            messages.error(request, 'Błędny login lub hasło.')
+            messages.error(request, 'Błędny login lub hasło.')  # Komunikat o błędzie logowania
 
+    # Wyświetlenie formularza logowania
     return render(request, 'sign_in.html')
-
 
 def search_room_view(request):
 
@@ -101,10 +112,6 @@ def search_room_view(request):
         'children': children,
     })
 
-from django.contrib.auth import authenticate, login
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from django.contrib.auth.models import User
 
 def register_view(request):
     if request.method == 'POST':
@@ -136,17 +143,15 @@ def register_view(request):
             return redirect('home_page')
         except Exception as e:
             messages.error(request, f'Błąd rejestracji: {e}')
-    
     return render(request, 'register.html')
 
+@login_required
 def profile_view(request):
-    context = {
-        'range_10': range(0, 11),
-        'range_10x': range(1, 11),
-    }
-    return render(request, 'profile.html', context)
+    reservations = Reservation.objects.filter(user=request.user)  # Pamiętaj o user
+    return render(request, 'profile.html', {'reservations': reservations})
 
 def logout_view(request):
+    request.session.flush()
     logout(request)
     messages.success(request, "Pomyślnie wylogowano.")
     return redirect('sign_in')
@@ -162,3 +167,81 @@ def edit_profile_view(request):
         form = UserProfileForm(instance=request.user)
 
     return render(request, 'edit_profile.html', {'form': form})
+
+def room_list(request):
+    rooms = Room.objects.filter(is_available=True)
+    return render(request, 'hotel/room_list.html', {'rooms': rooms})
+
+def room_detail(request, pk):
+    room = get_object_or_404(Room, pk=pk)
+    return render(request, 'hotel/room_detail.html', {'room': room})
+
+def make_reservation(request, pk):
+    room = get_object_or_404(Room, pk=pk)
+    if request.method == 'POST':
+        form = ReservationForm(request.POST)
+        if form.is_valid():
+            reservation = form.save(commit=False)
+            reservation.room = room
+            reservation.user = request.user  # przypisujemy zalogowanego użytkownika
+            reservation.save()
+            return render(request, 'hotel/reservation_success.html', {'reservation': reservation})
+    else:
+        form = ReservationForm()
+
+    return render(request, 'hotel/make_reservation.html', {'room': room, 'form': form})
+
+# Konfiguracja PayPal SDK
+paypalrestsdk.configure({
+    "mode": "sandbox",
+    "client_id": "YOUR_CLIENT_ID",
+    "client_secret": "YOUR_CLIENT_SECRET"
+})
+
+def process_payment(request, room_id):
+    room = get_object_or_404(Room, id=room_id)
+    if request.method == "POST":
+        payment = Payment({
+            "intent": "sale",
+            "payer": {
+                "payment_method": "paypal"
+            },
+            "redirect_urls": {
+                "return_url": request.build_absolute_uri(reverse('payment_success')),
+                "cancel_url": request.build_absolute_uri(reverse('payment_cancel'))
+            },
+            "transactions": [{
+                "item_list": {
+                    "items": [{
+                        "name": room.name,
+                        "sku": str(room.id),
+                        "price": str(room.price),
+                        "currency": "USD",
+                        "quantity": 1
+                    }]
+                },
+                "amount": {
+                    "total": str(room.price),
+                    "currency": "USD"
+                },
+                "description": f"Rezerwacja pokoju: {room.name}"
+            }]
+        })
+
+        if payment.create():
+            for link in payment.links:
+                if link.rel == "approval_url":
+                    approval_url = str(link.href)
+                    return redirect(approval_url)
+        else:
+            return render(request, "payment_error.html", {"error": payment.error})
+    return redirect('room_list')
+
+def payment_success(request):
+    reservation_data = request.session.get('reservation_data')
+    if reservation_data:
+        Reservation.objects.create(**reservation_data)
+    return render(request, "payment_success.html")
+
+def payment_cancel(request):
+    return render(request, "payment_cancel.html")

@@ -19,5 +19,8 @@ urlpatterns = [
     path('lastminute/logout', views.logout_view),
     path('profile/logout', views.logout_view),
     path('edit_profile/logout', views.logout_view),
+    path('rooms/', views.room_list, name='room_list'),
+    path('room/<int:pk>/', views.room_detail, name='room_detail'),
+    path('room/<int:pk>/reserve/', views.make_reservation, name='make_reservation'),
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -21,6 +21,19 @@
 
         <div class="reservations">
             <h2>Twoje rezerwacje</h2>
+            {% if reservations %}
+            <ul>
+                {% for reservation in reservations %}
+                    <li>
+                        <strong>{{ reservation.room.name }}</strong> 
+                        ({{ reservation.check_in_date }} - {{ reservation.check_out_date }}) 
+                        - Cena: {{ reservation.room.price }} zł/noc
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Brak rezerwacji.</p>
+        {% endif %}
         </div>
     </div>
 {% endblock %}

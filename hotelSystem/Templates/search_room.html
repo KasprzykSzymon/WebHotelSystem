@@ -3,50 +3,47 @@
 {% block header %}
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/styles_search_room.css' %}">
-    <title>Szukanie pokoju</title>
-
+    <title>Wyszukiwanie pokoi</title>
 {% endblock %}
 
 {% block content %}
-    <div class="main-container">
-        <aside class="filters">
-            <h3>Filtry</h3>
-            <form method="GET" action="">
-                <label for="room-type">Typ pokoju:</label>
-                <select id="room-type" name="room_type">
-                    <option value="">Wszystkie</option>
-                    <option value="1">Jednoosobowy</option>
-                    <option value="2">Dwuosobowy</option>
-                    <option value="suite">Apartament</option>
-                </select>
-                <label for="price-range">Cena:</label>
-                <input type="number" id="price-range" name="min_price" placeholder="Minimalna">
-                <input type="number" id="price-range" name="max_price" placeholder="Maksymalna">
-                <button type="submit">Filtruj</button>
-            </form>
-        </aside>
+<div class="main-container">
+    <aside class="filters">
+        <h3>Filtry</h3>
+        <form method="GET" action="">
+            <label for="room-type">Typ pokoju:</label>
+            <select id="room-type" name="room_type">
+                <option value="">Wszystkie</option>
+                <option value="single">Jednoosobowy</option>
+                <option value="double">Dwuosobowy</option>
+                <option value="suite">Apartament</option>
+            </select>
+            <label for="min-price">Cena minimalna:</label>
+            <input type="number" id="min-price" name="min_price" placeholder="Minimalna">
+            <label for="max-price">Cena maksymalna:</label>
+            <input type="number" id="max-price" name="max_price" placeholder="Maksymalna">
+            <button type="submit" class="lokalizacja-button">Filtruj</button>
+        </form>
+    </aside>
 
-        <div class="rooms-list">
-            <h1>Szukanie pokoju</h1>
-            <h1>Wyniki wyszukiwania pokoi</h1>
-<p>Data przyjazdu: {{ arrival_date }}</p>
-<p>Data odjazdu: {{ departure_date }}</p>
-<p>Liczba dorosłych: {{ adults }}</p>
-<p>Liczba dzieci: {{ children }}</p>
-            {% for room in rooms %}
-            <div class="room">
-                <img src="{{ room.image.url }}" alt="{{ room.name }}">
-                <div class="room-info">
-                    <h3>{{ room.name }}</h3>
-                    <p>{{ room.description }}</p>
-                    <p><strong>Cena: </strong>{{ room.price }} zł/noc</p>
-                    <p><strong>Dostępność:</strong> od {{ room.available_from }} do {{ room.available_to }}</p>
-                    <a href="{% url 'room_detail' room.id %}" class="btn">Zobacz szczegóły</a>
-                </div>
+    <div class="rooms-list">
+        <h1>Wyniki wyszukiwania pokoi</h1>
+        <p>Data przyjazdu: {{ arrival_date }}</p>
+        <p>Data odjazdu: {{ departure_date }}</p>
+        <p>Liczba dorosłych: {{ adults }}</p>
+        <p>Liczba dzieci: {{ children }}</p>
+
+        {% for room in rooms %}
+        <div class="room">
+            <img src="{{ room.images.first.image.url }}" alt="{{ room.name }}" class="lokalizacja-img">
+            <div class="room-info">
+                <h3>{{ room.name }}</h3>
+                <p>{{ room.description }}</p>
+                <p><strong>Cena: </strong>{{ room.price_per_night }} zł/noc</p>
+                <a href="{% url 'room_detail' room.id %}" class="lokalizacja-button">Zobacz szczegóły</a>
             </div>
-            {% endfor %}
         </div>
+        {% endfor %}
     </div>
-
-
+</div>
 {% endblock %}

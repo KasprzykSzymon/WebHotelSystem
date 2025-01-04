@@ -2,7 +2,7 @@
 .login-container {
     text-align: center;
     margin: 60px auto;
-    font-family: 'Nunito Sans', sans-serif;
+    font-family: "Parisienne", serif;
     padding: 40px 20px;
     background: linear-gradient(to bottom, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7)), url('/static/images/login_background.jpg') no-repeat center center;
     background-size: cover;
@@ -17,23 +17,24 @@
 .login-container h1 {
     font-family: "Playfair Display", serif;
     font-weight: 900;
-    font-size: 3em;
+    font-size: 1em;
     color: #333;
     margin-bottom: 20px;
     text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
 }
 
 .login-container p {
-    font-family: "Nunito Sans", sans-serif;
+    font-family: "Parisienne", serif;
     font-weight: 600;
     font-size: 1em;
     color: #555;
-    margin-bottom: 30px;
+    margin-bottom: 30px;             
 }
 
 /* Formularz */
 .input-container {
     margin-bottom: 20px;
+    font-family: "Parisienne", serif;
 }
 
 .input-container input[type="text"],
@@ -81,7 +82,7 @@
 /* Link do rejestracji */
 .login-container .register-link {
     margin-top: 20px;
-    font-family: "Nunito Sans", sans-serif;
+    font-family: "Playfair Display", serif;
     font-size: 0.9em;
     color: #555;
 }
@@ -101,8 +102,8 @@
     margin: 0;
     text-align: center;  /* Wyśrodkowanie tekstu */
     position: relative;  /* Zmiana na relative, aby nie był to absolutny kontener */
-    width: 100%;
-    max-width: 400px;  /* Możesz ustawić maksymalną szerokość */
+    width: 80%;
+    max-width: 200;  /* Możesz ustawić maksymalną szerokość */
     margin-left: auto;
     margin-right: auto;
     z-index: 1;
@@ -115,32 +116,6 @@
     border-radius: 5px;
     font-size: 16px;
     margin-bottom: 10px;
-    transition: opacity 0.5s ease-in-out;
     display: inline-block;
-    width: 100%;
-}
-
-/* Kolor zielony dla sukcesu */
-.message.success {
-    background-color: #4CAF50;
-}
-
-/* Kolor czerwony dla błędów */
-.message.error {
-    background-color: #f44336;
-}
-
-
-/* Animacja znikania komunikatów */
-.messages .message {
-    animation: fadeOut 5s forwards; /* Znikanie komunikatu po 5 sekundach */
-}
-
-@keyframes fadeOut {
-    0% {
-        opacity: 1;
-    }
-    100% {
-        opacity: 0;
-    }
+    width: 60%;
 }

@@ -27,10 +27,13 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-SITE_ID = 2
+SITE_ID = 3
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 SESSION_CACHE_ALIAS = 'default'
+
+ACCOUNT_LOGOUT_ON_GET = True
+ACCOUNT_LOGOUT_REDIRECT_URL = '/' 
 
 CACHES = {
     'default': {
@@ -51,7 +54,8 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    'allauth.socialaccount.providers.google'
+    'allauth.socialaccount.providers.google',
+    'paypal.standard.ipn',
 ]
 
 SOCIALACCOUNT_PROVIDERS = {
@@ -157,3 +161,7 @@ MEDIA_ROOT = BASE_DIR / 'hotelSystem/static/images/'
 
 LOGIN_DIRECT_URL = "/"
 LOGIN_REDIRECT_URL = "/signin/" 
+
+PAYPAL_TEST = True
+
+PAYPAL_RECEIVER_EMAIL = 'hotel@scyzoryk.pl'

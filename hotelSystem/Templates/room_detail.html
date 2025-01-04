@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block header %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles_room_detail.css' %}">
+    <title>Szczegóły pokoju</title>
+{% endblock %}
+
+{% block content %}
+<div class="kontener">
+    <h1>{{ room.name }}</h1>
+    <div class="room-detail">
+        <img src="{{ room.images.first.image.url }}" alt="{{ room.name }}" class="lokalizacja-img">
+        <div class="room-info">
+            <p>{{ room.description }}</p>
+            <p><strong>Cena za noc: </strong>{{ room.price_per_night }} zł</p>
+            <p><strong>Liczba łóżek: </strong>{{ room.number_of_beds }}</p>
+            <a href="{% url 'make_reservation' room.id %}" class="lokalizacja-button">Zarezerwuj</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
