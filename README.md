@@ -19,6 +19,12 @@ pip install PyJWT
 pip install cryptography
 pip install Pillow
 pip install django-auth
+pip install paypal
+pip install django-paypal
+pip install paypalrestsdk
+
+
+
 
 
 If u have problem with system: ""The error you're encountering is related to PowerShell's script execution policy, which is set to prevent the running of scripts for security reasons. To resolve this and activate your virtual environment, you can modify the execution policy temporarily or permanently."" Run the following command to allow script execution for this session: Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process
