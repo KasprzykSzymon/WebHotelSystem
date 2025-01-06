@@ -26,7 +26,7 @@
                 <ul>
                     {% for reservation in reservations %}
                         <li>
-                            <strong>Pokój:</strong> {{ reservation.room.name }} <br>
+                            <strong>Pokój:</strong> {{ reservation.room.id }} <br>
                             <strong>ID Rezerwacji:</strong> {{ reservation.id }} <br>
                             <strong>Właściciel:</strong> {{ reservation.user.get_full_name }} <br>
                             <strong>Data przyjazdu:</strong> {{ reservation.check_in_date }} <br>

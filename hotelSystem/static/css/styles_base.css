@@ -3,7 +3,7 @@ body, html {
     font-family: "Nunito Sans", sans-serif;
     font-weight: 500;
     font-size: 1em;
-    background-color: #ffffff; /* Jasny beżowy kolor tła */
+    background-color: transparent; 
     text-align: center;
     margin: 0;
     padding: 0;
@@ -19,7 +19,6 @@ h1 {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background-color: #faf4ed; /* Kolor tła nagłówka */
     padding: 10px 20px;
     width: 100%;
     box-sizing: border-box;
@@ -28,16 +27,26 @@ h1 {
     z-index: 10;
 }
 
-.lewoNaglowek,
-.prawoNaglowek {
+/* Logo po lewej stronie */
+.lewoNaglowek {
     flex: 1;
-    text-align: center;
+    text-align: left; 
 }
 
-.lewoNaglowek p, .prawoNaglowek p {
-    margin:  20px;
+/* Menu po prawej stronie */
+.prawoNaglowek {
+    flex: 3;
+    display: flex;
+    justify-content: flex-end; 
+    align-items: center;
+    gap: 30px; 
+}
+
+.prawoNaglowek a p {
+    margin: 0;
     padding: 10px;
-    display: inline-block;
+    font-weight: bold;
+    cursor: pointer;
 }
 
 .naglowek img {
@@ -45,55 +54,27 @@ h1 {
     height: auto;
 }
 
-
-.hotel-info {
-    margin-top: 50px;
-    font-size: 1em;
-    color: #333;
-}
-
-.hotel-info h2 {
-    font-family: "Nunito Sans", sans-serif;
-    font-weight: 500;
-    font-size: 1em;
-    text-align: left;
-    color: #000000;
-}
-
-.hotel-info p {
-    font-family: "Nunito Sans", sans-serif;
-    font-weight: 500;
-    font-size: 1em;
-    margin: 5px;
-    text-align: left;
-}
-
-.hotel-info a {
-    color: #4A4A4A;
+/* Stylowanie przycisku logowania/wylogowania */
+.prawoNaglowek a p {
+    border: 2px solid #D2B48C;
+    padding: 10px 20px;
+    border-radius: 5px;
     text-decoration: none;
 }
 
-.hotel-info a:hover {
-    text-decoration: underline;
+.prawoNaglowek a p:hover {
+    background-color: #D2B48C;
+    color: white;
 }
 
-/* Dodatkowe style linków */
-a {
-    color: #4A4A4A;
-}
-
-a:hover {
-    color: #D8C3A5;
-}
-
-/* Styles footer*/
 footer.stopka {
     background-color: #faf4ed;
     padding: 10px;
     text-align: center;
     position: relative;
     bottom: 0;
-    width: 100%;}
+    width: 100%;
+}
 
 .stopka {
     background-color: #faf4ed;

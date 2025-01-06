@@ -44,7 +44,7 @@
             <!-- Nowy formularz PayPal -->
             <form action="{% url 'place_order' %}" method="post" target="_top">
                 {% csrf_token %}
-                <input type="hidden" %name="item_name" value="Usługa noclegowa - Pokój {{ room.number }}">  <!-- Nazwa pokoju -->
+                <input type="hidden" name="item_name" value="Usługa noclegowa - Pokój {{ room.number }}">  <!-- Nazwa pokoju -->
                 <input type="hidden" name="room_id" value="{{ room.id }}">
                 <input type="hidden" name="arrival_date" value="{{ arrival_date }}">
                 <input type="hidden" name="departure_date" value="{{ departure_date }}">

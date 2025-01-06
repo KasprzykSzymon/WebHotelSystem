@@ -7,7 +7,17 @@ from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .last_minute import generate_last_minute_offer
+from .models import Room, Reservation, Payment
+from django.urls import reverse
+from django.contrib.auth.models import User
+import requests
+import json
+import hmac
+import hashlib
+import base64
+from dotenv import load_dotenv
+import os
+from .payment_helpers import new_payment, check_payment
 
 
 def home_page_view(request):
@@ -59,13 +69,10 @@ def home_page_view(request):
     return render(request, 'home_page.html', context)
 
 def last_minute_view(request):
-    offers = generate_last_minute_offer(days_to_last_minute=7, max_discount=30)
-
-    context = {
-        'range_10': range(0, 11),
-        'range_10x': range(1, 11),
-    }
-    return render(request, 'last_minute.html', context)
+    days_to_last_minute = 4
+    max_discount = 30
+    offers = generate_last_minute_offer(days_to_last_minute=days_to_last_minute, max_discount=max_discount)
+    return render(request, 'last_minute.html', {'offers': offers})
 
 def news_view(request):
     context = {
@@ -205,10 +212,10 @@ def profile_view(request):
         {
             'id': reservation.id,
             'owner': f"{reservation.user.first_name} {reservation.user.last_name}",
-            'room_name': reservation.room.name,
+            'room_name': reservation.room.id,
             'check_in_date': reservation.check_in_date,
             'check_out_date': reservation.check_out_date,
-            'total_amount': (reservation.check_out_date - reservation.check_in_date).days * reservation.room.price
+            'total_amount': (reservation.check_out_date - reservation.check_in_date).days * reservation.room.price_per_night
         }
         for reservation in reservations
     ]
@@ -361,19 +368,6 @@ def place_order(request):
     print(paynow)
     return HttpResponseRedirect(paynow['redirectUrl'])
 
-
-@login_required(login_url='sign_in')
-def payment_cancel(request):
-    return render(request, 'payment_cancel.html', {'error': "Płatność została anulowana."})
-@login_required
-def payment_confirmation_view(request, reservation_id):
-    reservation = get_object_or_404(Reservation, id=reservation_id, user=request.user)
-    total_amount = (reservation.check_out_date - reservation.check_in_date).days * reservation.room.price
-
-    return render(request, 'payment_confirmation.html', {
-        'reservation': reservation,
-        'total_amount': total_amount,
-    })
 
 @login_required(login_url='sign_in')
 def order_confirmation(request):

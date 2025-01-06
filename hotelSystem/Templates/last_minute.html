@@ -1,44 +1,105 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block header %}
-    {% load static %}
     <link rel="stylesheet" href="{% static 'css/styles_last_minute.css' %}">
     <title>Last Minute</title>
 {% endblock %}
 
 {% block content %}
-     <div class="hotel-info">
-        <H1>Last Minute</H1>
-     {% if offers %}
-    <table>
-        <thead>
-            <tr>
-                <th>Room Number</th>
-                <th>Room Type</th>
-                <th>Original Price</th>
-                <th>Discounted Price</th>
-                <th>Discount (%)</th>
-            </tr>
-        </thead>
-        <tbody>
+<div class="last-minute-container">
+    <h1>Last Minute</h1>
+    {% if offers %}
+        <div class="offer-cards">
             {% for offer in offers %}
-            <tr>
-                <td>{{ offer.room.number }}</td>
-                <td>{{ offer.room.get_room_type_display }}</td>
-                <td>${{ offer.original_price }}</td>
-                <td>${{ offer.discounted_price }}</td>
-                <td>{{ offer.discount }}%</td>
-            </tr>
+                <div class="offer-card">
+                    <!-- Nagłówek karty -->
+                    <div class="room-header">
+                        <h2>{{ offer.room.get_room_type_display }} - Pokój nr {{ offer.room.number }}</h2>
+                        <p>Dostępny od {{ offer.today }} do {{ offer.availability_end_date }} ({{ offer.available_days }} nocy)</p>
+
+                        <!-- Przycisk do rozwijania sekcji ze szczegółami -->
+                        <button class="toggle-details-btn" type="button"
+                                onclick="toggleOfferDetails('details-{{ forloop.counter }}')">
+                            Pokaż więcej
+                        </button>
+                    </div>
+
+                    <!-- Sekcja ze szczegółami, ukryta domyślnie (CSS: display: none) -->
+                    <div id="details-{{ forloop.counter }}" class="room-details" style="display: none;">
+                        <p><strong>Cena przed rabatem:</strong> {{ offer.original_price }} PLN</p>
+                        <p><strong>Cena po rabacie:</strong> {{ offer.discounted_price }} PLN ({{ offer.discount }}% taniej)</p>
+
+                        <!-- Galeria zdjęć -->
+                        <div class="room-images-gallery">
+                            {% for image_url in offer.image_urls %}
+                                <img src="{{ image_url }}" alt="Zdjęcie pokoju {{ offer.room.number }}"
+                                     onclick="openModal('{{ image_url }}', {{ offer.image_urls|safe }})">
+                            {% empty %}
+                                <p>Brak zdjęć pokoju.</p>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Przejście do ekranu rezerwacji (np. widok: 'book_room') -->
+                        <div class="reservation-link">
+                            <!--
+                                Możemy przekazać ID pokoju i aktualny rabat jako parametry w URL,
+                                żeby widok rezerwacji wiedział, że to last minute nie zapomniec wsadzic
+                            -->
+
+                        </div>
+                    </div>
+                </div>
             {% endfor %}
-        </tbody>
-    </table>
-{% else %}
-    <p>Brak dostepnych ofert Last minute. Odwiedź nas za jakiś czas.</p>
-{% endif %}
-    </div>
-    
-    
+        </div>
+    {% else %}
+        <p>Brak dostępnych ofert Last minute. Odwiedź nas za jakiś czas.</p>
+    {% endif %}
+</div>
+
+<!-- Modal do wyświetlania powiększonego zdjęcia -->
+<div id="image-modal" class="modal" style="display: none;">
+    <span class="modal-close" onclick="closeModal()">&times;</span>
+    <img class="modal-content" id="modal-img">
+    <button class="prev-image-btn" onclick="prevImage()">Poprzednie</button>
+    <button class="next-image-btn" onclick="nextImage()">Następne</button>
+</div>
+
+<!-- JavaScript -->
+<script>
+    // Funkcja pokazująca/ukrywająca sekcję szczegółów
+    function toggleOfferDetails(detailsId) {
+        const elem = document.getElementById(detailsId);
+        if (elem.style.display === 'none') {
+            elem.style.display = 'block';
+        } else {
+            elem.style.display = 'none';
+        }
+    }
+
+    // Funkcje obsługujące otwarcie i zamknięcie powiększonego zdjęcia w modalu
+    let currentImageIndex = 0;
+    let imageUrls = [];
+
+    function openModal(imgUrl, urls) {
+        imageUrls = urls;
+        currentImageIndex = imageUrls.indexOf(imgUrl);
+        document.getElementById('modal-img').src = imgUrl;
+        document.getElementById('image-modal').style.display = 'block';
+    }
+
+    function closeModal() {
+        document.getElementById('image-modal').style.display = 'none';
+    }
+
+    function nextImage() {
+        currentImageIndex = (currentImageIndex + 1) % imageUrls.length;
+        document.getElementById('modal-img').src = imageUrls[currentImageIndex];
+    }
+
+    function prevImage() {
+        currentImageIndex = (currentImageIndex - 1 + imageUrls.length) % imageUrls.length;
+        document.getElementById('modal-img').src = imageUrls[currentImageIndex];
+    }
+</script>
 {% endblock %}
-
-
-
