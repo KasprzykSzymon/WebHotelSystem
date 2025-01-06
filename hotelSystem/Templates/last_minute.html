@@ -7,10 +7,30 @@
 {% endblock %}
 
 {% block content %}
-     <div class="hotel-info">
-        <H1>Last Minute</H1>
+     <div class="last-minute-container">
+        <h1>Last Minute</h1>
          {% if offers %}
-    <table>
+            <div class="offer-cards">
+            {% for offer in offers %}
+            <div class="offer-card">
+                <!--Zdjecie pokoju-->
+                <img src="{{offer.image_url}}" alt="Zdjecie pokoju {{offer.room.get_room_type_display}}" class="room-image">
+
+                <!-- Informacje o pokoju-->
+                <div class="room-details">
+                    <h2>{{ offer.room.get_room_type_display }} </h2>
+                    <p><strong>Dostępność: </strong> Od {{ offer.today }} do {{ offer.availability_end_date }}</p>
+                    <p><strong>Liczba nocy: {{ offer.available_days }} </strong> {{ offer.email }}</p>
+                    <p><strong>Cena przed: </strong>{{ offer.original_price }} PLN</p>
+                    <p><strong>Cena po obniżce: </strong>{{ offer.discounted_price }} PLN <strong>-{{ offer.discount }}%</strong></p>
+                </div>
+            </div>
+            {% endfor %}
+            </div>
+
+
+
+            <!-- <table>
         <thead>
             <tr>
                 <th>Room Number</th>
@@ -31,9 +51,11 @@
             </tr>
             {% endfor %}
         </tbody>
-    </table>
-{% else %}
-    <p>Brak dostepnych ofert Last minute. Odwiedź nas za jakiś czas.</p>
-{% endif %}
+    </table> -->
+
+
+            {% else %}
+                <p>Brak dostepnych ofert Last minute. Odwiedź nas za jakiś czas.</p>
+        {% endif %}
     </div>
 {% endblock %}
