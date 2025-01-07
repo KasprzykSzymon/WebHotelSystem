@@ -3,50 +3,54 @@
 {% block header %}
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/styles_search_room.css' %}">
-    <title>Szukanie pokoju</title>
-
+    <title>Wyszukiwanie pokoi</title>
 {% endblock %}
 
 {% block content %}
-    <div class="main-container">
-        <aside class="filters">
-            <h3>Filtry</h3>
-            <form method="GET" action="">
-                <label for="room-type">Typ pokoju:</label>
-                <select id="room-type" name="room_type">
-                    <option value="">Wszystkie</option>
-                    <option value="1">Jednoosobowy</option>
-                    <option value="2">Dwuosobowy</option>
-                    <option value="suite">Apartament</option>
-                </select>
-                <label for="price-range">Cena:</label>
-                <input type="number" id="price-range" name="min_price" placeholder="Minimalna">
-                <input type="number" id="price-range" name="max_price" placeholder="Maksymalna">
-                <button type="submit">Filtruj</button>
-            </form>
-        </aside>
+<div class="main-container">
+    <aside class="filters">
+        <h3>Filtry</h3>
+        <form method="get" action="{% url 'search_room' %}">
+            <input type="hidden" name="arrival_date" value="{{ arrival_date }}">
+            <input type="hidden" name="departure_date" value="{{ departure_date }}">
+            <input type="hidden" name="adults" value="{{ adults }}">
+            <input type="hidden" name="children" value="{{ children }}">
+            <input type="hidden" name="room_type" value="{{ room_type }}">
+            <input type="hidden" name="min_price" value="{{ min_price }}">
+            <input type="hidden" name="max_price" value="{{ max_price }}">
+        
+            <label for="sort_order">Sortuj według ceny:</label>
+            <select name="sort_order" id="sort_order">
+                <option value="asc" {% if sort_order == 'asc' %}selected{% endif %}>Rosnąco</option>
+                <option value="desc" {% if sort_order == 'desc' %}selected{% endif %}>Malejąco</option>
+            </select>
+        
+            <button type="submit">Filtruj</button>
+        </form>
+        
+    </aside>
 
-        <div class="rooms-list">
-            <h1>Szukanie pokoju</h1>
-            <h1>Wyniki wyszukiwania pokoi</h1>
-<p>Data przyjazdu: {{ arrival_date }}</p>
-<p>Data odjazdu: {{ departure_date }}</p>
-<p>Liczba dorosłych: {{ adults }}</p>
-<p>Liczba dzieci: {{ children }}</p>
+    <div class="rooms-list">
+        <h1>Wyniki wyszukiwania pokoi</h1>
+        {% if rooms %}
             {% for room in rooms %}
             <div class="room">
-                <img src="{{ room.image.url }}" alt="{{ room.name }}">
+                {% if room.images.first %}
+                    <img src="{{ room.images.first.image.url }}" alt="Image for {{ room.name }}" class="lokalizacja-img">
+                {% else %}
+                    <img src="{% static 'images/default-room.jpg' %}" alt="Default room image" class="lokalizacja-img">
+                {% endif %}
                 <div class="room-info">
-                    <h3>{{ room.name }}</h3>
-                    <p>{{ room.description }}</p>
-                    <p><strong>Cena: </strong>{{ room.price }} zł/noc</p>
-                    <p><strong>Dostępność:</strong> od {{ room.available_from }} do {{ room.available_to }}</p>
-                    <a href="{% url 'room_detail' room.id %}" class="btn">Zobacz szczegóły</a>
+                    <h3>Pokój {{ room.number }} - {{ room.get_room_type_display }}</h3>
+                    <p><strong>Cena za noc: </strong>{{ room.price_per_night }} zł</p>
+                    <p><strong>Pojemność: </strong>{{ room.capacity }} osób</p>
+                    <a href="{% url 'room_detail' room.id %}?arrival_date={{ arrival_date }}&departure_date={{ departure_date }}&adults={{ adults }}&children={{ children }}&room_type={{ room_type }}&min_price={{ min_price }}&max_price={{ max_price }}&sort_order={{ sort_order }}" class="lokalizacja-button">Zobacz szczegóły</a>
                 </div>
             </div>
             {% endfor %}
-        </div>
+        {% else %}
+            <p>Nie znaleziono pokoi spełniających podane kryteria.</p>
+        {% endif %}
     </div>
-
-
+</div>
 {% endblock %}

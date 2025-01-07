@@ -1,0 +1,57 @@
+/* Stylizacje dla szczegółów pokoju */
+.kontener {
+    padding: 40px;
+    background-color: #fbf8f4;
+}
+
+.room-detail {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+.room-detail img {
+    max-width: 300px;
+    border-radius: 10px;
+}
+
+.room-info {
+    flex: 1;
+    text-align: left;
+}
+
+.room-info p {
+    font-family: "Red Hat Display", sans-serif;
+    margin: 10px 0;
+    color: #000;
+}
+
+.room-info h1 {
+    font-family: "Playfair Display", serif;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.room-info .lokalizacja-button {
+    display: inline-block;
+    margin-top: 20px;
+}
+
+/* Ikony łóżek w tym samym wierszu co tekst */
+.icon-container {
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 10px; /* Opcjonalne - odstęp między ikonami */
+}
+
+.bed-description {
+    vertical-align: middle;
+    display: inline-block;
+}
+
+.icon img {
+    width: 20px;  /* Zmniejszenie rozmiaru ikon */
+    height: 20px;
+    vertical-align: middle;
+    margin-right: 5px;  /* Odstęp między ikonami */
+}

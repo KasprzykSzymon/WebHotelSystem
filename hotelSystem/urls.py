@@ -1,7 +1,10 @@
 from django.urls import path
 from . import views
+from .views import process_payment, payment_success, payment_cancel  # Dodajemy import widoku process_payment
+
 from django.conf import settings
 from django.conf.urls.static import static
+
 urlpatterns = [
     path('', views.home_page_view, name='home_page'),
     path('lastminute/', views.last_minute_view, name='last_minute'),
@@ -19,5 +22,10 @@ urlpatterns = [
     path('lastminute/logout', views.logout_view),
     path('profile/logout', views.logout_view),
     path('edit_profile/logout', views.logout_view),
-
+    path('rooms/', views.room_list, name='room_list'),
+    path('room/<int:pk>/', views.room_detail, name='room_detail'),
+    path('room/<int:pk>/reserve/', views.make_reservation, name='make_reservation'),
+    path('process_payment/<int:room_id>/', process_payment, name='process_payment'),
+    path('payment_success/<int:room_id>/', payment_success, name='payment_success'),
+    path('payment_cancel/', payment_cancel, name='payment_cancel'),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

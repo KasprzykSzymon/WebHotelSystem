@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}  <!-- Załaduj tagi static na początku pliku -->
+{% block header %}
+    <link rel="stylesheet" href="{% static 'css/styles_room_detail.css' %}">
+    <title>Szczegóły pokoju</title>
+{% endblock %}
+
+{% block content %}
+<div class="kontener">
+    <h1>{{ room.name }}</h1>
+    <div class="room-detail">
+        {% if room.images.first %}
+            <img src="{{ room.images.first.image.url }}" alt="{{ room.name }}" class="lokalizacja-img">
+        {% else %}
+            <img src="{% static 'images/default-room.jpg' %}" alt="Default room image" class="lokalizacja-img">
+        {% endif %}
+        <div class="room-info">
+            <p><strong>Typ pokoju: </strong>{{ room.get_room_type_display }}</p>
+            <p><strong>Cena za noc: </strong>{{ room.price_per_night }} zł</p>
+            
+            <!-- Łóżka: Ikony + opis -->
+            <p><strong>Łóżka:</strong>
+                <span class="icon-container">
+                    {% for bed in single_beds %}
+                        <span class="icon">
+                            <img src="{% static 'icons/single-bed.png' %}" alt="Single bed">
+                        </span>
+                    {% endfor %}
+                    {% for bed in double_beds %}
+                        <span class="icon">
+                            <img src="{% static 'icons/double-bed.png' %}" alt="Double bed">
+                        </span>
+                    {% endfor %}
+                </span>
+            </p>
+
+            <!-- Typ łóżek: Tekst w tej samej linii -->
+            <p><strong>Typ łóżek:</strong> 
+                {{ single_beds_text }}{% if double_beds_text %}, {{ double_beds_text }}{% endif %}
+            </p>
+
+            <p><strong>Całkowita cena za pobyt: </strong>{{ room.price_per_night|floatformat:2 }} zł za noc × {{ number_of_nights }} nocy = {{ total_price|floatformat:2 }} zł</p>
+
+            <form action="{% url 'process_payment' room.id %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="amount" value="{{ total_price|floatformat:2|stringformat:"f" }}">
+                <button type="submit">Zarezerwuj i zapłać przez PayPal</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block header %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles_make_reservation.css' %}">
+    <title>Rezerwacja pokoju</title>
+{% endblock %}
+
+{% block content %}
+<div class="kontener">
+    <h1>Rezerwacja pokoju: {{ room.name }}</h1>
+    <form method="POST">
+        {% csrf_token %}
+        <label for="check-in">Data przyjazdu:</label>
+        <input type="date" id="check-in" name="check_in_date" required>
+        <label for="check-out">Data odjazdu:</label>
+        <input type="date" id="check-out" name="check_out_date" required>
+        <label for="first-name">Imię:</label>
+        <input type="text" id="first-name" name="first_name" required>
+        <label for="last-name">Nazwisko:</label>
+        <input type="text" id="last-name" name="last_name" required>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+        <label for="phone">Numer telefonu:</label>
+        <input type="text" id="phone" name="phone_number" required>
+        <button type="submit" class="lokalizacja-button">Potwierdź rezerwację</button>
+    </form>
+</div>
+{% endblock %}

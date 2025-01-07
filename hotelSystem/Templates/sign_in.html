@@ -7,7 +7,14 @@
     <!-- Ładowanie czcionek -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@200;400;600;900&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Parisienne&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Parisienne&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">       
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+    
     <title>Logowanie</title>
 {% endblock %}
 
@@ -34,12 +41,14 @@
     </form>
 
     {% if messages %}
-        <span class="messages">
-            {% for message in messages %}
-                <p class="message {% if message.tags == 'error' %}error{% else %}success{% endif %}">{{ message }}</p>
-            {% endfor %}
-        </span>
-    {% endif %}
+    <span class="messages">
+        {% for message in messages %}
+            <p class="message {% if message.tags == 'error' %}error{% elif message.tags == 'success' %}success{% endif %}">
+                {{ message }}
+            </p>
+        {% endfor %}
+    </span>
+{% endif %}
 
     {% load socialaccount %}
     <a href="{% provider_login_url 'google' %}?next=/">Login with Google</a>

@@ -27,10 +27,13 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-SITE_ID = 2
+SITE_ID = 3
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 SESSION_CACHE_ALIAS = 'default'
+
+ACCOUNT_LOGOUT_ON_GET = True
+ACCOUNT_LOGOUT_REDIRECT_URL = '/' 
 
 CACHES = {
     'default': {
@@ -51,7 +54,8 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    'allauth.socialaccount.providers.google'
+    'allauth.socialaccount.providers.google',
+    'paypal.standard.ipn',
 ]
 
 SOCIALACCOUNT_PROVIDERS = {
@@ -157,3 +161,22 @@ MEDIA_ROOT = BASE_DIR / 'hotelSystem/static/images/'
 
 LOGIN_DIRECT_URL = "/"
 LOGIN_REDIRECT_URL = "/signin/" 
+
+PAYPAL_TEST = True
+# PayPal Configuration (testowe konto sandbox)
+PAYPAL_MODE = "sandbox"
+PAYPAL_CLIENT_ID = 'AY_xt2ZKCsnMSyBB3X_q_ffXxC1MmYQw8LWmktNBgacosS57spW2rRHp4q-hhs0QYX2HEu7iX-cIoYUl' 
+PAYPAL_CLIENT_SECRET = 'EOM8iMY97EtwuwGJkE2ZRm7nC1915fFkG-UTU7piQNnFG4bCEm52lT_GVmKe24jy4-x0fcweACMTE-1a' 
+
+# Adres email odbiorcy płatności
+PAYPAL_RECEIVER_EMAIL = 'hotel@scyzoryk.pl'
+
+import paypalrestsdk
+
+paypalrestsdk.configure({
+    "mode": PAYPAL_MODE,  
+    "client_id": PAYPAL_CLIENT_ID,
+    "client_secret": PAYPAL_CLIENT_SECRET
+})
+
+LANGUAGE_CODE = 'en-us'

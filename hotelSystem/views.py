@@ -1,33 +1,76 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth import logout
-from .forms import UserProfileForm  
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.urls import reverse
+from django.http import JsonResponse
+from .forms import UserProfileForm
 from hotelSystem.logic.last_minute import generate_last_minute_offer
 from datetime import datetime
+from paypalrestsdk import Payment
+from .models import Room, Reservation
+import paypalrestsdk
+import uuid
+import requests
+from paypal.standard.forms import PayPalPaymentsForm
+from django.conf import settings
 from django.contrib import messages
+from datetime import datetime
+
+from django.contrib import messages
+from datetime import datetime
+
+from django.contrib import messages
+from datetime import datetime
+
+from datetime import datetime
+from django.contrib import messages
+from django.shortcuts import render
+
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+
+from datetime import datetime
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+from django.shortcuts import render
+
+from datetime import datetime
+from django.shortcuts import render
+from django.contrib import messages
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 
 def home_page_view(request):
-    error_message = None
     arrival_date = request.GET.get('arrival_date')
     departure_date = request.GET.get('departure_date')
+    adults = request.GET.get('adults', 1)
+    children = request.GET.get('children', 0)
 
-    print(f"Arrival Date: {arrival_date}, Departure Date: {departure_date}")
+    today = datetime.today().date()
+    error_message = None
 
     if arrival_date and departure_date:
         try:
-            arrival_date_obj = datetime.strptime(arrival_date, '%Y-%m-%d')
-            departure_date_obj = datetime.strptime(departure_date, '%Y-%m-%d')
+            arrival_date_obj = datetime.strptime(arrival_date, '%Y-%m-%d').date()
+            departure_date_obj = datetime.strptime(departure_date, '%Y-%m-%d').date()
 
-            print(f"Parsed Dates: Arrival: {arrival_date_obj}, Departure: {departure_date_obj}")
-
-            if departure_date_obj < arrival_date_obj:
+            if arrival_date_obj < today:
+                error_message = "Data przyjazdu nie może być wcześniejsza niż dzisiejsza data."
+            elif departure_date_obj <= arrival_date_obj:
                 error_message = "Data odjazdu nie może być wcześniejsza niż data przyjazdu."
-        except ValueError as e:
-            error_message = f"Podano nieprawidłowy format daty: {e}"
-            print(f"ValueError: {e}")
+        except ValueError:
+            error_message = "Podano nieprawidłowy format daty."
+
+    if not error_message and arrival_date and departure_date:
+        query_params = f"?arrival_date={arrival_date}&departure_date={departure_date}&adults={adults}&children={children}"
+        return HttpResponseRedirect(reverse('search_room') + query_params)
+
+    if error_message:
+        messages.error(request, error_message)
 
     context = {
-        'range_10': range(0, 11),
+        'range_10': range(11),
         'range_10x': range(1, 11),
         'images': [
             {"id": "zdj1", "src": "images/Gory.jpg", "alt": "Góry Świętokrzyskie", "desc": "Wspaniałe widoki Gór Świętokrzyskich w hotelu Scyzoryk."},
@@ -38,8 +81,11 @@ def home_page_view(request):
             'lat': 50.8882347,
             'lng': 20.8720543
         },
-        'search': "{% url 'search_room' %}",
-        'error_message': error_message,
+        'search': reverse('search_room'),
+        'arrival_date': arrival_date,
+        'departure_date': departure_date,
+        'adults': adults,
+        'children': children
     }
     return render(request, 'home_page.html', context)
 
@@ -66,41 +112,95 @@ def contact_view(request):
     return render(request, 'contact.html')
 
 def sign_in_view(request):
-
+    # Sprawdzenie, czy użytkownik jest już zalogowany
     if request.user.is_authenticated:
-        return redirect('home_page') 
+        messages.info(request, 'Jesteś już zalogowany.')  # Informacyjny komunikat
+        return redirect('home_page')  # Przekierowanie na stronę główną
 
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
 
-
+        # Autentykacja użytkownika
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect('home_page')  
+            messages.success(request, f'Witaj, {user.username}! Pomyślnie zalogowano.')  # Komunikat sukcesu
+            return redirect('home_page')  # Przekierowanie na stronę główną
         else:
-            messages.error(request, 'Błędny login lub hasło.')
+            messages.error(request, 'Błędny login lub hasło.')  # Komunikat o błędzie logowania
 
-
+    # Wyświetlenie formularza logowania
     return render(request, 'sign_in.html')
+
+from django.db.models import Q
 
 
 def search_room_view(request):
-
-
+    rooms = Room.objects.all()
     arrival_date = request.GET.get('arrival_date')
     departure_date = request.GET.get('departure_date')
-    adults = request.GET.get('adults')
-    children = request.GET.get('children')
+    adults = request.GET.get('adults', '0')
+    children = request.GET.get('children', '0')
+    room_type = request.GET.get('room_type')
+    min_price = request.GET.get('min_price')
+    max_price = request.GET.get('max_price')
+    sort_order = request.GET.get('sort_order')
+    error_message = None
 
+    try:
+        total_guests = int(adults) + int(children)
+    except ValueError:
+        total_guests = 0
 
-    return render(request, 'search_room.html', {
+    if arrival_date and departure_date:
+        try:
+            arrival_date_obj = datetime.strptime(arrival_date, '%Y-%m-%d').date()
+            departure_date_obj = datetime.strptime(departure_date, '%Y-%m-%d').date()
+            today = datetime.today().date()
+
+            if arrival_date_obj < today:
+                error_message = "Data przyjazdu nie może być wcześniejsza niż dzisiejsza data."
+                rooms = Room.objects.none()
+            elif departure_date_obj <= arrival_date_obj:
+                error_message = "Data odjazdu nie może być wcześniejsza niż data przyjazdu."
+                rooms = Room.objects.none()
+        except ValueError:
+            error_message = "Podano nieprawidłowy format daty."
+            rooms = Room.objects.none()
+
+    if not error_message:
+        if total_guests > 0:
+            rooms = rooms.filter(capacity__gte=total_guests)
+        if room_type and room_type != 'None':
+            rooms = rooms.filter(room_type=room_type)
+        if min_price and min_price.isdigit():
+            rooms = rooms.filter(price_per_night__gte=float(min_price))
+        if max_price and max_price.isdigit():
+            rooms = rooms.filter(price_per_night__lte=float(max_price))
+
+        if sort_order == 'desc':
+            rooms = rooms.order_by('-price_per_night')
+        elif sort_order == 'asc':
+            rooms = rooms.order_by('price_per_night')
+
+        if not rooms.exists():
+            error_message = "Nie znaleziono pokoi spełniających podane kryteria."
+
+    context = {
+        'rooms': rooms,
         'arrival_date': arrival_date,
         'departure_date': departure_date,
         'adults': adults,
         'children': children,
-    })
+        'room_type': room_type,
+        'min_price': min_price,
+        'max_price': max_price,
+        'sort_order': sort_order,
+        'error_message': error_message
+    }
+
+    return render(request, 'search_room.html', context)
 
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
@@ -138,17 +238,15 @@ def register_view(request):
             return redirect('home_page')
         except Exception as e:
             messages.error(request, f'Błąd rejestracji: {e}')
-    
     return render(request, 'register.html')
 
+@login_required
 def profile_view(request):
-    context = {
-        'range_10': range(0, 11),
-        'range_10x': range(1, 11),
-    }
-    return render(request, 'profile.html', context)
+    reservations = Reservation.objects.filter(user=request.user)  # Pamiętaj o user
+    return render(request, 'profile.html', {'reservations': reservations})
 
 def logout_view(request):
+    request.session.flush()
     logout(request)
     messages.success(request, "Pomyślnie wylogowano.")
     return redirect('sign_in')
@@ -164,3 +262,191 @@ def edit_profile_view(request):
         form = UserProfileForm(instance=request.user)
 
     return render(request, 'edit_profile.html', {'form': form})
+
+def room_list(request):
+    rooms = Room.objects.filter(is_available=True)
+    return render(request, 'room_list.html', {'rooms': rooms})
+
+from datetime import datetime
+
+from datetime import datetime
+
+from datetime import datetime
+from django.shortcuts import render, get_object_or_404
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.utils.dateparse import parse_date
+from .models import Room, Reservation
+from datetime import datetime
+
+@login_required(login_url='sign_in')
+def room_detail(request, pk):
+    arrival_date = request.GET.get('arrival_date')
+    departure_date = request.GET.get('departure_date')
+    adults = request.GET.get('adults')
+    children = request.GET.get('children')
+    room_type = request.GET.get('room_type')
+    min_price = request.GET.get('min_price')
+    max_price = request.GET.get('max_price')
+    sort_order = request.GET.get('sort_order')
+
+    room = get_object_or_404(Room, pk=pk)
+    error_message = None
+    total_price = None
+    number_of_nights = 0
+    total_beds = []
+
+    # Calculate price and number of nights if dates are provided
+    if arrival_date and departure_date:
+        try:
+            arrival_date_obj = datetime.strptime(arrival_date, '%Y-%m-%d').date()
+            departure_date_obj = datetime.strptime(departure_date, '%Y-%m-%d').date()
+
+            if departure_date_obj <= arrival_date_obj:
+                error_message = "Data odjazdu nie może być wcześniejsza niż data przyjazdu."
+            else:
+                # Calculate the number of nights
+                number_of_nights = (departure_date_obj - arrival_date_obj).days
+                # Calculate total price for the stay
+                total_price = room.price_per_night * number_of_nights
+        except ValueError:
+            error_message = "Podano nieprawidłowy format daty."
+
+    # Prepare information about the beds and their count
+    single_beds_text = ''
+    double_beds_text = ''
+
+    if room.single_bed_count > 0:
+        if room.single_bed_count == 1:
+            single_beds_text = "1 łóżko pojedyncze"
+        elif room.single_bed_count in [2, 3, 4]:
+            single_beds_text = f"{room.single_bed_count} łóżka pojedyncze"
+        else:
+            single_beds_text = f"{room.single_bed_count} łóżek pojedynczych"
+
+    if room.double_bed_count > 0:
+        if room.double_bed_count == 1:
+            double_beds_text = "1 łóżko podwójne"
+        elif room.double_bed_count in [2, 3, 4]:
+            double_beds_text = f"{room.double_bed_count} łóżka podwójne"
+        else:
+            double_beds_text = f"{room.double_bed_count} łóżek podwójnych"
+
+    # Prepare bed icons
+    single_bed_icons = ["<img src='{% static 'icons/single-bed.png' %}' alt='Single bed'>" for _ in range(room.single_bed_count)]
+    double_bed_icons = ["<img src='{% static 'icons/double-bed.png' %}' alt='Double bed'>" for _ in range(room.double_bed_count)]
+
+    context = {
+        'room': room,
+        'arrival_date': arrival_date,
+        'departure_date': departure_date,
+        'error_message': error_message,
+        'number_of_nights': number_of_nights,
+        'total_price': total_price,
+        'single_beds_text': single_beds_text,
+        'double_beds_text': double_beds_text,
+        'single_beds': single_bed_icons,
+        'double_beds': double_bed_icons,
+    }
+
+    return render(request, 'room_detail.html', context)
+
+
+
+
+def make_reservation(request, pk):
+    room = get_object_or_404(Room, pk=pk)
+    if request.method == 'POST':
+        form = ReservationForm(request.POST)
+        if form.is_valid():
+            reservation = form.save(commit=False)
+            reservation.room = room
+            reservation.user = request.user  # przypisujemy zalogowanego użytkownika
+            reservation.save()
+            return render(request, 'reservation_success.html', {'reservation': reservation})
+    else:
+        form = ReservationForm()
+
+    return render(request, 'make_reservation.html', {'room': room, 'form': form})
+
+# Konfiguracja PayPal SDK
+paypalrestsdk.configure({
+    "mode": "sandbox",
+    "client_id": "AY_xt2ZKCsnMSyBB3X_q_ffXxC1MmYQw8LWmktNBgacosS57spW2rRHp4q-hhs0QYX2HEu7iX-cIoYUl",
+    "client_secret": "EOM8iMY97EtwuwGJkE2ZRm7nC1915fFkG-UTU7piQNnFG4bCEm52lT_GVmKe24jy4-x0fcweACMTE-1a"
+})
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from paypalrestsdk import Payment
+from .models import Room, Reservation
+from django.urls import reverse
+from django.contrib.auth.models import User
+
+@login_required(login_url='sign_in')
+def process_payment(request, room_id):
+    room = get_object_or_404(Room, id=room_id)
+    if request.method == "POST":
+        amount = request.POST.get('amount')
+        payment = Payment({
+            "intent": "sale",
+            "payer": {
+                "payment_method": "paypal"
+            },
+            "redirect_urls": {
+                "return_url": request.build_absolute_uri(reverse('payment_success', kwargs={'room_id': room.id})),
+                "cancel_url": request.build_absolute_uri(reverse('payment_cancel'))
+            },
+            "transactions": [{
+                "item_list": {
+                    "items": [{
+                        "name": room.room_type,  # Zaktualizowane pole
+                        "sku": str(room.id),
+                        "price": amount,
+                        "currency": "PLN",
+                        "quantity": 1
+                    }]
+                },
+                "amount": {
+                    "total": amount,
+                    "currency": "PLN"
+                },
+                "description": f"Rezerwacja pokoju: {room.room_type}"  # Zaktualizowane pole
+            }]
+        })
+
+        if payment.create():
+            for link in payment.links:
+                if link.rel == "approval_url":
+                    approval_url = str(link.href)
+                    request.session['reservation_data'] = {
+                        'room': room.id,
+                        'user': request.user.id,
+                        'arrival_date': request.GET.get('arrival_date'),
+                        'departure_date': request.GET.get('departure_date')
+                    }
+                    return redirect(approval_url)
+        else:
+            return render(request, "payment_cancel.html", {"error": payment.cancel})
+    return redirect('room_list')
+
+@login_required(login_url='sign_in')
+def payment_success(request, room_id):
+    reservation_data = request.session.get('reservation_data')
+    if reservation_data:
+        room = get_object_or_404(Room, id=reservation_data['room'])
+        user = get_object_or_404(User, id=reservation_data['user'])
+        arrival_date = reservation_data['arrival_date']
+        departure_date = reservation_data['departure_date']
+        Reservation.objects.create(room=room, user=user, arrival_date=arrival_date, departure_date=departure_date)
+    return render(request, "payment_success.html", {
+        'room': room,
+        'user': user,
+        'arrival_date': arrival_date,
+        'departure_date': departure_date
+    })
+
+@login_required(login_url='signin')
+def payment_cancel(request):
+    return render(request, "payment_cancel.html")

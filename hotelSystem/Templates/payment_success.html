@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block header %}
+    <title>Płatność zakończona pomyślnie</title>
+    <link rel="stylesheet" href="{% static 'css/styles_payment.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="kontener">
+    <h1>Płatność zakończona pomyślnie</h1>
+    <p>Dziękujemy za dokonanie płatności. Twoja rezerwacja została pomyślnie zrealizowana.</p>
+    <p>Szczegóły rezerwacji:</p>
+    <ul>
+        <li>Pokój: {{ room.name }}</li>
+        <li>Data przyjazdu: {{ arrival_date }}</li>
+        <li>Data odjazdu: {{ departure_date }}</li>
+        <li>Użytkownik: {{ user.username }}</li>
+    </ul>
+    <a href="{% url 'home_page' %}" class="btn">Powrót na stronę główną</a>
+</div>
+{% endblock %}
