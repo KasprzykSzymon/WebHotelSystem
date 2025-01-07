@@ -1,52 +1,23 @@
-from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import logout, authenticate, login
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from django.urls import reverse
-from django.http import JsonResponse
 from .forms import UserProfileForm
 from hotelSystem.logic.last_minute import generate_last_minute_offer
+import paypalrestsdk
+from django.http import HttpResponseRedirect
+from django.contrib.auth import authenticate, login
+from django.contrib import messages
 from datetime import datetime
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
 from paypalrestsdk import Payment
 from .models import Room, Reservation
-import paypalrestsdk
-import uuid
-import requests
-from paypal.standard.forms import PayPalPaymentsForm
-from django.conf import settings
-from django.contrib import messages
-from datetime import datetime
-
-from django.contrib import messages
-from datetime import datetime
-
-from django.contrib import messages
-from datetime import datetime
-
-from datetime import datetime
-from django.contrib import messages
-from django.shortcuts import render
-
-from django.http import HttpResponseRedirect
 from django.urls import reverse
-
-from datetime import datetime
-from django.http import HttpResponseRedirect
-from django.urls import reverse
-from django.shortcuts import render
-
-from datetime import datetime
-from django.shortcuts import render
-from django.contrib import messages
-from django.http import HttpResponseRedirect
-from django.urls import reverse
+from django.contrib.auth.models import User
 
 def home_page_view(request):
     arrival_date = request.GET.get('arrival_date')
     departure_date = request.GET.get('departure_date')
     adults = request.GET.get('adults', 1)
     children = request.GET.get('children', 0)
-
     today = datetime.today().date()
     error_message = None
 
@@ -89,7 +60,6 @@ def home_page_view(request):
     }
     return render(request, 'home_page.html', context)
 
-
 def last_minute_view(request):
     offers = generate_last_minute_offer(days_to_last_minute=5, max_discount=20)
     context = {
@@ -106,7 +76,6 @@ def news_view(request):
         'range_10x': range(1, 11),
     }
     return render(request, 'news.html', context)
-
 
 def contact_view(request):
     return render(request, 'contact.html')
@@ -129,12 +98,8 @@ def sign_in_view(request):
             return redirect('home_page')  # Przekierowanie na stronę główną
         else:
             messages.error(request, 'Błędny login lub hasło.')  # Komunikat o błędzie logowania
-
     # Wyświetlenie formularza logowania
     return render(request, 'sign_in.html')
-
-from django.db.models import Q
-
 
 def search_room_view(request):
     rooms = Room.objects.all()
@@ -178,12 +143,10 @@ def search_room_view(request):
             rooms = rooms.filter(price_per_night__gte=float(min_price))
         if max_price and max_price.isdigit():
             rooms = rooms.filter(price_per_night__lte=float(max_price))
-
         if sort_order == 'desc':
             rooms = rooms.order_by('-price_per_night')
         elif sort_order == 'asc':
             rooms = rooms.order_by('price_per_night')
-
         if not rooms.exists():
             error_message = "Nie znaleziono pokoi spełniających podane kryteria."
 
@@ -199,17 +162,10 @@ def search_room_view(request):
         'sort_order': sort_order,
         'error_message': error_message
     }
-
     return render(request, 'search_room.html', context)
-
-from django.contrib.auth import authenticate, login
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from django.contrib.auth.models import User
 
 def register_view(request):
     if request.method == 'POST':
-
         username = request.POST.get('username')
         firstname = request.POST.get('firstname')
         lastname = request.POST.get('lastname')
@@ -266,19 +222,6 @@ def edit_profile_view(request):
 def room_list(request):
     rooms = Room.objects.filter(is_available=True)
     return render(request, 'room_list.html', {'rooms': rooms})
-
-from datetime import datetime
-
-from datetime import datetime
-
-from datetime import datetime
-from django.shortcuts import render, get_object_or_404
-
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
-from django.utils.dateparse import parse_date
-from .models import Room, Reservation
-from datetime import datetime
 
 @login_required(login_url='sign_in')
 def room_detail(request, pk):
@@ -349,11 +292,7 @@ def room_detail(request, pk):
         'single_beds': single_bed_icons,
         'double_beds': double_bed_icons,
     }
-
     return render(request, 'room_detail.html', context)
-
-
-
 
 def make_reservation(request, pk):
     room = get_object_or_404(Room, pk=pk)
@@ -367,7 +306,6 @@ def make_reservation(request, pk):
             return render(request, 'reservation_success.html', {'reservation': reservation})
     else:
         form = ReservationForm()
-
     return render(request, 'make_reservation.html', {'room': room, 'form': form})
 
 # Konfiguracja PayPal SDK
@@ -376,13 +314,6 @@ paypalrestsdk.configure({
     "client_id": "AY_xt2ZKCsnMSyBB3X_q_ffXxC1MmYQw8LWmktNBgacosS57spW2rRHp4q-hhs0QYX2HEu7iX-cIoYUl",
     "client_secret": "EOM8iMY97EtwuwGJkE2ZRm7nC1915fFkG-UTU7piQNnFG4bCEm52lT_GVmKe24jy4-x0fcweACMTE-1a"
 })
-
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
-from paypalrestsdk import Payment
-from .models import Room, Reservation
-from django.urls import reverse
-from django.contrib.auth.models import User
 
 @login_required(login_url='sign_in')
 def process_payment(request, room_id):
