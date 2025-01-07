@@ -1,3 +1,4 @@
+from .last_minute import generate_last_minute_offer
 from django.contrib.auth import logout, authenticate, login
 from .forms import UserProfileForm
 from hotelSystem.logic.last_minute import generate_last_minute_offer
@@ -7,7 +8,10 @@ from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .last_minute import generate_last_minute_offer
+from paypalrestsdk import Payment
+from .models import Room, Reservation
+from django.urls import reverse
+from django.contrib.auth.models import User
 
 
 def home_page_view(request):
@@ -100,9 +104,6 @@ def sign_in_view(request):
 
     # Wyświetlenie formularza logowania
     return render(request, 'sign_in.html')
-
-from django.db.models import Q
-
 
 def search_room_view(request):
     rooms = Room.objects.all()
