@@ -7,6 +7,8 @@ from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from .last_minute import generate_last_minute_offer
+
 
 def home_page_view(request):
     arrival_date = request.GET.get('arrival_date')
