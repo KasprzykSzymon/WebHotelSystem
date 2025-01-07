@@ -2,7 +2,7 @@ from datetime import date, timedelta
 from hotelSystem.models import Room, Reservation
 from decimal import Decimal
 
-def generate_last_minute_offer(days_to_last_minute=4, max_discount=30):
+def generate_last_minute_offer(days_to_last_minute, max_discount):
     """
     Generuje oferty last minute.
     :param days_to_last_minute: Liczba dni przed terminem, które kwalifikują ofertę jako last minute.
@@ -25,7 +25,7 @@ def generate_last_minute_offer(days_to_last_minute=4, max_discount=30):
             days_until_reservation = (nearest_reservation_date - today).days
             if days_until_reservation > days_to_last_minute:
                 continue  # Wyklucz pokój, jeśli nie spełnia warunku last minute
-            available_days = days_until_reservation - 1
+            available_days = days_until_reservation
             availability_end_date = nearest_reservation_date - timedelta(days=1)  # Dzień przed rezerwacją
         else:
             continue  # Wyklucz pokoje bez rezerwacji, bo nie spełniają warunku last minute
