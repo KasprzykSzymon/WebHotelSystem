@@ -19,8 +19,8 @@
     <form action="{% url 'sign_in' %}" method="post">
         {% csrf_token %}
         <div class="input-container">
-            <label for="login">Login</label><br>
-            <input type="text" id="login" name="username" placeholder="Wpisz swój login" required>
+            <label for="email">Login</label><br>
+            <input type="text" id="login" name="username" placeholder="Wpisz swój email" required>
         </div>
 
         <div class="input-container">

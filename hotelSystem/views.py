@@ -82,6 +82,7 @@ def sign_in_view(request):
         else:
             messages.error(request, 'Błędny login lub hasło.')
 
+
     return render(request, 'sign_in.html')
 
 
@@ -109,6 +110,7 @@ from django.contrib.auth.models import User
 def register_view(request):
     if request.method == 'POST':
 
+        username = request.POST.get('username')
         firstname = request.POST.get('firstname')
         lastname = request.POST.get('lastname')
         birthdate = request.POST.get('birthdate')
@@ -125,11 +127,11 @@ def register_view(request):
             return render(request, 'register.html')
 
         try:
-            user = User.objects.create_user(username=email, email=email, password=password, first_name=firstname, last_name=lastname)
+            user = User.objects.create_user(username=username, email=email, password=password, first_name=firstname, last_name=lastname)
             user.save()
 
 
-            user = authenticate(request, username=email, password=password)
+            user = authenticate(request, email=email, password=password)
             if user is not None:
                 login(request, user)
             messages.success(request, 'Rejestracja zakończona sukcesem. Zostałeś zalogowany.')
