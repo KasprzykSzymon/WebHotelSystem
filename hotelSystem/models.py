@@ -49,7 +49,7 @@ class Room(models.Model):
 
     def discounted_price(self):
         """Oblicza cenę po zniżce, zaokrągloną do dwóch miejsc po przecinku."""
-        return round(self.price_per_night * (1 - self.last_minute_discount / 100), 2)
+        return self.price_per_night * (1 - self.last_minute_discount / 100)
 
     def save(self, *args, **kwargs):
         """Ustawia pojemność na podstawie typu pokoju."""

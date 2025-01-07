@@ -5,13 +5,10 @@ import paypalrestsdk
 from django.http import HttpResponseRedirect
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
-from datetime import datetime
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from paypalrestsdk import Payment
-from .models import Room, Reservation
-from django.urls import reverse
-from django.contrib.auth.models import User
+from .last_minute import generate_last_minute_offer
+
 
 def home_page_view(request):
     arrival_date = request.GET.get('arrival_date')
@@ -59,20 +56,15 @@ def home_page_view(request):
         'adults': adults,
         'children': children
     }
-
     return render(request, 'home_page.html', context)
 
-
-
-
-
 def last_minute_view(request):
-    offers = generate_last_minute_offer(days_to_last_minute=5, max_discount=20)
+    offers = generate_last_minute_offer(days_to_last_minute=7, max_discount=30)
+
     context = {
         'offers': offers,
         'range_10': range(0, 11),
         'range_10x': range(1, 11),
-
     }
     return render(request, 'last_minute.html', {'offers': offers})
 
@@ -175,10 +167,7 @@ def search_room_view(request):
         'sort_order': sort_order,
         'error_message': error_message
     }
-
     return render(request, 'search_room.html', context)
-
-
 
 def register_view(request):
     if request.method == 'POST':
