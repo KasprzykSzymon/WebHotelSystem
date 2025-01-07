@@ -2,19 +2,19 @@
 
 {% block header %}
     {% load static %}
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="{% static 'css/styles_home_page.css' %}">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Protest+Revolution&display=swap" rel="stylesheet">
-        <title>Strona hotelu</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/styles_home_page.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Protest+Revolution&display=swap" rel="stylesheet">
+    <title>Strona hotelu</title>
 {% endblock %}
 
 {% block content %}
 {% if user.is_authenticated %}
-    <h1>Witaj {{user.first_name}} </h1> 
+    <h1>Witaj {{ user.first_name }} </h1>
 {% else %}
-    <h1>Witaj w hotelu Scyzoryk! </h1> 
+    <h1>Witaj w hotelu Scyzoryk! </h1>
 {% endif %}
 <p>U nas zaśniesz spokojnie</p>
 
@@ -26,21 +26,21 @@
     </div>
 {% endif %}
 
-<form action="{% url 'search_room' %}" method="get" class="formularz">
+<form action="{% url 'home_page' %}" method="get" class="formularz">
     <div class="formularze-container">
         <div class="formularz1">
             <span>Wybierz swoją datę przyjazdu</span><br>
-            <input type="date" name="arrival_date" required>
+            <input type="date" name="arrival_date" value="{{ arrival_date }}" required>
         </div>
         <div class="formularz2">
             <span>Wybierz swoją datę odjazdu</span><br>
-            <input type="date" name="departure_date" required>
+            <input type="date" name="departure_date" value="{{ departure_date }}" required>
         </div>
         <div class="select1-dorosli">
             <span>Liczba dorosłych:</span><br>
             <select name="adults" required>
                 {% for i in range_10x %}
-                <option value="{{ i }}">{{ i }}</option>
+                <option value="{{ i }}" {% if i == adults %}selected{% endif %}>{{ i }}</option>
                 {% endfor %}
             </select>
         </div>
@@ -48,7 +48,7 @@
             <span>Liczba dzieci:</span><br>
             <select name="children" required>
                 {% for i in range_10 %}
-                <option value="{{ i }}">{{ i }}</option>
+                <option value="{{ i }}" {% if i == children %}selected{% endif %}>{{ i }}</option>
                 {% endfor %}
             </select>
         </div><br>
@@ -57,6 +57,13 @@
         </div>
     </div>
 </form>
+
+{% if error_message %}
+    <div class="error-message" style="color: red; font-weight: bold;">
+        <p>{{ error_message }}</p>
+    </div>
+{% endif %}
+
 
 <div class="kontener-zdjec">
     <div>

@@ -23,37 +23,54 @@ from datetime import datetime
 from django.contrib import messages
 from datetime import datetime
 
+from datetime import datetime
+from django.contrib import messages
+from django.shortcuts import render
+
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+
+from datetime import datetime
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+from django.shortcuts import render
+
+from datetime import datetime
+from django.shortcuts import render
+from django.contrib import messages
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+
 def home_page_view(request):
     arrival_date = request.GET.get('arrival_date')
     departure_date = request.GET.get('departure_date')
+    adults = request.GET.get('adults', 1)
+    children = request.GET.get('children', 0)
 
-    print(f"Arrival Date: {arrival_date}, Departure Date: {departure_date}")
-
-    today = datetime.today().date()  # dzisiejsza data
+    today = datetime.today().date()
+    error_message = None
 
     if arrival_date and departure_date:
         try:
-            # Parsowanie dat
             arrival_date_obj = datetime.strptime(arrival_date, '%Y-%m-%d').date()
             departure_date_obj = datetime.strptime(departure_date, '%Y-%m-%d').date()
 
-            print(f"Parsed Dates: Arrival: {arrival_date_obj}, Departure: {departure_date_obj}")
-
-            # Sprawdzanie, czy data przyjazdu nie jest wcześniejsza niż dzisiejsza data
             if arrival_date_obj < today:
-                messages.error(request, "Data przyjazdu nie może być wcześniejsza niż dzisiejsza data.")
-            
-            # Sprawdzanie, czy data odjazdu nie jest wcześniejsza niż data przyjazdu
-            elif departure_date_obj < arrival_date_obj:
-                messages.error(request, "Data odjazdu nie może być wcześniejsza niż data przyjazdu.")
+                error_message = "Data przyjazdu nie może być wcześniejsza niż dzisiejsza data."
+            elif departure_date_obj <= arrival_date_obj:
+                error_message = "Data odjazdu nie może być wcześniejsza niż data przyjazdu."
+        except ValueError:
+            error_message = "Podano nieprawidłowy format daty."
 
-        except ValueError as e:
-            messages.error(request, f"Podano nieprawidłowy format daty: {e}")
-            print(f"ValueError: {e}")
+    if not error_message and arrival_date and departure_date:
+        query_params = f"?arrival_date={arrival_date}&departure_date={departure_date}&adults={adults}&children={children}"
+        return HttpResponseRedirect(reverse('search_room') + query_params)
 
-    # Kontekst przekazywany do szablonu
+    if error_message:
+        messages.error(request, error_message)
+
     context = {
-        'range_10': range(0, 11),
+        'range_10': range(11),
         'range_10x': range(1, 11),
         'images': [
             {"id": "zdj1", "src": "images/Gory.jpg", "alt": "Góry Świętokrzyskie", "desc": "Wspaniałe widoki Gór Świętokrzyskich w hotelu Scyzoryk."},
@@ -63,11 +80,17 @@ def home_page_view(request):
         'hotel_location': {
             'lat': 50.8882347,
             'lng': 20.8720543
-            
         },
-        'search': "{% url 'search_room' %}",
+        'search': reverse('search_room'),
+        'arrival_date': arrival_date,
+        'departure_date': departure_date,
+        'adults': adults,
+        'children': children
     }
+
     return render(request, 'home_page.html', context)
+
+
 
 
 
@@ -116,40 +139,72 @@ def sign_in_view(request):
 
 from django.db.models import Q
 
+
 def search_room_view(request):
+    rooms = Room.objects.all()
     arrival_date = request.GET.get('arrival_date')
     departure_date = request.GET.get('departure_date')
-    adults = int(request.GET.get('adults', 0))
-    children = int(request.GET.get('children', 0))
-    total_guests = adults + children
+    adults = request.GET.get('adults', '0')
+    children = request.GET.get('children', '0')
+    room_type = request.GET.get('room_type')
+    min_price = request.GET.get('min_price')
+    max_price = request.GET.get('max_price')
+    sort_order = request.GET.get('sort_order')
+    error_message = None
 
-    rooms = Room.objects.all()
+    try:
+        total_guests = int(adults) + int(children)
+    except ValueError:
+        total_guests = 0
 
     if arrival_date and departure_date:
         try:
             arrival_date_obj = datetime.strptime(arrival_date, '%Y-%m-%d').date()
             departure_date_obj = datetime.strptime(departure_date, '%Y-%m-%d').date()
+            today = datetime.today().date()
 
-            if arrival_date_obj >= departure_date_obj:
-                messages.error(request, "Data odjazdu musi być późniejsza niż data przyjazdu.")
-            else:
-                reserved_rooms = Reservation.objects.filter(
-                    Q(check_in_date__lte=departure_date_obj, check_out_date__gte=arrival_date_obj)
-                ).values_list('room_id', flat=True)
+            if arrival_date_obj < today:
+                error_message = "Data przyjazdu nie może być wcześniejsza niż dzisiejsza data."
+                rooms = Room.objects.none()
+            elif departure_date_obj <= arrival_date_obj:
+                error_message = "Data odjazdu nie może być wcześniejsza niż data przyjazdu."
+                rooms = Room.objects.none()
+        except ValueError:
+            error_message = "Podano nieprawidłowy format daty."
+            rooms = Room.objects.none()
 
-                # Filtracja dostępnych pokoi na podstawie liczby gości
-                rooms = rooms.exclude(id__in=reserved_rooms).filter(capacity__gte=total_guests)
+    if not error_message:
+        if total_guests > 0:
+            rooms = rooms.filter(capacity__gte=total_guests)
+        if room_type and room_type != 'None':
+            rooms = rooms.filter(room_type=room_type)
+        if min_price and min_price.isdigit():
+            rooms = rooms.filter(price_per_night__gte=float(min_price))
+        if max_price and max_price.isdigit():
+            rooms = rooms.filter(price_per_night__lte=float(max_price))
 
-        except ValueError as e:
-            messages.error(request, f"Nieprawidłowy format daty: {e}")
+        if sort_order == 'desc':
+            rooms = rooms.order_by('-price_per_night')
+        elif sort_order == 'asc':
+            rooms = rooms.order_by('price_per_night')
 
-    return render(request, 'search_room.html', {
+        if not rooms.exists():
+            error_message = "Nie znaleziono pokoi spełniających podane kryteria."
+
+    context = {
+        'rooms': rooms,
         'arrival_date': arrival_date,
         'departure_date': departure_date,
         'adults': adults,
         'children': children,
-        'rooms': rooms,
-    })
+        'room_type': room_type,
+        'min_price': min_price,
+        'max_price': max_price,
+        'sort_order': sort_order,
+        'error_message': error_message
+    }
+
+    return render(request, 'search_room.html', context)
 
 
 
@@ -212,9 +267,48 @@ def room_list(request):
     rooms = Room.objects.filter(is_available=True)
     return render(request, 'room_list.html', {'rooms': rooms})
 
+from datetime import datetime
+
+from datetime import datetime
+
 def room_detail(request, pk):
     room = get_object_or_404(Room, pk=pk)
-    return render(request, 'room_detail.html', {'room': room})
+    arrival_date = request.GET.get('arrival_date')
+    departure_date = request.GET.get('departure_date')
+    error_message = None
+    total_price = None
+    number_of_nights = 0
+
+    # Jeśli daty przyjazdu i odjazdu są dostępne, obliczamy liczbę nocy i cenę
+    if arrival_date and departure_date:
+        try:
+            arrival_date_obj = datetime.strptime(arrival_date, '%Y-%m-%d').date()
+            departure_date_obj = datetime.strptime(departure_date, '%Y-%m-%d').date()
+
+            if departure_date_obj <= arrival_date_obj:
+                error_message = "Data odjazdu nie może być wcześniejsza niż data przyjazdu."
+            else:
+                # Oblicz liczbę nocy
+                number_of_nights = (departure_date_obj - arrival_date_obj).days
+
+                # Oblicz całkowitą cenę za pobyt
+                total_price = room.price_per_night * number_of_nights
+        except ValueError:
+            error_message = "Podano nieprawidłowy format daty."
+
+    context = {
+        'room': room,
+        'arrival_date': arrival_date,
+        'departure_date': departure_date,
+        'error_message': error_message,
+        'number_of_nights': number_of_nights,
+        'total_price': total_price,
+        'single_beds': range(room.single_bed_count),  # Correct the reference here
+        'double_beds': range(room.double_bed_count)   # Correct the reference here
+    }
+
+    return render(request, 'room_detail.html', context)
+
 
 def make_reservation(request, pk):
     room = get_object_or_404(Room, pk=pk)

@@ -10,12 +10,30 @@
 <div class="kontener">
     <h1>{{ room.name }}</h1>
     <div class="room-detail">
-        <img src="{{ room.images.first.image.url }}" alt="{{ room.name }}" class="lokalizacja-img">
+        {% if room.images.first %}
+            <img src="{{ room.images.first.image.url }}" alt="{{ room.name }}" class="lokalizacja-img">
+        {% else %}
+            <img src="{% static 'images/default-room.jpg' %}" alt="Default room image" class="lokalizacja-img">
+        {% endif %}
         <div class="room-info">
-            <p>{{ room.description }}</p>
+            <p><strong>Typ pokoju: </strong>{{ room.get_room_type_display }}</p>
             <p><strong>Cena za noc: </strong>{{ room.price_per_night }} zł</p>
             <p><strong>Liczba łóżek: </strong>{{ room.number_of_beds }}</p>
-            <a href="{% url 'make_reservation' room.id %}" class="lokalizacja-button">Zarezerwuj</a>
+            <p><strong>Typ łóżek:</strong></p>
+            <div class="beds">
+                {% if room.single_bed %}
+                    {% for i in range(room.single_bed) %}
+                        <span class="icon"><img src="{% static 'icons/single-bed.png' %}" alt="Single bed"></span>
+                    {% endfor %}
+                {% endif %}
+                {% if room.double_bed %}
+                    {% for i in range(room.double_bed) %}
+                        <span class="icon"><img src="{% static 'icons/double-bed.png' %}" alt="Double bed"></span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <p><strong>Całkowita cena za pobyt: </strong>{{ room.price_per_night|floatformat:2 }} zł za noc × {{ number_of_nights }} nocy = {{ total_price|floatformat:2 }} zł</p>
+            <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=YOUR_PAYPAL_EMAIL&item_name={{ room.name }}&amount={{ total_price }}&currency_code=PLN" class="lokalizacja-button">Zarezerwuj i zapłać przez PayPal</a>
         </div>
     </div>
 </div>

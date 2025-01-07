@@ -27,7 +27,16 @@ class SocialApp(models.Model):
 
 from django.db import models
 
+from django.db import models
+
 class Room(models.Model):
+    @property
+    def single_bed_count(self):
+        return self.single_bed if hasattr(self, 'single_bed') else 0  # Ensure this is 0 if no value is set
+
+    @property
+    def double_bed_count(self):
+        return self.double_bed if hasattr(self, 'double_bed') else 0  # Same for double bed count
     ROOM_TYPES = [
         ('single', 'Single'),
         ('double', 'Double'),
@@ -45,14 +54,18 @@ class Room(models.Model):
     price_per_night = models.DecimalField(max_digits=6, decimal_places=2)
     is_available = models.BooleanField(default=True)
     last_minute_discount = models.DecimalField(max_digits=5, decimal_places=2, default=0)
-    capacity = models.IntegerField(default=1)  # Domyślna wartość
+    capacity = models.IntegerField(default=1)
+    
+    # New fields to store the number of beds
+    single_bed_count = models.IntegerField(default=0)
+    double_bed_count = models.IntegerField(default=0)
 
     def discounted_price(self):
-        "Oblicza cene po znizce"
+        """Oblicza cenę po zniżce."""
         return self.price_per_night * (1 - self.last_minute_discount / 100)
 
     def save(self, *args, **kwargs):
-        # Mapowanie typu pokoju na pojemność
+        """Ustawia pojemność na podstawie typu pokoju."""
         type_to_capacity = {
             'single': 1,
             'double': 2,
@@ -64,7 +77,6 @@ class Room(models.Model):
             'triple': 3,
             'triple_marriage': 3,
         }
-        # Ustawienie capacity na podstawie room_type
         self.capacity = type_to_capacity.get(self.room_type, 1)
         super().save(*args, **kwargs)
 
@@ -74,6 +86,7 @@ class Room(models.Model):
     class Meta:
         verbose_name = "Pokój"
         verbose_name_plural = "Pokoje"
+
 
 
 
@@ -119,6 +132,44 @@ class Reservation(models.Model):
     class Meta:
         verbose_name = "Rezerwacja"
         verbose_name_plural = "Rezerwacje"
+def room_detail(request, pk):
+    room = get_object_or_404(Room, pk=pk)
+    arrival_date = request.GET.get('arrival_date')
+    departure_date = request.GET.get('departure_date')
+    error_message = None
+    total_price = None
+    number_of_nights = 0
+
+    # Jeśli daty przyjazdu i odjazdu są dostępne, obliczamy liczbę nocy i cenę
+    if arrival_date and departure_date:
+        try:
+            arrival_date_obj = datetime.strptime(arrival_date, '%Y-%m-%d').date()
+            departure_date_obj = datetime.strptime(departure_date, '%Y-%m-%d').date()
+
+            if departure_date_obj <= arrival_date_obj:
+                error_message = "Data odjazdu nie może być wcześniejsza niż data przyjazdu."
+            else:
+                # Oblicz liczbę nocy
+                number_of_nights = (departure_date_obj - arrival_date_obj).days
+
+                # Oblicz całkowitą cenę za pobyt
+                total_price = room.price_per_night * number_of_nights
+        except ValueError:
+            error_message = "Podano nieprawidłowy format daty."
+
+    # Here, we explicitly pass the integer count, not the model reference
+    context = {
+        'room': room,
+        'arrival_date': arrival_date,
+        'departure_date': departure_date,
+        'error_message': error_message,
+        'number_of_nights': number_of_nights,
+        'total_price': total_price,
+        'single_beds': range(room.single_bed_count),  # Pass actual count of beds
+        'double_beds': range(room.double_bed_count),  # Pass actual count of beds
+    }
+
+    return render(request, 'room_detail.html', context)
 
 def make_reservation(request, pk):
     room = get_object_or_404(Room, pk=pk)
@@ -138,8 +189,8 @@ def make_reservation(request, pk):
     else:
         form = ReservationForm()
 
-    return render(request, 'hotel/make_reservation.html', {'room': room, 'form': form})
+    return render(request, 'make_reservation.html', {'room': room, 'form': form})
 
 def room_list(request):
     rooms = Room.objects.all()
-    return render(request, 'hotel/room_list.html', {'rooms': rooms})
+    return render(request, 'room_list.html', {'rooms': rooms})
