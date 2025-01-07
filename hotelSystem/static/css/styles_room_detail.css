@@ -36,3 +36,22 @@
     display: inline-block;
     margin-top: 20px;
 }
+
+/* Ikony łóżek w tym samym wierszu co tekst */
+.icon-container {
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 10px; /* Opcjonalne - odstęp między ikonami */
+}
+
+.bed-description {
+    vertical-align: middle;
+    display: inline-block;
+}
+
+.icon img {
+    width: 20px;  /* Zmniejszenie rozmiaru ikon */
+    height: 20px;
+    vertical-align: middle;
+    margin-right: 5px;  /* Odstęp między ikonami */
+}

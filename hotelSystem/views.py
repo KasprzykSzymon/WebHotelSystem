@@ -271,15 +271,26 @@ from datetime import datetime
 
 from datetime import datetime
 
+from datetime import datetime
+from django.shortcuts import render, get_object_or_404
+
 def room_detail(request, pk):
-    room = get_object_or_404(Room, pk=pk)
     arrival_date = request.GET.get('arrival_date')
     departure_date = request.GET.get('departure_date')
+    adults = request.GET.get('adults')
+    children = request.GET.get('children')
+    room_type = request.GET.get('room_type')
+    min_price = request.GET.get('min_price')
+    max_price = request.GET.get('max_price')
+    sort_order = request.GET.get('sort_order')
+    
+    room = get_object_or_404(Room, pk=pk)
     error_message = None
     total_price = None
     number_of_nights = 0
+    total_beds = []
 
-    # Jeśli daty przyjazdu i odjazdu są dostępne, obliczamy liczbę nocy i cenę
+    # Calculate price and number of nights if dates are provided
     if arrival_date and departure_date:
         try:
             arrival_date_obj = datetime.strptime(arrival_date, '%Y-%m-%d').date()
@@ -288,13 +299,36 @@ def room_detail(request, pk):
             if departure_date_obj <= arrival_date_obj:
                 error_message = "Data odjazdu nie może być wcześniejsza niż data przyjazdu."
             else:
-                # Oblicz liczbę nocy
+                # Calculate the number of nights
                 number_of_nights = (departure_date_obj - arrival_date_obj).days
-
-                # Oblicz całkowitą cenę za pobyt
+                # Calculate total price for the stay
                 total_price = room.price_per_night * number_of_nights
         except ValueError:
             error_message = "Podano nieprawidłowy format daty."
+
+    # Prepare information about the beds and their count
+    single_beds_text = ''
+    double_beds_text = ''
+
+    if room.single_bed_count > 0:
+        if room.single_bed_count == 1:
+            single_beds_text = "1 łóżko pojedyncze"
+        elif room.single_bed_count in [2, 3, 4]:
+            single_beds_text = f"{room.single_bed_count} łóżka pojedyncze"
+        else:
+            single_beds_text = f"{room.single_bed_count} łóżek pojedynczych"
+
+    if room.double_bed_count > 0:
+        if room.double_bed_count == 1:
+            double_beds_text = "1 łóżko podwójne"
+        elif room.double_bed_count in [2, 3, 4]:
+            double_beds_text = f"{room.double_bed_count} łóżka podwójne"
+        else:
+            double_beds_text = f"{room.double_bed_count} łóżek podwójnych"
+
+    # Prepare bed icons
+    single_bed_icons = ["<img src='{% static 'icons/single-bed.png' %}' alt='Single bed'>" for _ in range(room.single_bed_count)]
+    double_bed_icons = ["<img src='{% static 'icons/double-bed.png' %}' alt='Double bed'>" for _ in range(room.double_bed_count)]
 
     context = {
         'room': room,
@@ -303,11 +337,15 @@ def room_detail(request, pk):
         'error_message': error_message,
         'number_of_nights': number_of_nights,
         'total_price': total_price,
-        'single_beds': range(room.single_bed_count),  # Correct the reference here
-        'double_beds': range(room.double_bed_count)   # Correct the reference here
+        'single_beds_text': single_beds_text,
+        'double_beds_text': double_beds_text,
+        'single_beds': single_bed_icons,
+        'double_beds': double_bed_icons,
     }
 
     return render(request, 'room_detail.html', context)
+
+
 
 
 def make_reservation(request, pk):

@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
-from datetime import date
+from datetime import date, datetime
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 
@@ -25,18 +25,7 @@ class SocialApp(models.Model):
     def __str__(self):
         return f"{self.name} ({self.provider})"
 
-from django.db import models
-
-from django.db import models
-
 class Room(models.Model):
-    @property
-    def single_bed_count(self):
-        return self.single_bed if hasattr(self, 'single_bed') else 0  # Ensure this is 0 if no value is set
-
-    @property
-    def double_bed_count(self):
-        return self.double_bed if hasattr(self, 'double_bed') else 0  # Same for double bed count
     ROOM_TYPES = [
         ('single', 'Single'),
         ('double', 'Double'),
@@ -55,8 +44,6 @@ class Room(models.Model):
     is_available = models.BooleanField(default=True)
     last_minute_discount = models.DecimalField(max_digits=5, decimal_places=2, default=0)
     capacity = models.IntegerField(default=1)
-    
-    # New fields to store the number of beds
     single_bed_count = models.IntegerField(default=0)
     double_bed_count = models.IntegerField(default=0)
 
@@ -86,9 +73,6 @@ class Room(models.Model):
     class Meta:
         verbose_name = "Pokój"
         verbose_name_plural = "Pokoje"
-
-
-
 
 class RoomImage(models.Model):
     room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='images')
@@ -132,8 +116,9 @@ class Reservation(models.Model):
     class Meta:
         verbose_name = "Rezerwacja"
         verbose_name_plural = "Rezerwacje"
+
 def room_detail(request, pk):
-    room = get_object_or_404(Room, pk=pk)
+    room = get_object_or_404(Room.objects.prefetch_related('images'), pk=pk)
     arrival_date = request.GET.get('arrival_date')
     departure_date = request.GET.get('departure_date')
     error_message = None
@@ -157,7 +142,6 @@ def room_detail(request, pk):
         except ValueError:
             error_message = "Podano nieprawidłowy format daty."
 
-    # Here, we explicitly pass the integer count, not the model reference
     context = {
         'room': room,
         'arrival_date': arrival_date,
@@ -165,8 +149,8 @@ def room_detail(request, pk):
         'error_message': error_message,
         'number_of_nights': number_of_nights,
         'total_price': total_price,
-        'single_beds': range(room.single_bed_count),  # Pass actual count of beds
-        'double_beds': range(room.double_bed_count),  # Pass actual count of beds
+        'single_beds': range(room.single_bed_count),
+        'double_beds': range(room.double_bed_count),
     }
 
     return render(request, 'room_detail.html', context)
@@ -192,5 +176,5 @@ def make_reservation(request, pk):
     return render(request, 'make_reservation.html', {'room': room, 'form': form})
 
 def room_list(request):
-    rooms = Room.objects.all()
+    rooms = Room.objects.prefetch_related('images')
     return render(request, 'room_list.html', {'rooms': rooms})

@@ -44,7 +44,7 @@
                     <h3>Pokój {{ room.number }} - {{ room.get_room_type_display }}</h3>
                     <p><strong>Cena za noc: </strong>{{ room.price_per_night }} zł</p>
                     <p><strong>Pojemność: </strong>{{ room.capacity }} osób</p>
-                    <a href="{% url 'room_detail' room.id %}" class="lokalizacja-button">Zobacz szczegóły</a>
+                    <a href="{% url 'room_detail' room.id %}?arrival_date={{ arrival_date }}&departure_date={{ departure_date }}&adults={{ adults }}&children={{ children }}&room_type={{ room_type }}&min_price={{ min_price }}&max_price={{ max_price }}&sort_order={{ sort_order }}" class="lokalizacja-button">Zobacz szczegóły</a>
                 </div>
             </div>
             {% endfor %}
