@@ -242,8 +242,25 @@ def register_view(request):
 
 @login_required
 def profile_view(request):
-    reservations = Reservation.objects.filter(user=request.user)  # Pamiętaj o user
-    return render(request, 'profile.html', {'reservations': reservations})
+    reservations = Reservation.objects.filter(user=request.user).select_related('room')
+    
+    reservation_details = [
+        {
+            'id': reservation.id,
+            'owner': f"{reservation.user.first_name} {reservation.user.last_name}",
+            'room_name': reservation.room.name,
+            'check_in_date': reservation.check_in_date,
+            'check_out_date': reservation.check_out_date,
+            'total_amount': (reservation.check_out_date - reservation.check_in_date).days * reservation.room.price
+        }
+        for reservation in reservations
+    ]
+    
+    return render(request, 'profile.html', {
+        'user': request.user,
+        'reservations': reservation_details
+    })
+
 
 def logout_view(request):
     request.session.flush()
@@ -274,6 +291,7 @@ from datetime import datetime
 from datetime import datetime
 from django.shortcuts import render, get_object_or_404
 
+@login_required(login_url='sign_in')
 def room_detail(request, pk):
     arrival_date = request.GET.get('arrival_date')
     departure_date = request.GET.get('departure_date')
@@ -347,21 +365,30 @@ def room_detail(request, pk):
 
 
 
-
+@login_required
 def make_reservation(request, pk):
-    room = get_object_or_404(Room, pk=pk)
-    if request.method == 'POST':
-        form = ReservationForm(request.POST)
-        if form.is_valid():
-            reservation = form.save(commit=False)
-            reservation.room = room
-            reservation.user = request.user  # przypisujemy zalogowanego użytkownika
-            reservation.save()
-            return render(request, 'reservation_success.html', {'reservation': reservation})
-    else:
-        form = ReservationForm()
+    room = Room.objects.get(pk=pk)
+    
+    if request.method == "POST":
+        # Wykonaj logikę płatności
+        payment_successful = process_payment(request)  # Zastąp tym, co masz do obsługi płatności
 
-    return render(request, 'make_reservation.html', {'room': room, 'form': form})
+        if payment_successful:
+            # Tworzymy rezerwację
+            reservation = Reservation.objects.create(
+                user=request.user,
+                room=room,
+                check_in_date=request.POST['check_in_date'],
+                check_out_date=request.POST['check_out_date']
+            )
+            # Przekierowanie do widoku potwierdzenia płatności
+            return redirect('payment_confirmation', reservation_id=reservation.id)
+        else:
+            # Jeżeli płatność nie powiodła się
+            messages.error(request, "Płatność nie powiodła się. Spróbuj ponownie.")
+            return redirect('make_reservation', pk=pk)
+
+    return render(request, 'room_detail.html', {'room': room})
 
 # Konfiguracja PayPal SDK
 paypalrestsdk.configure({
@@ -370,6 +397,7 @@ paypalrestsdk.configure({
     "client_secret": "EOM8iMY97EtwuwGJkE2ZRm7nC1915fFkG-UTU7piQNnFG4bCEm52lT_GVmKe24jy4-x0fcweACMTE-1a"
 })
 
+@login_required(login_url='sign_in')
 def process_payment(request, room_id):
     room = get_object_or_404(Room, id=room_id)
     if request.method == "POST":
@@ -379,7 +407,7 @@ def process_payment(request, room_id):
                 "payment_method": "paypal"
             },
             "redirect_urls": {
-                "return_url": request.build_absolute_uri(reverse('payment_success')),
+                "return_url": request.build_absolute_uri(reverse('payment_success', args=[room_id])),
                 "cancel_url": request.build_absolute_uri(reverse('payment_cancel'))
             },
             "transactions": [{
@@ -399,12 +427,12 @@ def process_payment(request, room_id):
                 "description": f"Rezerwacja pokoju: {room.name}"
             }]
         })
-        import logging
+
         logger = logging.getLogger(__name__)
 
         if not payment.create():
             logger.error(f"Payment creation failed: {payment.error}")
-        return render(request, "payment_error.html", {"error": payment.error})
+            return render(request, "payment_error.html", {"error": payment.error})
 
         if payment.create():
             for link in payment.links:
@@ -416,11 +444,35 @@ def process_payment(request, room_id):
     return redirect('room_list')
 
 
-def payment_success(request):
-    reservation_data = request.session.get('reservation_data')
-    if reservation_data:
-        Reservation.objects.create(**reservation_data)
-    return render(request, "payment_success.html")
+@login_required(login_url='sign_in')
+def payment_success(request, room_id):
+    room = get_object_or_404(Room, id=room_id)
 
+    # Tworzenie rezerwacji w bazie danych
+    reservation = Reservation.objects.create(
+        user=request.user,
+        room=room,
+        check_in_date=request.session.get('check_in_date'),  # Można użyć sesji do przechowywania dat
+        check_out_date=request.session.get('check_out_date'),  # Podobnie z datą wyjazdu
+        total_amount=room.price  # Całkowita kwota płatności
+    )
+
+    # Zapisanie płatności w bazie danych
+    reservation.payment_status = 'Completed'
+    reservation.save()
+
+    # Przekierowanie na stronę potwierdzenia
+    return render(request, 'payment_confirmation.html', {'reservation': reservation})
+
+@login_required(login_url='sign_in')
 def payment_cancel(request):
-    return render(request, "payment_cancel.html")
+    return render(request, 'payment_cancel.html', {'error': "Płatność została anulowana."})
+@login_required
+def payment_confirmation_view(request, reservation_id):
+    reservation = get_object_or_404(Reservation, id=reservation_id, user=request.user)
+    total_amount = (reservation.check_out_date - reservation.check_in_date).days * reservation.room.price
+    
+    return render(request, 'payment_confirmation.html', {
+        'reservation': reservation,
+        'total_amount': total_amount,
+    })

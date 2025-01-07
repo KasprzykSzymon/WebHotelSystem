@@ -6,3 +6,10 @@ register = template.Library()
 def replace(value, args):
     old, new = args.split(',')
     return value.replace(old, new)
+
+@register.filter
+def mul(value, arg):
+    try:
+        return value * arg
+    except (ValueError, TypeError):
+        return value
