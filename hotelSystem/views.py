@@ -274,13 +274,6 @@ from datetime import datetime
 from datetime import datetime
 from django.shortcuts import render, get_object_or_404
 
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
-from django.utils.dateparse import parse_date
-from .models import Room, Reservation
-from datetime import datetime
-
-@login_required(login_url='sign_in')
 def room_detail(request, pk):
     arrival_date = request.GET.get('arrival_date')
     departure_date = request.GET.get('departure_date')
@@ -377,76 +370,57 @@ paypalrestsdk.configure({
     "client_secret": "EOM8iMY97EtwuwGJkE2ZRm7nC1915fFkG-UTU7piQNnFG4bCEm52lT_GVmKe24jy4-x0fcweACMTE-1a"
 })
 
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
-from paypalrestsdk import Payment
-from .models import Room, Reservation
-from django.urls import reverse
-from django.contrib.auth.models import User
-
-@login_required(login_url='sign_in')
 def process_payment(request, room_id):
     room = get_object_or_404(Room, id=room_id)
     if request.method == "POST":
-        amount = request.POST.get('amount')
         payment = Payment({
             "intent": "sale",
             "payer": {
                 "payment_method": "paypal"
             },
             "redirect_urls": {
-                "return_url": request.build_absolute_uri(reverse('payment_success', kwargs={'room_id': room.id})),
+                "return_url": request.build_absolute_uri(reverse('payment_success')),
                 "cancel_url": request.build_absolute_uri(reverse('payment_cancel'))
             },
             "transactions": [{
                 "item_list": {
                     "items": [{
-                        "name": room.room_type,  # Zaktualizowane pole
+                        "name": room.name,
                         "sku": str(room.id),
-                        "price": amount,
-                        "currency": "PLN",
+                        "price": f"{room.price:.2f}",  # Ensure the price is correctly formatted
+                        "currency": "PLN",  # Ensure PLN is used as the currency
                         "quantity": 1
                     }]
                 },
                 "amount": {
-                    "total": amount,
-                    "currency": "PLN"
+                    "total": f"{room.price:.2f}",  # Ensure the total amount is formatted correctly
+                    "currency": "PLN"  # Ensure PLN is used as the currency
                 },
-                "description": f"Rezerwacja pokoju: {room.room_type}"  # Zaktualizowane pole
+                "description": f"Rezerwacja pokoju: {room.name}"
             }]
         })
+        import logging
+        logger = logging.getLogger(__name__)
+
+        if not payment.create():
+            logger.error(f"Payment creation failed: {payment.error}")
+        return render(request, "payment_error.html", {"error": payment.error})
 
         if payment.create():
             for link in payment.links:
                 if link.rel == "approval_url":
                     approval_url = str(link.href)
-                    request.session['reservation_data'] = {
-                        'room': room.id,
-                        'user': request.user.id,
-                        'arrival_date': request.GET.get('arrival_date'),
-                        'departure_date': request.GET.get('departure_date')
-                    }
                     return redirect(approval_url)
         else:
-            return render(request, "payment_cancel.html", {"error": payment.cancel})
+            return render(request, "payment_error.html", {"error": payment.error})
     return redirect('room_list')
 
-@login_required(login_url='sign_in')
-def payment_success(request, room_id):
+
+def payment_success(request):
     reservation_data = request.session.get('reservation_data')
     if reservation_data:
-        room = get_object_or_404(Room, id=reservation_data['room'])
-        user = get_object_or_404(User, id=reservation_data['user'])
-        arrival_date = reservation_data['arrival_date']
-        departure_date = reservation_data['departure_date']
-        Reservation.objects.create(room=room, user=user, arrival_date=arrival_date, departure_date=departure_date)
-    return render(request, "payment_success.html", {
-        'room': room,
-        'user': user,
-        'arrival_date': arrival_date,
-        'departure_date': departure_date
-    })
+        Reservation.objects.create(**reservation_data)
+    return render(request, "payment_success.html")
 
-@login_required(login_url='signin')
 def payment_cancel(request):
     return render(request, "payment_cancel.html")
