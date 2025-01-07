@@ -18,6 +18,7 @@ def home_page_view(request):
     departure_date = request.GET.get('departure_date')
     adults = request.GET.get('adults', 1)
     children = request.GET.get('children', 0)
+
     today = datetime.today().date()
     error_message = None
 
@@ -58,7 +59,12 @@ def home_page_view(request):
         'adults': adults,
         'children': children
     }
+
     return render(request, 'home_page.html', context)
+
+
+
+
 
 def last_minute_view(request):
     offers = generate_last_minute_offer(days_to_last_minute=5, max_discount=20)
@@ -76,6 +82,7 @@ def news_view(request):
         'range_10x': range(1, 11),
     }
     return render(request, 'news.html', context)
+
 
 def contact_view(request):
     return render(request, 'contact.html')
@@ -98,8 +105,12 @@ def sign_in_view(request):
             return redirect('home_page')  # Przekierowanie na stronę główną
         else:
             messages.error(request, 'Błędny login lub hasło.')  # Komunikat o błędzie logowania
+
     # Wyświetlenie formularza logowania
     return render(request, 'sign_in.html')
+
+from django.db.models import Q
+
 
 def search_room_view(request):
     rooms = Room.objects.all()
@@ -143,10 +154,12 @@ def search_room_view(request):
             rooms = rooms.filter(price_per_night__gte=float(min_price))
         if max_price and max_price.isdigit():
             rooms = rooms.filter(price_per_night__lte=float(max_price))
+
         if sort_order == 'desc':
             rooms = rooms.order_by('-price_per_night')
         elif sort_order == 'asc':
             rooms = rooms.order_by('price_per_night')
+
         if not rooms.exists():
             error_message = "Nie znaleziono pokoi spełniających podane kryteria."
 
@@ -162,11 +175,14 @@ def search_room_view(request):
         'sort_order': sort_order,
         'error_message': error_message
     }
+
     return render(request, 'search_room.html', context)
+
+
 
 def register_view(request):
     if request.method == 'POST':
-        username = request.POST.get('username')
+
         firstname = request.POST.get('firstname')
         lastname = request.POST.get('lastname')
         birthdate = request.POST.get('birthdate')
@@ -198,8 +214,25 @@ def register_view(request):
 
 @login_required
 def profile_view(request):
-    reservations = Reservation.objects.filter(user=request.user)  # Pamiętaj o user
-    return render(request, 'profile.html', {'reservations': reservations})
+    reservations = Reservation.objects.filter(user=request.user).select_related('room')
+
+    reservation_details = [
+        {
+            'id': reservation.id,
+            'owner': f"{reservation.user.first_name} {reservation.user.last_name}",
+            'room_name': reservation.room.name,
+            'check_in_date': reservation.check_in_date,
+            'check_out_date': reservation.check_out_date,
+            'total_amount': (reservation.check_out_date - reservation.check_in_date).days * reservation.room.price
+        }
+        for reservation in reservations
+    ]
+
+    return render(request, 'profile.html', {
+        'user': request.user,
+        'reservations': reservation_details
+    })
+
 
 def logout_view(request):
     request.session.flush()
@@ -222,6 +255,13 @@ def edit_profile_view(request):
 def room_list(request):
     rooms = Room.objects.filter(is_available=True)
     return render(request, 'room_list.html', {'rooms': rooms})
+
+from datetime import datetime
+
+from datetime import datetime
+
+from datetime import datetime
+from django.shortcuts import render, get_object_or_404
 
 @login_required(login_url='sign_in')
 def room_detail(request, pk):
@@ -294,6 +334,9 @@ def room_detail(request, pk):
     }
     return render(request, 'room_detail.html', context)
 
+
+
+@login_required
 def make_reservation(request, pk):
     room = get_object_or_404(Room, pk=pk)
     if request.method == 'POST':
@@ -307,6 +350,28 @@ def make_reservation(request, pk):
     else:
         form = ReservationForm()
     return render(request, 'make_reservation.html', {'room': room, 'form': form})
+    room = Room.objects.get(pk=pk)
+
+    if request.method == "POST":
+        # Wykonaj logikę płatności
+        payment_successful = process_payment(request)  # Zastąp tym, co masz do obsługi płatności
+
+        if payment_successful:
+            # Tworzymy rezerwację
+            reservation = Reservation.objects.create(
+                user=request.user,
+                room=room,
+                check_in_date=request.POST['check_in_date'],
+                check_out_date=request.POST['check_out_date']
+            )
+            # Przekierowanie do widoku potwierdzenia płatności
+            return redirect('payment_confirmation', reservation_id=reservation.id)
+        else:
+            # Jeżeli płatność nie powiodła się
+            messages.error(request, "Płatność nie powiodła się. Spróbuj ponownie.")
+            return redirect('make_reservation', pk=pk)
+
+    return render(request, 'room_detail.html', {'room': room})
 
 # Konfiguracja PayPal SDK
 paypalrestsdk.configure({
@@ -319,65 +384,77 @@ paypalrestsdk.configure({
 def process_payment(request, room_id):
     room = get_object_or_404(Room, id=room_id)
     if request.method == "POST":
-        amount = request.POST.get('amount')
         payment = Payment({
             "intent": "sale",
             "payer": {
                 "payment_method": "paypal"
             },
             "redirect_urls": {
-                "return_url": request.build_absolute_uri(reverse('payment_success', kwargs={'room_id': room.id})),
+                "return_url": request.build_absolute_uri(reverse('payment_success', args=[room_id])),
                 "cancel_url": request.build_absolute_uri(reverse('payment_cancel'))
             },
             "transactions": [{
                 "item_list": {
                     "items": [{
-                        "name": room.room_type,  # Zaktualizowane pole
+                        "name": room.name,
                         "sku": str(room.id),
-                        "price": amount,
-                        "currency": "PLN",
+                        "price": f"{room.price:.2f}",  # Ensure the price is correctly formatted
+                        "currency": "PLN",  # Ensure PLN is used as the currency
                         "quantity": 1
                     }]
                 },
                 "amount": {
-                    "total": amount,
-                    "currency": "PLN"
+                    "total": f"{room.price:.2f}",  # Ensure the total amount is formatted correctly
+                    "currency": "PLN"  # Ensure PLN is used as the currency
                 },
-                "description": f"Rezerwacja pokoju: {room.room_type}"  # Zaktualizowane pole
+                "description": f"Rezerwacja pokoju: {room.name}"
             }]
         })
+
+        logger = logging.getLogger(__name__)
+
+        if not payment.create():
+            logger.error(f"Payment creation failed: {payment.error}")
+            return render(request, "payment_error.html", {"error": payment.error})
 
         if payment.create():
             for link in payment.links:
                 if link.rel == "approval_url":
                     approval_url = str(link.href)
-                    request.session['reservation_data'] = {
-                        'room': room.id,
-                        'user': request.user.id,
-                        'arrival_date': request.GET.get('arrival_date'),
-                        'departure_date': request.GET.get('departure_date')
-                    }
                     return redirect(approval_url)
         else:
-            return render(request, "payment_cancel.html", {"error": payment.cancel})
+            return render(request, "payment_error.html", {"error": payment.error})
     return redirect('room_list')
 
 @login_required(login_url='sign_in')
 def payment_success(request, room_id):
-    reservation_data = request.session.get('reservation_data')
-    if reservation_data:
-        room = get_object_or_404(Room, id=reservation_data['room'])
-        user = get_object_or_404(User, id=reservation_data['user'])
-        arrival_date = reservation_data['arrival_date']
-        departure_date = reservation_data['departure_date']
-        Reservation.objects.create(room=room, user=user, arrival_date=arrival_date, departure_date=departure_date)
-    return render(request, "payment_success.html", {
-        'room': room,
-        'user': user,
-        'arrival_date': arrival_date,
-        'departure_date': departure_date
-    })
+    room = get_object_or_404(Room, id=room_id)
 
-@login_required(login_url='signin')
+    # Tworzenie rezerwacji w bazie danych
+    reservation = Reservation.objects.create(
+        user=request.user,
+        room=room,
+        check_in_date=request.session.get('check_in_date'),  # Można użyć sesji do przechowywania dat
+        check_out_date=request.session.get('check_out_date'),  # Podobnie z datą wyjazdu
+        total_amount=room.price  # Całkowita kwota płatności
+    )
+
+    # Zapisanie płatności w bazie danych
+    reservation.payment_status = 'Completed'
+    reservation.save()
+
+    # Przekierowanie na stronę potwierdzenia
+    return render(request, 'payment_confirmation.html', {'reservation': reservation})
+
+@login_required(login_url='sign_in')
 def payment_cancel(request):
-    return render(request, "payment_cancel.html")
+    return render(request, 'payment_cancel.html', {'error': "Płatność została anulowana."})
+@login_required
+def payment_confirmation_view(request, reservation_id):
+    reservation = get_object_or_404(Reservation, id=reservation_id, user=request.user)
+    total_amount = (reservation.check_out_date - reservation.check_in_date).days * reservation.room.price
+
+    return render(request, 'payment_confirmation.html', {
+        'reservation': reservation,
+        'total_amount': total_amount,
+    })

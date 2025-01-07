@@ -41,9 +41,14 @@
 
             <p><strong>Całkowita cena za pobyt: </strong>{{ room.price_per_night|floatformat:2 }} zł za noc × {{ number_of_nights }} nocy = {{ total_price|floatformat:2 }} zł</p>
 
-            <form action="{% url 'process_payment' room.id %}" method="post">
-                {% csrf_token %}
+            <form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post">
+                <input type="hidden" name="cmd" value="_xclick">
+                <input type="hidden" name="business" value="hotel@scyzoryk.pl">
+                <input type="hidden" name="item_name" value="{{ room.name }}">
                 <input type="hidden" name="amount" value="{{ total_price|floatformat:2|stringformat:"f" }}">
+                <input type="hidden" name="currency_code" value="PLN">
+                <input type="hidden" name="return" value="{{ request.build_absolute_uri }}">
+                <input type="hidden" name="cancel_return" value="{{ request.build_absolute_uri }}">
                 <button type="submit">Zarezerwuj i zapłać przez PayPal</button>
             </form>
         </div>

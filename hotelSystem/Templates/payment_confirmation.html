@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block header %}
+    {% load static %}
+    <title>Potwierdzenie Płatności</title>
+    <link rel="stylesheet" href="{% static 'css/styles_confirmation.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="confirmation-container">
+        <h1>Potwierdzenie Płatności</h1>
+
+        <div class="reservation-details">
+            <p><strong>Rezerwacja ID:</strong> {{ reservation.id }}</p>
+            <p><strong>Pokój:</strong> {{ reservation.room.name }}</p>
+            <p><strong>Data zameldowania:</strong> {{ reservation.check_in_date }}</p>
+            <p><strong>Data wymeldowania:</strong> {{ reservation.check_out_date }}</p>
+            <p><strong>Łączna kwota:</strong> {{ total_amount }} zł</p>
+        </div>
+
+        <p>Dziękujemy za dokonanie płatności. Szczegóły rezerwacji zostały przesłane na Twój adres e-mail.</p>
+        <a href="{% url 'profile' %}" class="btn-return-profile">Wróć do profilu</a>
+    </div>
+{% endblock %}
