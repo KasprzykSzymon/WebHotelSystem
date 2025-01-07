@@ -48,8 +48,8 @@ class Room(models.Model):
     double_bed_count = models.IntegerField(default=0)
 
     def discounted_price(self):
-        """Oblicza cenę po zniżce."""
-        return self.price_per_night * (1 - self.last_minute_discount / 100)
+        """Oblicza cenę po zniżce, zaokrągloną do dwóch miejsc po przecinku."""
+        return round(self.price_per_night * (1 - self.last_minute_discount / 100), 2)
 
     def save(self, *args, **kwargs):
         """Ustawia pojemność na podstawie typu pokoju."""
@@ -107,7 +107,8 @@ class Reservation(models.Model):
 
     def save(self, *args, **kwargs):
         nights = (self.check_out_date - self.check_in_date).days
-        self.total_price = nights * self.room.discounted_price()  # Ensure this method is defined in the Room model
+        if nights > 0:
+            self.total_price = round(nights * self.room.discounted_price(), 2)  # Zaokrąglenie ceny do 2 miejsc po przecinku
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -116,6 +117,8 @@ class Reservation(models.Model):
     class Meta:
         verbose_name = "Rezerwacja"
         verbose_name_plural = "Rezerwacje"
+
+# Widok room_detail w pliku views.py
 
 def room_detail(request, pk):
     room = get_object_or_404(Room.objects.prefetch_related('images'), pk=pk)
@@ -138,7 +141,7 @@ def room_detail(request, pk):
                 number_of_nights = (departure_date_obj - arrival_date_obj).days
 
                 # Oblicz całkowitą cenę za pobyt
-                total_price = room.price_per_night * number_of_nights
+                total_price = round(room.price_per_night * number_of_nights, 2)  # Zaokrąglenie do 2 miejsc po przecinku
         except ValueError:
             error_message = "Podano nieprawidłowy format daty."
 
@@ -154,27 +157,3 @@ def room_detail(request, pk):
     }
 
     return render(request, 'room_detail.html', context)
-
-def make_reservation(request, pk):
-    room = get_object_or_404(Room, pk=pk)
-    if request.method == 'POST':
-        form = ReservationForm(request.POST)
-        if form.is_valid():
-            # Create or update guest
-            guest = form.cleaned_data['guest']
-            # Create reservation
-            reservation = form.save(commit=False)
-            reservation.room = room
-            reservation.user = request.user  # Przypisz aktualnie zalogowanego użytkownika
-            reservation.save()
-
-            messages.success(request, "Rezerwacja została pomyślnie dokonana.")
-            return redirect('payment', pk=reservation.id)
-    else:
-        form = ReservationForm()
-
-    return render(request, 'make_reservation.html', {'room': room, 'form': form})
-
-def room_list(request):
-    rooms = Room.objects.prefetch_related('images')
-    return render(request, 'room_list.html', {'rooms': rooms})

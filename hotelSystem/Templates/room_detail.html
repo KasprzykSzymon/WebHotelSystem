@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
-
+{% load static %}  <!-- Załaduj tagi static na początku pliku -->
 {% block header %}
-    {% load static %}
     <link rel="stylesheet" href="{% static 'css/styles_room_detail.css' %}">
     <title>Szczegóły pokoju</title>
 {% endblock %}
@@ -42,7 +41,11 @@
 
             <p><strong>Całkowita cena za pobyt: </strong>{{ room.price_per_night|floatformat:2 }} zł za noc × {{ number_of_nights }} nocy = {{ total_price|floatformat:2 }} zł</p>
 
-            <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=YOUR_PAYPAL_EMAIL&item_name={{ room.name }}&amount={{ total_price }}&currency_code=PLN&return={{ request.build_absolute_uri }}?arrival_date={{ arrival_date }}&departure_date={{ departure_date }}&adults={{ adults }}&children={{ children }}&room_type={{ room_type }}&min_price={{ min_price }}&max_price={{ max_price }}&sort_order={{ sort_order }}" class="lokalizacja-button">Zarezerwuj i zapłać przez PayPal</a>
+            <form action="{% url 'process_payment' room.id %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="amount" value="{{ total_price|floatformat:2|stringformat:"f" }}">
+                <button type="submit">Zarezerwuj i zapłać przez PayPal</button>
+            </form>
         </div>
     </div>
 </div>

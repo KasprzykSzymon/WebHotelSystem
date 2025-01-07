@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load static%}
+{% block header %}
+    <title>Płatność anulowana</title>
+    <link rel="stylesheet" href="{% static 'css/styles_payment.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="kontener">
+    <h1>Płatność anulowana</h1>
+    <p>Twoja płatność została anulowana. Jeśli potrzebujesz pomocy, skontaktuj się z nami.</p>
+    <a href="{% url 'home_page' %}" class="btn">Powrót na stronę główną</a>
+</div>
+{% endblock %}

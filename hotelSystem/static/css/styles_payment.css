@@ -1,0 +1,44 @@
+.kontener {
+    padding: 40px;
+    background-color: #fbf8f4;
+    text-align: center;  /* Wyśrodkowanie tekstu */
+}
+
+.kontener h1 {
+    font-family: "Playfair Display", serif;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.kontener p {
+    font-family: "Red Hat Display", sans-serif;
+    margin: 10px 0;
+    color: #000;
+}
+
+.kontener ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.kontener ul li {
+    font-family: "Red Hat Display", sans-serif;
+    margin: 5px 0;
+    color: #000;
+}
+
+.kontener .btn {
+    display: inline-block;
+    padding: 10px 20px;
+    font-family: "Red Hat Display", sans-serif;
+    font-size: 16px;
+    color: #fff;
+    background-color: #007bff;
+    border-radius: 5px;
+    text-decoration: none;
+    margin-top: 20px;
+}
+
+.kontener .btn:hover {
+    background-color: #0056b3;
+}
