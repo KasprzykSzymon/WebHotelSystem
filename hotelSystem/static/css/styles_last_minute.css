@@ -1,0 +1,51 @@
+.last-minute-container {
+    padding: 20px;
+    text-align: center;
+}
+
+.offer-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+.offer-card {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    width: 300px;
+    text-align: left;
+}
+
+.room-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.room-details {
+    padding: 15px;
+}
+
+.room-details h2 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
+
+.room-details p {
+    margin: 5px 0;
+    font-size: 1em;
+    color: #333;
+}
+
+.room-details p strong {
+    color: #555;
+}
+
+.offer-card p:last-child {
+    font-weight: bold;
+    color: #27ae60; /* Zielony kolor dla ceny po zniżce */
+}
