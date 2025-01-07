@@ -10,7 +10,6 @@ from django.contrib.auth.decorators import login_required
 from .models import Room, Reservation, Payment
 from django.urls import reverse
 from django.contrib.auth.models import User
-
 import requests
 import json
 import hmac
@@ -385,7 +384,7 @@ def order_confirmation(request):
     payment.last_update = datetime.now()
     payment.save()
     if check['status'] != "CONFIRMED":
-        return render(request, "payment_cancel.html")
+        return render(request,"payment_cancel.html")
     context = {
         "reservation": reservation, "total_amount": reservation.total_price
     }

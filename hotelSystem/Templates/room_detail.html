@@ -46,8 +46,8 @@
                 <input type="hidden" name="room_id" value="{{ room.id }}">
                 <input type="hidden" name="arrival_date" value="{{ arrival_date }}">
                 <input type="hidden" name="departure_date" value="{{ departure_date }}">
-                <input type="hidden" name="item_name" value="{{ room.type }}">
-                <input type="hidden" name="total_price" value="{{ total_price|floatformat:2 }}">
+                <input type="hidden" name="item_name" value="{{ room.name }}">
+                <input type="hidden" name="total_price" value="{{total_price}}">
                 <button type="submit">Zarezerwuj i zapłać przez PayNow</button>
             </form>
             

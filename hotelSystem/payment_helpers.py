@@ -35,18 +35,3 @@ def check_payment(payment_id):
                            {'Api-key': key, 'Accept': '*/*', 'Content-Type': 'application/json'}).prepare()
     r = s.send(req)
     return (json.loads(r.text))
-
-# print(new_payment({
-#         "amount": 45671,
-#         "description": "Some description",
-#         "externalId": "234567898654",
-#         "buyer": {
-#             "email": "aaa@bbb.pl",
-#             "phone": {
-#                 "prefix": "+48",
-#                 "number": 123456789
-#             }
-#         }
-#     }, "test-mateusz-1001"))
-
-# print(check_payment("NOEE-F4V-2BB-S5C"))
