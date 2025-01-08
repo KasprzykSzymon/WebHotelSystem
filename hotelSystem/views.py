@@ -64,15 +64,6 @@ def home_page_view(request):
     return render(request, 'home_page.html', context)
 
 def last_minute_view(request):
-    offers = generate_last_minute_offer(days_to_last_minute=7, max_discount=30)
-
-    context = {
-        'offers': offers,
-        'range_10': range(0, 11),
-        'range_10x': range(1, 11),
-    }
-    days_to_last_minute = 5
-    max_discount = 20
     days_to_last_minute = 4
     max_discount = 30
     offers = generate_last_minute_offer(days_to_last_minute=days_to_last_minute, max_discount=max_discount)
