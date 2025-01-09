@@ -47,12 +47,15 @@ h1 {
     padding: 10px;
     font-weight: bold;
     cursor: pointer;
+    font-weight: bold;
+    cursor: pointer;
 }
 
 .naglowek img {
     width: 100px;
     height: auto;
 }
+
 
 /* Stylowanie przycisku logowania/wylogowania */
 .prawoNaglowek a p {
@@ -75,6 +78,7 @@ footer.stopka {
     bottom: 0;
     width: 100%;
 }
+
 
 .stopka {
     background-color: #faf4ed;

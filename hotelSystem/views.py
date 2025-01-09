@@ -1,4 +1,3 @@
-from .last_minute import generate_last_minute_offer
 from django.contrib.auth import logout, authenticate, login
 from .forms import UserProfileForm
 from hotelSystem.logic.last_minute import generate_last_minute_offer
@@ -10,15 +9,6 @@ from django.contrib.auth.decorators import login_required
 from .models import Room, Reservation, Payment
 from django.urls import reverse
 from django.contrib.auth.models import User
-import requests
-import json
-import hmac
-import hashlib
-import base64
-from dotenv import load_dotenv
-import os
-from .payment_helpers import new_payment, check_payment
-
 
 def home_page_view(request):
     arrival_date = request.GET.get('arrival_date')

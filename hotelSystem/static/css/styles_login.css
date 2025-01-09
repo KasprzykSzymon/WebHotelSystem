@@ -4,7 +4,8 @@
     margin: 60px auto;
     font-family: 'Nunito Sans', sans-serif;
     padding: 40px 20px;
-    background-color: #fff;  
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7)), url('/static/images/login_background.jpg') no-repeat center center;
+    background-size: cover;
     border-radius: 10px;
     max-width: 700px;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
@@ -66,8 +67,9 @@
 }
 
 .btn-login {
-    font-family: "Red Hat Display", sans-serif; 
-    font-weight: 500; 
+    padding: 15px 30px;
+    background-color: #D2B48C;
+    color: white;
     font-size: 1.2em;
     display: inline-block;
     margin-top: 40px;
@@ -80,9 +82,9 @@
 }
 
 .btn-login:hover {
-    background-color: transparent; /* Wypełnienie puste */
-    color: #74573a; 
-    border-color: #74573a; /* kolor ramki */
+    background-color: #ebd8bf;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(210, 180, 140, 0.4);
 }
 
 /* Link do rejestracji */
