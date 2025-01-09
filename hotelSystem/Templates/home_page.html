@@ -2,94 +2,65 @@
 
 {% block header %}
     {% load static %}
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'css/styles_home_page.css' %}">
+
+    <!-- Ładowanie czcionek z Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Protest+Revolution&display=swap" rel="stylesheet">
-    <title>Strona hotelu</title>
+    <link href="https://fonts.googleapis.com/css2?family=Parisienne&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Parisienne&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+
+    <title>Hotel Scyzoryk</title>
 {% endblock %}
 
 {% block content %}
-{% if user.is_authenticated %}
-    <h1>Witaj {{ user.first_name }} </h1>
-{% else %}
-    <h1>Witaj w hotelu Scyzoryk! </h1>
-{% endif %}
-<p>U nas zaśniesz spokojnie</p>
-
-{% if messages %}
-    <div class="error-message" style="color: red; font-weight: bold;">
-        {% for message in messages %}
-            <p>{{ message }}</p>
-        {% endfor %}
-    </div>
-{% endif %}
-
-<form action="{% url 'home_page' %}" method="get" class="formularz">
-    <div class="formularze-container">
-        <div class="formularz1">
-            <span>Wybierz swoją datę przyjazdu</span><br>
-            <input type="date" name="arrival_date" value="{{ arrival_date }}" required>
-        </div>
-        <div class="formularz2">
-            <span>Wybierz swoją datę odjazdu</span><br>
-            <input type="date" name="departure_date" value="{{ departure_date }}" required>
-        </div>
-        <div class="select1-dorosli">
-            <span>Liczba dorosłych:</span><br>
-            <select name="adults" required>
-                {% for i in range_10x %}
-                <option value="{{ i }}" {% if i == adults %}selected{% endif %}>{{ i }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="select1-dzieci">
-            <span>Liczba dzieci:</span><br>
-            <select name="children" required>
-                {% for i in range_10 %}
-                <option value="{{ i }}" {% if i == children %}selected{% endif %}>{{ i }}</option>
-                {% endfor %}
-            </select>
-        </div><br>
-        <div class="guzik-container">
-            <button type="submit" class="guzik">Szukaj pokoju</button>
-
+    <div class="header" style="background-image: url('{% static 'images/TloStronaGlowna.jpg' %}'); background-size: cover; background-position: center; height: 100vh; display: flex; justify-content: center; align-items: center; text-align: center;">
+        <div class="header-text">
+            <h1>Hotel Scyzoryk</h1>
+            <p>w koronach drzew</p>
         </div>
     </div>
-</form>
 
-{% if error_message %}
-    <div class="error-message" style="color: red; font-weight: bold;">
-        <p>{{ error_message }}</p>
+    <!-- Formularz rezerwacji -->
+    <div class="reservation-form-container">
+        <h2>Rezerwacja pokoju</h2>
+        <form action="/submit-form/" method="POST">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="adults">Liczba dorosłych</label>
+                <select id="adults" name="adults">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="children">Liczba dzieci</label>
+                <select id="children" name="children">
+                    <option value="0">0</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="arrival-date">Data przyjazdu:</label>
+                <input type="date" id="arrival-date" name="arrival_date" required>
+            </div>
+
+            <div class="form-group">
+                <label for="departure-date">Data wyjazdu:</label>
+                <input type="date" id="departure-date" name="departure_date" required>
+            </div>
+
+            <button type="submit">ZAREZERWUJ</button>
+        </form>
     </div>
-{% endif %}
-
-
-<div class="kontener-zdjec">
-    <div>
-        <img id="zdj1" src="{% static 'images/Gory.jpg' %}" alt="GorySw">
-        <div class="pod-zdjeciem">
-            <p>Wspaniałe widoki Gór Świętokrzyskich w hotelu Scyzoryk.</p>
-        </div>
-    </div>
-    <div>
-        <img id="zdj2" src="{% static 'images/Kielce.jpg' %}" alt="Kielce">
-        <div class="pod-zdjeciem">
-            <p>Odwiedź nasze miasto Kielce i ciesz się jego atrakcjami.</p>
-        </div>
-    </div>
-    <div>
-        <img id="zdj3" src="{% static 'images/Hotel.jpg' %}" alt="Hotel">
-        <div class="pod-zdjeciem">
-            <p>Oferujemy spotkania biznesowe dla firm!</p>
-        </div>
-    </div>
-</div>
-
-<div class="hotel-info">
-    <img id="hotelZdjecie" src="{% static 'images/zdjHotelu.png' %}" alt="Hotel Scyzoryk">
-    <p class="hotelOpis">Hotel Scyzoryk to miejsce, które łączy tradycję z nowoczesnością. Położony w malowniczej okolicy Świętokrzyskich Gór, oferuje komfortowy wypoczynek w otoczeniu natury. Każdy pokój zapewnia gościom wygodę, a bogata oferta spa oraz restauracja z lokalnymi specjałami dopełniają wrażenia.</p>
-</div>
-
 {% endblock %}

@@ -12,6 +12,7 @@
         <h1>Profil Użytkownika</h1>
 
         <div class="user-info">
+            <p><strong>Nick:</strong> {{ user.username }}</p>
             <p><strong>Imię:</strong> {{ user.first_name }}</p>
             <p><strong>Nazwisko:</strong> {{ user.last_name }}</p>
             <p><strong>Email:</strong> <a href="mailto:{{ user.email }}">{{ user.email }}</a></p>
