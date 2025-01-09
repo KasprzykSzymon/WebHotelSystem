@@ -86,7 +86,6 @@ class Guest(models.Model):
     last_name = models.CharField(max_length=50)
     email = models.EmailField(unique=True)
     phone_number = models.CharField(max_length=15)
-
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 
@@ -94,22 +93,37 @@ class Guest(models.Model):
         verbose_name = "Klient"
         verbose_name_plural = "Klienci"
 
+class Payment(models.Model):
+    creation_date = models.DateTimeField(auto_now_add=True)
+    status = models.TextField(null=True)
+    amount = models.IntegerField()
+    paynow_id = models.TextField(null=True)
+    redirect_url = models.TextField(null=True)
+    request = models.TextField(null=True)
+    last_response = models.TextField(null=True)
+    last_update = models.DateTimeField(auto_now_add=True)
+
 class Reservation(models.Model):
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
-    guest = models.ForeignKey(Guest, on_delete=models.CASCADE)
+    guest = models.TextField(null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)  # Allow user to be null
     check_in_date = models.DateField()
     check_out_date = models.DateField()
     total_price = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
+    payment = models.ForeignKey(Payment, on_delete=models.DO_NOTHING, null=True, blank=True)
 
     def is_in_last_minute_period(self, threshold_date):
         return threshold_date >= self.check_in_date >= date.today()
 
     def save(self, *args, **kwargs):
-        nights = (self.check_out_date - self.check_in_date).days
-        if nights > 0:
-            self.total_price = round(nights * self.room.discounted_price(), 2)  # Zaokrąglenie ceny do 2 miejsc po przecinku
+        if self.check_in_date and self.check_out_date:
+            nights = (self.check_out_date - self.check_in_date).days
+            if nights > 0:
+                self.total_price = round(nights * self.room.discounted_price(), 2)
+        else:
+            raise ValueError("Brak daty przyjazdu lub odjazdu.")
         super().save(*args, **kwargs)
+
 
     def __str__(self):
         return f"Reservation for {self.guest} in Room {self.room.number}"
@@ -118,42 +132,3 @@ class Reservation(models.Model):
         verbose_name = "Rezerwacja"
         verbose_name_plural = "Rezerwacje"
 
-# Widok room_detail w pliku views.py
-
-def room_detail(request, pk):
-    room = get_object_or_404(Room.objects.prefetch_related('images'), pk=pk)
-    arrival_date = request.GET.get('arrival_date')
-    departure_date = request.GET.get('departure_date')
-    error_message = None
-    total_price = None
-    number_of_nights = 0
-
-    # Jeśli daty przyjazdu i odjazdu są dostępne, obliczamy liczbę nocy i cenę
-    if arrival_date and departure_date:
-        try:
-            arrival_date_obj = datetime.strptime(arrival_date, '%Y-%m-%d').date()
-            departure_date_obj = datetime.strptime(departure_date, '%Y-%m-%d').date()
-
-            if departure_date_obj <= arrival_date_obj:
-                error_message = "Data odjazdu nie może być wcześniejsza niż data przyjazdu."
-            else:
-                # Oblicz liczbę nocy
-                number_of_nights = (departure_date_obj - arrival_date_obj).days
-
-                # Oblicz całkowitą cenę za pobyt
-                total_price = round(room.price_per_night * number_of_nights, 2)  # Zaokrąglenie do 2 miejsc po przecinku
-        except ValueError:
-            error_message = "Podano nieprawidłowy format daty."
-
-    context = {
-        'room': room,
-        'arrival_date': arrival_date,
-        'departure_date': departure_date,
-        'error_message': error_message,
-        'number_of_nights': number_of_nights,
-        'total_price': total_price,
-        'single_beds': range(room.single_bed_count),
-        'double_beds': range(room.double_bed_count),
-    }
-
-    return render(request, 'room_detail.html', context)

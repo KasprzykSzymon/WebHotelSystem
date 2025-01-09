@@ -1,19 +1,14 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth import logout
-from .forms import UserProfileForm  
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout, authenticate, login
+from .forms import UserProfileForm
 from hotelSystem.logic.last_minute import generate_last_minute_offer
-import paypalrestsdk
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from paypalrestsdk import Payment
-from .models import Room, Reservation
+from .models import Room, Reservation, Payment
 from django.urls import reverse
 from django.contrib.auth.models import User
-
 
 def home_page_view(request):
     arrival_date = request.GET.get('arrival_date')
@@ -64,9 +59,13 @@ def home_page_view(request):
     return render(request, 'home_page.html', context)
 
 def last_minute_view(request):
-    days_to_last_minute = 4
-    max_discount = 30
-    offers = generate_last_minute_offer(days_to_last_minute=days_to_last_minute, max_discount=max_discount)
+    offers = generate_last_minute_offer(days_to_last_minute=5, max_discount=20)
+    context = {
+        'offers': offers,
+        'range_10': range(0, 11),
+        'range_10x': range(1, 11),
+
+    }
     return render(request, 'last_minute.html', {'offers': offers})
 
 def news_view(request):
@@ -250,22 +249,14 @@ from datetime import datetime
 from datetime import datetime
 from django.shortcuts import render, get_object_or_404
 
-@login_required(login_url='sign_in')
+#@login_required(login_url='sign_in')
 def room_detail(request, pk):
     arrival_date = request.GET.get('arrival_date')
     departure_date = request.GET.get('departure_date')
-    adults = request.GET.get('adults')
-    children = request.GET.get('children')
-    room_type = request.GET.get('room_type')
-    min_price = request.GET.get('min_price')
-    max_price = request.GET.get('max_price')
-    sort_order = request.GET.get('sort_order')
-
     room = get_object_or_404(Room, pk=pk)
     error_message = None
     total_price = None
     number_of_nights = 0
-    total_beds = []
 
     # Calculate price and number of nights if dates are provided
     if arrival_date and departure_date:
@@ -319,119 +310,58 @@ def room_detail(request, pk):
         'single_beds': single_bed_icons,
         'double_beds': double_bed_icons,
     }
+    print(room, arrival_date, departure_date, request.user)
     return render(request, 'room_detail.html', context)
 
-
-
-@login_required
-def make_reservation(request, pk):
-    room = get_object_or_404(Room, pk=pk)
-    if request.method == 'POST':
-        form = ReservationForm(request.POST)
-        if form.is_valid():
-            reservation = form.save(commit=False)
-            reservation.room = room
-            reservation.user = request.user  # przypisujemy zalogowanego użytkownika
-            reservation.save()
-            return render(request, 'reservation_success.html', {'reservation': reservation})
-    else:
-        form = ReservationForm()
-    return render(request, 'make_reservation.html', {'room': room, 'form': form})
-    room = Room.objects.get(pk=pk)
-
-    if request.method == "POST":
-        # Wykonaj logikę płatności
-        payment_successful = process_payment(request)  # Zastąp tym, co masz do obsługi płatności
-
-        if payment_successful:
-            # Tworzymy rezerwację
-            reservation = Reservation.objects.create(
-                user=request.user,
-                room=room,
-                check_in_date=request.POST['check_in_date'],
-                check_out_date=request.POST['check_out_date']
-            )
-            # Przekierowanie do widoku potwierdzenia płatności
-            return redirect('payment_confirmation', reservation_id=reservation.id)
-        else:
-            # Jeżeli płatność nie powiodła się
-            messages.error(request, "Płatność nie powiodła się. Spróbuj ponownie.")
-            return redirect('make_reservation', pk=pk)
-
-    return render(request, 'room_detail.html', {'room': room})
-
-# Konfiguracja PayPal SDK
-paypalrestsdk.configure({
-    "mode": "sandbox",
-    "client_id": "AY_xt2ZKCsnMSyBB3X_q_ffXxC1MmYQw8LWmktNBgacosS57spW2rRHp4q-hhs0QYX2HEu7iX-cIoYUl",
-    "client_secret": "EOM8iMY97EtwuwGJkE2ZRm7nC1915fFkG-UTU7piQNnFG4bCEm52lT_GVmKe24jy4-x0fcweACMTE-1a"
-})
-
 @login_required(login_url='sign_in')
-def process_payment(request, room_id):
-    room = get_object_or_404(Room, id=room_id)
-    if request.method == "POST":
-        payment = Payment({
-            "intent": "sale",
-            "payer": {
-                "payment_method": "paypal"
-            },
-            "redirect_urls": {
-                "return_url": request.build_absolute_uri(reverse('payment_success', args=[room_id])),
-                "cancel_url": request.build_absolute_uri(reverse('payment_cancel'))
-            },
-            "transactions": [{
-                "item_list": {
-                    "items": [{
-                        "name": room.name,
-                        "sku": str(room.id),
-                        "price": f"{room.price:.2f}",  # Ensure the price is correctly formatted
-                        "currency": "PLN",  # Ensure PLN is used as the currency
-                        "quantity": 1
-                    }]
-                },
-                "amount": {
-                    "total": f"{room.price:.2f}",  # Ensure the total amount is formatted correctly
-                    "currency": "PLN"  # Ensure PLN is used as the currency
-                },
-                "description": f"Rezerwacja pokoju: {room.name}"
-            }]
-        })
-
-        logger = logging.getLogger(__name__)
-
-        if not payment.create():
-            logger.error(f"Payment creation failed: {payment.error}")
-            return render(request, "payment_error.html", {"error": payment.error})
-
-        if payment.create():
-            for link in payment.links:
-                if link.rel == "approval_url":
-                    approval_url = str(link.href)
-                    return redirect(approval_url)
-        else:
-            return render(request, "payment_error.html", {"error": payment.error})
-    return redirect('room_list')
-
-@login_required(login_url='sign_in')
-def payment_success(request, room_id):
-    room = get_object_or_404(Room, id=room_id)
-
-    # Tworzenie rezerwacji w bazie danych
-    reservation = Reservation.objects.create(
-        user=request.user,
-        room=room,
-        check_in_date=request.session.get('check_in_date'),  # Można użyć sesji do przechowywania dat
-        check_out_date=request.session.get('check_out_date'),  # Podobnie z datą wyjazdu
-        total_amount=room.price  # Całkowita kwota płatności
-    )
-
-    # Zapisanie płatności w bazie danych
-    reservation.payment_status = 'Completed'
+def place_order(request):
+    print(request.POST)
+    room_id = int(request.POST['room_id'])
+    arrival_date_obj = datetime.strptime(request.POST['arrival_date'], '%Y-%m-%d').date()
+    departure_date_obj = datetime.strptime(request.POST['departure_date'], '%Y-%m-%d').date()
+    room_id = int(request.POST['room_id'])
+    desc = request.POST['item_name']
+    room = Room.objects.get(id=room_id)
+    time = (departure_date_obj - arrival_date_obj).days
+    print(time)
+    cost = time * room.price_per_night
+    cost = int(cost*100)
+    payment = Payment()
+    payment.amount=cost
+    payment.save()
+    reservation = Reservation()
+    reservation.room=room
+    print("USER", request.user)
+    reservation.user = request.user
+    reservation.check_in_date = arrival_date_obj
+    reservation.check_out_date = departure_date_obj
+    reservation.total_price = cost
+    reservation.payment = payment
     reservation.save()
 
-    # Przekierowanie na stronę potwierdzenia
-    return render(request, 'payment_confirmation.html', {'reservation': reservation})
+    
+    paynow = new_payment({
+        "amount": cost,
+        "description": desc,
+        "externalId": str(payment.id),
+        "buyer": {
+            "email": request.user.email,
+            "phone": {
+                "prefix": "+48",
+                "number": "112112112"
+            }
+        },
+        "continueUrl": f"http://127.0.0.1:8000/payment_confirmation?reservation={str(reservation.id)}"
+    }, str(payment.id))
+    payment.last_response = json.dumps(paynow)
+    payment.status = paynow['status']
+    payment.paynow_id = paynow['paymentId']
+    payment.redirect_url = paynow['redirectUrl']
+    payment.last_update = datetime.now()
+    payment.save()
+    print(paynow)
+    return HttpResponseRedirect(paynow['redirectUrl'])
+
 
 @login_required(login_url='sign_in')
 def payment_cancel(request):
@@ -445,3 +375,20 @@ def payment_confirmation_view(request, reservation_id):
         'reservation': reservation,
         'total_amount': total_amount,
     })
+
+@login_required(login_url='sign_in')
+def order_confirmation(request):
+    print(request.GET['reservation'])
+    reservation_id = int(request.GET['reservation'])
+    reservation = Reservation.objects.get(id=reservation_id)
+    payment = reservation.payment
+    check = check_payment(payment.paynow_id)
+    payment.status = check['status']
+    payment.last_update = datetime.now()
+    payment.save()
+    if check['status'] != "CONFIRMED":
+        return render(request,"payment_cancel.html")
+    context = {
+        "reservation": reservation, "total_amount": reservation.total_price
+    }
+    return render(request, 'payment_confirmation.html', context)
