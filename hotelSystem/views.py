@@ -374,6 +374,19 @@ def place_order(request):
 
 
 @login_required(login_url='sign_in')
+def payment_cancel(request):
+    return render(request, 'payment_cancel.html', {'error': "Płatność została anulowana."})
+@login_required
+def payment_confirmation_view(request, reservation_id):
+    reservation = get_object_or_404(Reservation, id=reservation_id, user=request.user)
+    total_amount = (reservation.check_out_date - reservation.check_in_date).days * reservation.room.price
+
+    return render(request, 'payment_confirmation.html', {
+        'reservation': reservation,
+        'total_amount': total_amount,
+    })
+
+@login_required(login_url='sign_in')
 def order_confirmation(request):
     print(request.GET['reservation'])
     reservation_id = int(request.GET['reservation'])

@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load static %}  <!-- Załaduj tagi static na początku pliku -->
+{% load static %}
 {% block header %}
     <link rel="stylesheet" href="{% static 'css/styles_room_detail.css' %}">
     <title>Szczegóły pokoju</title>
@@ -41,14 +41,16 @@
 
             <p><strong>Całkowita cena za pobyt: </strong>{{ room.price_per_night|floatformat:2 }} zł za noc × {{ number_of_nights }} nocy = {{ total_price|floatformat:2 }} zł</p>
 
-            <form action="{% url 'place_order' %}" method="post">
+            <!-- Nowy formularz PayPal -->
+            <form action="{% url 'place_order' %}" method="post" target="_top">
                 {% csrf_token %}
+                <input type="hidden" %name="item_name" value="Usługa noclegowa - Pokój {{ room.number }}">  <!-- Nazwa pokoju -->
                 <input type="hidden" name="room_id" value="{{ room.id }}">
                 <input type="hidden" name="arrival_date" value="{{ arrival_date }}">
                 <input type="hidden" name="departure_date" value="{{ departure_date }}">
-                <input type="hidden" name="item_name" value="{{ room.name }}">
-                <input type="hidden" name="total_price" value="{{total_price}}">
-                <button type="submit">Zarezerwuj i zapłać przez PayNow</button>
+                <input type="hidden" name="count_of_nights" value="{{ time }}">
+                <input type="hidden" name="cost" value="{{ cost }}">
+                <input type="submit" value="Zamawiam z obowiązkiem zapłaty">
             </form>
             
         </div>
