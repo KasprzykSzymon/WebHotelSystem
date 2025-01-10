@@ -132,3 +132,15 @@ class Reservation(models.Model):
         verbose_name = "Rezerwacja"
         verbose_name_plural = "Rezerwacje"
 
+class Event(models.Model):
+    name = models.CharField(max_length=200)
+    start_date = models.DateField()
+    end_date = models.DateField()
+    description = models.TextField()
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = "Wydarzenie"
+        verbose_name_plural = "Wydarzenia"
