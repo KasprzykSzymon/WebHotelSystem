@@ -1,15 +1,14 @@
 {% extends 'base.html' %}
-{% load custom_filters %}
 
 {% block header %}
     {% load static %}
-    <title>Profil Użytkownika</title>
+    <title>Profil użytkownika</title>
     <link rel="stylesheet" href="{% static 'css/styles_profile.css' %}">
 {% endblock %}
 
 {% block content %}
     <div class="profile-container">
-        <h1>Profil Użytkownika</h1>
+        <h1>Profil użytkownika</h1>
 
         <div class="user-info">
             <p><strong>Nick:</strong> {{ user.username }}</p>
@@ -18,26 +17,26 @@
             <p><strong>Email:</strong> <a href="mailto:{{ user.email }}">{{ user.email }}</a></p>
             <p><strong>Numer telefonu:</strong> {{ user.phone_number }}</p>
 
-    <a href="{% url 'edit_profile' %}" class="btn-edit-profile">Zmień dane</a>
-</div>
+            <a href="{% url 'edit_profile' %}" class="btn-edit-profile">Zmień dane</a>
+        </div>
 
         <div class="reservations">
             <h2>Twoje rezerwacje</h2>
             {% if reservations %}
-                <ul>
+                <div class="reservation-list">
                     {% for reservation in reservations %}
-                        <li>
-                            <strong>Pokój:</strong> {{ reservation.room.id }} <br>
-                            <strong>ID Rezerwacji:</strong> {{ reservation.id }} <br>
-                            <strong>Właściciel:</strong> {{ reservation.user.get_full_name }} <br>
-                            <strong>Data przyjazdu:</strong> {{ reservation.check_in_date }} <br>
-                            <strong>Data odjazdu:</strong> {{ reservation.check_out_date }} <br>
-                            <strong>Cena za noc:</strong> {{ reservation.room.price }} zł <br>
-                            <strong>Łączna kwota:</strong> {{ reservation.total_price|floatformat:2 }} zł
-
-                        </li>
+                        <div class="reservation-item">
+                            <p><strong>Rezerwacja ID:</strong> {{ reservation.id }}</p>
+                            <p><strong>Pokój:</strong> {{ reservation.room_number }}</p>
+                            <p><strong>Data zameldowania:</strong> {{ reservation.check_in_date }}</p>
+                            <p><strong>Data wymeldowania:</strong> {{ reservation.check_out_date }}</p>
+                            <!-- Wyświetlamy total_amount -->
+                            <p><strong>Łączna kwota:</strong> {{ reservation.total_amount|floatformat:2 }} zł</p>
+                            <p><strong>Status płatności:</strong> {{ reservation.status }}</p>
+                            <p><strong>Email rezerwacji:</strong> {{ reservation.email }}</p>
+                        </div>
                     {% endfor %}
-                </ul>
+                </div>
             {% else %}
                 <p>Brak rezerwacji.</p>
             {% endif %}

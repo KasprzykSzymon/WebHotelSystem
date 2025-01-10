@@ -205,25 +205,27 @@ def register_view(request):
 
 @login_required
 def profile_view(request):
-    reservations = Reservation.objects.filter(user=request.user).select_related('room')
+    reservations = Reservation.objects.filter(user=request.user).select_related('room', 'payment')
 
     reservation_details = [
         {
             'id': reservation.id,
-            'owner': f"{reservation.user.first_name} {reservation.user.last_name}",
-            'room_name': reservation.room.id,
+            'room_number': reservation.room.number,
             'check_in_date': reservation.check_in_date,
             'check_out_date': reservation.check_out_date,
-            'total_amount': (reservation.check_out_date - reservation.check_in_date).days * reservation.room.price_per_night
+            # Obliczamy total_amount
+            'total_amount': (reservation.check_out_date - reservation.check_in_date).days * reservation.room.price_per_night,
+            'paynow_id': reservation.payment.paynow_id if reservation.payment else "Brak płatności",
+            'status': reservation.payment.status if reservation.payment else "Brak statusu",
+            'email': reservation.user.email,
         }
         for reservation in reservations
     ]
 
     return render(request, 'profile.html', {
         'user': request.user,
-        'reservations': reservation_details
+        'reservations': reservation_details,
     })
-
 
 def logout_view(request):
     request.session.flush()
@@ -368,19 +370,30 @@ def place_order(request):
     return HttpResponseRedirect(paynow['redirectUrl'])
 
 
-@login_required(login_url='sign_in')
 def order_confirmation(request):
     print(request.GET['reservation'])
     reservation_id = int(request.GET['reservation'])
     reservation = Reservation.objects.get(id=reservation_id)
+
+      # Obliczanie liczby nocy
+    number_of_nights = (reservation.check_out_date - reservation.check_in_date).days
+
+    # Obliczanie całkowitej kwoty
+    total_amount = reservation.room.price_per_night * number_of_nights
+
+    # Inne obliczenia związane z płatnością
     payment = reservation.payment
     check = check_payment(payment.paynow_id)
     payment.status = check['status']
     payment.last_update = datetime.now()
     payment.save()
+
     if check['status'] != "CONFIRMED":
-        return render(request,"payment_cancel.html")
+        return render(request, "payment_cancel.html")
+
     context = {
-        "reservation": reservation, "total_amount": reservation.total_price
+        "reservation": reservation,
+        "total_amount": total_amount  # Przekazujemy całkowitą kwotę do szablonu
     }
+
     return render(request, 'payment_confirmation.html', context)

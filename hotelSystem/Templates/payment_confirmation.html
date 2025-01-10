@@ -15,7 +15,7 @@
             <p><strong>Pokój:</strong> {{ reservation.room.number }}</p>
             <p><strong>Data zameldowania:</strong> {{ reservation.check_in_date }}</p>
             <p><strong>Data wymeldowania:</strong> {{ reservation.check_out_date }}</p>
-            <p><strong>Łączna kwota:</strong> {{ total_amount }} zł</p>
+            <p><strong>Łączna kwota:</strong> {{ total_amount|floatformat:2 }} zł</p>
         </div>
 
         <p>Dziękujemy za dokonanie płatności. Szczegóły rezerwacji zostały przesłane na Twój adres e-mail.</p>
