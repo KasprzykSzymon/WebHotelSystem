@@ -1,3 +1,36 @@
+/* Stylowanie napisu "Wyszukaj wydarzenia" */
+.wyszukaj-wydarzenia {
+    font-family: "Red Hat Display", sans-serif;
+    font-weight: 600;
+    font-size: 1.6em; /* Zwiększenie czcionki */
+    color: #000000; /* Kolor tekstu */
+    margin-bottom: 70px; /* Odstęp poniżej napisu */
+    margin-top: 20px; /* Podniesienie napisu */
+    text-align: center; /* Wyśrodkowanie */
+}
+
+/* Stylowanie rozwijanych list */
+select {
+    font-family: "Red Hat Display", sans-serif; /* Czcionka Red Hat Display */
+    font-weight: 500;
+    font-size: 1.2em;
+    padding: 25px 60px; 
+    background-color: transparent; 
+    color: #D2B48C; 
+    border: 2px solid #D2B48C; 
+    border-radius: 0; 
+    width: 250px; 
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+/* Stylowanie rozwijanej listy po kliknięciu (focus) */
+select:focus {
+    outline: none;
+    border-color: #74573a; 
+    color: #74573a; 
+}
+
 /* Styl dla sekcji wydarzeń */
 .wydarzenia-container {
     display: flex;
@@ -13,7 +46,7 @@
     font-family: "Playfair Display", serif;
     margin: 0 0 10px 0; 
     font-weight: 100;
-    font-size: 4em;
+    font-size: 5em;
     color: #333;
 }
 
@@ -31,11 +64,12 @@
     margin-bottom: 200px; 
 }
 
-/* Kalendarz i przycisk  */
+/* Kalendarz i przycisk */
 .kalendarz-container {
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start; /* Wyrównanie do góry, aby etykiety były na swoim miejscu */
+    gap: 20px; /* Odstęp między kalendarzami */
     margin-top: 20px;
 }
 
@@ -43,7 +77,16 @@
     font-family: "Red Hat Display", sans-serif; 
     font-weight: 500; 
     font-size: 1.2em;
-    margin-right: 20px; /* Odstęp między kalendarzem a przyciskiem */
+    display: flex;
+    flex-direction: column; /* Ustawienie elementów w kolumnie */
+    align-items: center; /* Wyśrodkowanie tekstu */
+}
+
+.kalendarz label {
+    margin-bottom: 10px; /* Odstęp między etykietą a kalendarzem */
+    font-size: 1.1em;
+    color: #333;
+    font-family: "Red Hat Display", sans-serif;
 }
 
 .kalendarz input[type="date"] {
@@ -69,6 +112,7 @@
 .button-container {
     display: flex;
     justify-content: center;
+    align-items: center;
 }
 
 .btn-rezerwuj {
@@ -89,4 +133,46 @@
     background-color: transparent;
     color: #74573a;
     border-color: #74573a; 
+}
+
+/* Stylowanie wyników wyszukiwania */
+.events-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 30px;
+}
+
+.events-container h2 {
+    font-family: "Playfair Display", serif;
+    color: #333;
+    font-size: 2.5em;
+    margin-bottom: 20px;
+}
+
+.events-container ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.events-container li {
+    background-color: #f5f5f5;
+    margin: 10px 0;
+    padding: 20px;
+    width: 80%;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.events-container li h3 {
+    font-family: "Playfair Display", serif;
+    font-size: 1.8em;
+    color: #74573a;
+    margin-bottom: 10px;
+}
+
+.events-container li p {
+    font-family: "Red Hat Display", sans-serif;
+    color: #333;
+    font-size: 1.2em;
 }

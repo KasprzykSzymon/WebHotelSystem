@@ -1,15 +1,16 @@
 from .last_minute import generate_last_minute_offer
 from django.contrib.auth import logout, authenticate, login
-from .forms import UserProfileForm
+from .forms import UserProfileForm, EventSearchForm
 from hotelSystem.logic.last_minute import generate_last_minute_offer
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .models import Room, Reservation, Payment
+from .models import Room, Reservation, Payment, Event
 from django.urls import reverse
 from django.contrib.auth.models import User
+from datetime import datetime
 import requests
 import json
 import hmac
@@ -226,19 +227,42 @@ def profile_view(request):
         for reservation in reservations
     ]
 
-    # Pobieramy reservation_id z URL (jeśli istnieje)
+    # Pobieramy wydarzenia (Event) z bazy danych
+    events = Event.objects.all()
+
+    event_details = [
+        {
+            'id': event.id,
+            'name': event.name,
+            'start_date': event.start_date,
+            'end_date': event.end_date,
+            'description': event.description,
+        }
+        for event in events
+    ]
+
+    # Pobieramy reservation_id i event_id z URL (jeśli istnieją)
     reservation_id = request.GET.get('reservation_id')
+    event_id = request.GET.get('event_id')  # Poprawiony sposób dostępu do parametru
+
     reservation_detail = None
+    event_detail = None
 
     # Jeżeli mamy reservation_id, pobieramy szczegóły tej rezerwacji
     if reservation_id:
         reservation_detail = next((r for r in reservation_details if r['id'] == int(reservation_id)), None)
+
+    # Jeżeli mamy event_id, pobieramy szczegóły tego wydarzenia
+    if event_id:
+        event_detail = next((e for e in event_details if e['id'] == int(event_id)), None)
 
     # Renderujemy szablon
     return render(request, 'profile.html', {
         'user': request.user,
         'reservations': reservation_details,
         'reservation_detail': reservation_detail,  # Przekazujemy szczegóły wybranej rezerwacji
+        'event': event_detail,  # Szczegóły wybranego wydarzenia
+        'event_details': event_details,  # Lista wszystkich wydarzeń
     })
 
 
@@ -412,3 +436,35 @@ def order_confirmation(request):
     }
 
     return render(request, 'payment_confirmation.html', context)
+
+def news_view(request):
+    events = None
+    success_message = None
+    
+    if request.method == "POST":
+        start_date = request.POST.get('start_date')
+        end_date = request.POST.get('end_date')
+
+        if start_date and end_date:
+            # Zamiana dat na obiekt typu datetime
+            start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
+            end_date = datetime.strptime(end_date, "%Y-%m-%d").date()
+
+            # Filtrowanie wydarzeń na podstawie nakładających się dat
+            events = Event.objects.filter(
+                start_date__lte=end_date,  # Jeśli początek wydarzenia jest przed końcem zakresu
+                end_date__gte=start_date   # Jeśli koniec wydarzenia jest po rozpoczęciu zakresu
+            )
+
+            # Sprawdzanie czy są wyniki
+            if not events:
+                success_message = "Brak wydarzeń w tym zakresie dat."
+
+    return render(request, 'news.html', {'events': events, 'success_message': success_message})
+
+def rezerwacja_view(request, event_id):
+    # Pobieramy konkretne wydarzenie na podstawie event_id
+    event = get_object_or_404(Event, id=event_id)
+    
+    # Przekazujemy wydarzenie do szablonu
+    return render(request, 'rezerwacja.html', {'event': event})

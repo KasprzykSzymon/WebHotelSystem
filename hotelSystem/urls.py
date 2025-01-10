@@ -19,3 +19,4 @@ urlpatterns = [
     path('place_order/', views.place_order, name='place_order'),
     path('payment_confirmation/', views.order_confirmation, name='order_confirmation')
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
