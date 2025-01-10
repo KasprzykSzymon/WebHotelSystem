@@ -205,15 +205,16 @@ def register_view(request):
 
 @login_required
 def profile_view(request):
+    # Pobieramy rezerwacje użytkownika
     reservations = Reservation.objects.filter(user=request.user).select_related('room', 'payment')
 
+    # Przygotowanie danych rezerwacji
     reservation_details = [
         {
             'id': reservation.id,
             'room_number': reservation.room.number,
             'check_in_date': reservation.check_in_date,
             'check_out_date': reservation.check_out_date,
-            # Obliczamy total_amount
             'total_amount': (reservation.check_out_date - reservation.check_in_date).days * reservation.room.price_per_night,
             'paynow_id': reservation.payment.paynow_id if reservation.payment else "Brak płatności",
             'status': reservation.payment.status if reservation.payment else "Brak statusu",
@@ -222,10 +223,21 @@ def profile_view(request):
         for reservation in reservations
     ]
 
+    # Pobieramy reservation_id z URL (jeśli istnieje)
+    reservation_id = request.GET.get('reservation_id')
+    reservation_detail = None
+
+    # Jeżeli mamy reservation_id, pobieramy szczegóły tej rezerwacji
+    if reservation_id:
+        reservation_detail = next((r for r in reservation_details if r['id'] == int(reservation_id)), None)
+
+    # Renderujemy szablon
     return render(request, 'profile.html', {
         'user': request.user,
         'reservations': reservation_details,
+        'reservation_detail': reservation_detail,  # Przekazujemy szczegóły wybranej rezerwacji
     })
+
 
 def logout_view(request):
     request.session.flush()

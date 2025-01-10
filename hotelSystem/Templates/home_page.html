@@ -3,14 +3,11 @@
 {% block header %}
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/styles_home_page.css' %}">
-
-    <!-- Ładowanie czcionek z Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Parisienne&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Parisienne&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
-
     <title>Hotel Scyzoryk</title>
 {% endblock %}
 
@@ -31,7 +28,6 @@
             <div class="form-group">
                 <label for="adults">Liczba dorosłych</label>
                 <div class="select1-dorosli">
-                    <span>Liczba dorosłych:</span><br>
                     <select id="adults" name="adults" required>
                         {% for i in range_10x %}
                         <option value="{{ i }}" {% if i == adults %}selected{% endif %}>{{ i }}</option>
@@ -43,7 +39,6 @@
             <div class="form-group">
                 <label for="children">Liczba dzieci</label>
                 <div class="select1-dzieci">
-                    <span>Liczba dzieci:</span><br>
                     <select id="children" name="children" required>
                         {% for i in range_10 %}
                         <option value="{{ i }}" {% if i == children %}selected{% endif %}>{{ i }}</option>
@@ -54,15 +49,33 @@
 
             <div class="form-group">
                 <label for="arrival-date">Data przyjazdu:</label>
-                <input type="date" id="arrival-date" name="arrival_date" required>
+                <input type="date" id="arrival-date" name="arrival_date" value="{{ arrival_date }}" required>
+                {% if arrival_date_errors %}
+                <div class="error-message" style="color: red; font-weight: bold;">
+                    <p>{{ arrival_date_errors }}</p>
+                </div>
+                {% endif %}
             </div>
 
             <div class="form-group">
                 <label for="departure-date">Data wyjazdu:</label>
-                <input type="date" id="departure-date" name="departure_date" required>
+                <input type="date" id="departure-date" name="departure_date" value="{{ departure_date }}" required>
+                {% if departure_date_errors %}
+                <div class="error-message" style="color: red; font-weight: bold;">
+                    <p>{{ departure_date_errors }}</p>
+                </div>
+                {% endif %}
             </div>
 
             <button type="submit">ZAREZERWUJ</button>
         </form>
     </div>
+
+    {% if messages %}
+        <div class="error-message" style="color: red; font-weight: bold;">
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
 {% endblock %}
