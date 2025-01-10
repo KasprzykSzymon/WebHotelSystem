@@ -135,26 +135,29 @@ def search_room_view(request):
             elif departure_date_obj <= arrival_date_obj:
                 error_message = "Data odjazdu nie może być wcześniejsza niż data przyjazdu."
                 rooms = Room.objects.none()
+            else:
+                # Filtrowanie pokoi według dostępności
+                rooms = [room for room in rooms if room.is_available(arrival_date_obj, departure_date_obj)]
         except ValueError:
             error_message = "Podano nieprawidłowy format daty."
             rooms = Room.objects.none()
 
     if not error_message:
         if total_guests > 0:
-            rooms = rooms.filter(capacity__gte=total_guests)
+            rooms = [room for room in rooms if room.capacity >= total_guests]
         if room_type and room_type != 'None':
-            rooms = rooms.filter(room_type=room_type)
+            rooms = [room for room in rooms if room.room_type == room_type]
         if min_price and min_price.isdigit():
-            rooms = rooms.filter(price_per_night__gte=float(min_price))
+            rooms = [room for room in rooms if room.price_per_night >= float(min_price)]
         if max_price and max_price.isdigit():
-            rooms = rooms.filter(price_per_night__lte=float(max_price))
+            rooms = [room for room in rooms if room.price_per_night <= float(max_price)]
 
         if sort_order == 'desc':
-            rooms = rooms.order_by('-price_per_night')
+            rooms.sort(key=lambda r: r.price_per_night, reverse=True)
         elif sort_order == 'asc':
-            rooms = rooms.order_by('price_per_night')
+            rooms.sort(key=lambda r: r.price_per_night)
 
-        if not rooms.exists():
+        if not rooms:
             error_message = "Nie znaleziono pokoi spełniających podane kryteria."
 
     context = {

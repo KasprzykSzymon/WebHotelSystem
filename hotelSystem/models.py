@@ -47,6 +47,17 @@ class Room(models.Model):
     single_bed_count = models.IntegerField(default=0)
     double_bed_count = models.IntegerField(default=0)
 
+    def is_available(self, arrival_date, departure_date):
+        """
+        Sprawdza, czy pokój jest dostępny w danym zakresie dat.
+        """
+        overlapping_reservations = Reservation.objects.filter(
+            room=self,
+            check_in_date__lt=departure_date,  # Rezerwacje zaczynające się przed datą wyjazdu
+            check_out_date__gt=arrival_date    # Rezerwacje kończące się po dacie przyjazdu
+        )
+        return not overlapping_reservations.exists()
+
     def discounted_price(self):
         """Oblicza cenę po zniżce, zaokrągloną do dwóch miejsc po przecinku."""
         return self.price_per_night * (1 - self.last_minute_discount / 100)
@@ -73,7 +84,6 @@ class Room(models.Model):
     class Meta:
         verbose_name = "Pokój"
         verbose_name_plural = "Pokoje"
-
 class RoomImage(models.Model):
     room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='images')
     image = models.ImageField(upload_to='room_images/')

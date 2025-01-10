@@ -14,11 +14,13 @@ def generate_last_minute_offer(days_to_last_minute, max_discount):
     reserved_rooms = Reservation.objects.filter(check_in_date__gte=today).values_list('room_id', 'check_in_date')
     room_to_reservation = {room_id: check_in_date for room_id, check_in_date in reserved_rooms}
 
-    # Pobieranie wszystkich dostępnych pokoi
-    available_rooms = Room.objects.filter(is_available=True)
+    # Pobieranie wszystkich pokoi
+    all_rooms = Room.objects.all()
 
     offers = []
-    for room in available_rooms:
+    for room in all_rooms:
+
+
         # Sprawdź, czy pokój ma najbliższą rezerwację
         nearest_reservation_date = room_to_reservation.get(room.id)
 
