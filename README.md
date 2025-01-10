@@ -22,7 +22,8 @@ pip install django-auth
 pip install paypal
 pip install django-paypal
 pip install paypalrestsdk
-
+pip install django-dotenv
+pip install load-dotenv
 
 
 
