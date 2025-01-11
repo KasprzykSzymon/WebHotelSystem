@@ -1,6 +1,6 @@
 from .last_minute import generate_last_minute_offer
 from django.contrib.auth import logout, authenticate, login
-from .forms import UserProfileForm, EventSearchForm
+from .forms import UserProfileForm
 from hotelSystem.logic.last_minute import generate_last_minute_offer
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth import authenticate, login
@@ -10,15 +10,10 @@ from django.contrib.auth.decorators import login_required
 from .models import Room, Reservation, Payment, Event
 from django.urls import reverse
 from django.contrib.auth.models import User
-from datetime import datetime
-import requests
 import json
-import hmac
-import hashlib
-import base64
-from dotenv import load_dotenv
-import os
 from .payment_helpers import new_payment, check_payment
+from datetime import datetime
+from django.shortcuts import render, get_object_or_404
 
 def home_page_view(request):
     arrival_date = request.GET.get('arrival_date')
@@ -288,12 +283,7 @@ def room_list(request):
     rooms = Room.objects.filter(is_available=True)
     return render(request, 'room_list.html', {'rooms': rooms})
 
-from datetime import datetime
 
-from datetime import datetime
-
-from datetime import datetime
-from django.shortcuts import render, get_object_or_404
 
 #@login_required(login_url='sign_in')
 def room_detail(request, pk):
@@ -440,7 +430,7 @@ def order_confirmation(request):
 def news_view(request):
     events = None
     success_message = None
-    
+
     if request.method == "POST":
         start_date = request.POST.get('start_date')
         end_date = request.POST.get('end_date')
