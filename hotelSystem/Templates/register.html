@@ -17,6 +17,11 @@
     <form method="POST">
         {% csrf_token %}
         <div class="input-container">
+            <label for="username">nazwa uzytkownika</label>
+            <input type="text" id="username" name="username" placeholder="Wpisz swoja nazwe uzytkownika" required>
+        </div>
+        
+        <div class="input-container">
             <label for="firstname">Imię</label>
             <input type="text" id="firstname" name="firstname" placeholder="Wpisz swoje imię" required>
         </div>

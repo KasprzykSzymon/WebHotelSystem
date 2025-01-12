@@ -127,3 +127,61 @@
     border-color: green;
     color: green;
 }
+
+.gsi-material-button {
+  display: inline-flex; /* Dla poprawnego wyrównania ikony i tekstu */
+  align-items: center; /* Wyśrodkowanie pionowe */
+  justify-content: center; /* Wyśrodkowanie poziome */
+  background-color: #202124; /* Czarne tło */
+  border: 1px solid #3c4043; /* Subtelny obrys */
+  border-radius: 4px; /* Zaokrąglone rogi */
+  color: #fff; /* Biały tekst */
+  font-family: 'Roboto', arial, sans-serif; /* Czcionka Roboto */
+  font-size: 14px; /* Rozmiar tekstu */
+  font-weight: 500; /* Pogrubiony tekst */
+  height: 40px; /* Stała wysokość przycisku */
+  padding: 0 16px; /* Marginesy wewnętrzne */
+  width: 250px; /* Szerokość przycisku */
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out; /* Animacje */
+  text-decoration: none;
+  text-align: center;
+}
+
+.gsi-material-button:hover {
+  background-color: #3c4043; /* Jaśniejszy odcień przy hover */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Delikatny cień */
+}
+
+.gsi-material-button .gsi-material-button-icon {
+  flex-shrink: 0; /* Zapobiega skalowaniu ikony */
+  width: 20px; /* Szerokość ikony */
+  height: 20px; /* Wysokość ikony */
+  margin-right: 8px; /* Odstęp między ikoną a tekstem */
+}
+
+.gsi-material-button svg {
+  display: block; /* Zapewnia poprawne renderowanie SVG */
+  width: 20px; /* Stała szerokość SVG */
+  height: 20px; /* Stała wysokość SVG */
+}
+
+.gsi-material-button .gsi-material-button-content-wrapper {
+  display: flex; /* Ustawienie flexboxa dla wrappera */
+  align-items: center; /* Wyśrodkowanie zawartości pionowo */
+  justify-content: center; /* Wyśrodkowanie zawartości poziomo */
+}
+
+.gsi-material-button .gsi-material-button-contents {
+  text-align: center;
+  flex-grow: 1;
+  white-space: nowrap; /* Zapobiega zawijaniu tekstu */
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gsi-material-button:focus {
+  outline: none; /* Usunięcie domyślnego obramowania */
+  border-color: #8ab4f8; /* Niebieska ramka przy focus */
+  box-shadow: 0 0 3px 2px rgba(66, 133, 244, 0.3); /* Efekt focus */
+}
