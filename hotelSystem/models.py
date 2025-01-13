@@ -93,6 +93,7 @@ class RoomImage(models.Model):
         return f"Image for Room {self.room.number}"
 
 class Guest(models.Model):
+    username = models.CharField(max_length=50, null=True)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     email = models.EmailField(unique=True)

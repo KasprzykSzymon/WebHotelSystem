@@ -16,7 +16,7 @@ class SocialAppAdmin(admin.ModelAdmin):
 
 @admin.register(Guest)
 class GuestAdmin(admin.ModelAdmin):
-    list_display = ('first_name', 'last_name', 'email', 'phone_number')
+    list_display = ('username', 'first_name', 'last_name', 'email', 'phone_number')
 
 @admin.register(Reservation)
 class ReservationAdmin(admin.ModelAdmin):

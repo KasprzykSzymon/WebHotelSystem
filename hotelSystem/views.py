@@ -165,7 +165,7 @@ def search_room_view(request):
 
 def register_view(request):
     if request.method == 'POST':
-
+        username = request.POST.get('username')
         firstname = request.POST.get('firstname')
         lastname = request.POST.get('lastname')
         birthdate = request.POST.get('birthdate')
@@ -189,8 +189,8 @@ def register_view(request):
             user = authenticate(request, email=email, password=password)
             if user is not None:
                 login(request, user)
-            messages.success(request, 'Rejestracja zakończona sukcesem. Zostałeś zalogowany.')
-            return redirect('home_page')
+                messages.success(request, 'Rejestracja zakończona sukcesem. Zostałeś zalogowany.')
+                return redirect('home_page')
         except Exception as e:
             messages.error(request, f'Błąd rejestracji: {e}')
     return render(request, 'register.html')
