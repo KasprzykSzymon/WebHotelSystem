@@ -1,4 +1,3 @@
-from .last_minute import generate_last_minute_offer
 from django.contrib.auth import logout, authenticate, login
 from .forms import UserProfileForm
 from hotelSystem.logic.last_minute import generate_last_minute_offer
@@ -12,6 +11,7 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 import json
 from .payment_helpers import new_payment, check_payment
+import uuid
 from datetime import datetime
 from django.shortcuts import render, get_object_or_404
 
@@ -223,41 +223,36 @@ def profile_view(request):
     ]
 
     # Pobieramy wydarzenia (Event) z bazy danych
-    events = Event.objects.all()
+    # events = Event.objects.all()
+    # event_details = [
+    #     {
+    #         'id': event.id,
+    #         'name': event.name,
+    #         'start_date': event.start_date,
+    #         'end_date': event.end_date,
+    #         'description': event.description,
+    #     }
+    #     for event in events
+    # ]
 
-    event_details = [
-        {
-            'id': event.id,
-            'name': event.name,
-            'start_date': event.start_date,
-            'end_date': event.end_date,
-            'description': event.description,
-        }
-        for event in events
-    ]
-
-    # Pobieramy reservation_id i event_id z URL (jeśli istnieją)
+    # Pobieramy reservation_id z URL (jeśli istnieje)
     reservation_id = request.GET.get('reservation_id')
-    event_id = request.GET.get('event_id')  # Poprawiony sposób dostępu do parametru
-
+    # event_id = request.GET.get('event_id')  # Poprawiony sposób dostępu do parametru
     reservation_detail = None
-    event_detail = None
-
+    # event_detail = None
     # Jeżeli mamy reservation_id, pobieramy szczegóły tej rezerwacji
     if reservation_id:
         reservation_detail = next((r for r in reservation_details if r['id'] == int(reservation_id)), None)
-
-    # Jeżeli mamy event_id, pobieramy szczegóły tego wydarzenia
-    if event_id:
-        event_detail = next((e for e in event_details if e['id'] == int(event_id)), None)
-
+        # Jeżeli mamy event_id, pobieramy szczegóły tego wydarzenia
+    # if event_id:
+        # event_detail = next((e for e in event_details if e['id'] == int(event_id)), None)
     # Renderujemy szablon
     return render(request, 'profile.html', {
         'user': request.user,
         'reservations': reservation_details,
         'reservation_detail': reservation_detail,  # Przekazujemy szczegóły wybranej rezerwacji
-        'event': event_detail,  # Szczegóły wybranego wydarzenia
-        'event_details': event_details,  # Lista wszystkich wydarzeń
+        # 'event': event_detail, #szczegoly wydarzenia
+        # 'event_details': event_details,
     })
 
 
@@ -282,7 +277,6 @@ def edit_profile_view(request):
 def room_list(request):
     rooms = Room.objects.filter(is_available=True)
     return render(request, 'room_list.html', {'rooms': rooms})
-
 
 
 #@login_required(login_url='sign_in')
@@ -375,7 +369,7 @@ def place_order(request):
     reservation.payment = payment
     reservation.save()
 
-    
+    myuuid = uuid.uuid4()
     paynow = new_payment({
         "amount": cost,
         "description": desc,
@@ -388,7 +382,7 @@ def place_order(request):
             }
         },
         "continueUrl": f"http://127.0.0.1:8000/payment_confirmation?reservation={str(reservation.id)}"
-    }, str(payment.id))
+    }, str(myuuid))
     payment.last_response = json.dumps(paynow)
     payment.status = paynow['status']
     payment.paynow_id = paynow['paymentId']
@@ -427,6 +421,7 @@ def order_confirmation(request):
 
     return render(request, 'payment_confirmation.html', context)
 
+
 def news_view(request):
     events = None
     success_message = None
@@ -434,27 +429,16 @@ def news_view(request):
     if request.method == "POST":
         start_date = request.POST.get('start_date')
         end_date = request.POST.get('end_date')
-
         if start_date and end_date:
             # Zamiana dat na obiekt typu datetime
             start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
             end_date = datetime.strptime(end_date, "%Y-%m-%d").date()
-
             # Filtrowanie wydarzeń na podstawie nakładających się dat
             events = Event.objects.filter(
                 start_date__lte=end_date,  # Jeśli początek wydarzenia jest przed końcem zakresu
-                end_date__gte=start_date   # Jeśli koniec wydarzenia jest po rozpoczęciu zakresu
+                end_date__gte=start_date  # Jeśli koniec wydarzenia jest po rozpoczęciu zakresu
             )
-
             # Sprawdzanie czy są wyniki
             if not events:
                 success_message = "Brak wydarzeń w tym zakresie dat."
-
     return render(request, 'news.html', {'events': events, 'success_message': success_message})
-
-def rezerwacja_view(request, event_id):
-    # Pobieramy konkretne wydarzenie na podstawie event_id
-    event = get_object_or_404(Event, id=event_id)
-    
-    # Przekazujemy wydarzenie do szablonu
-    return render(request, 'rezerwacja.html', {'event': event})
