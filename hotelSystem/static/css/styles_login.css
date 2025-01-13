@@ -4,7 +4,7 @@
     margin: 60px auto;
     font-family: 'Nunito Sans', sans-serif;
     padding: 40px 20px;
-    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7)), url('/static/images/login_background.jpg') no-repeat center center;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7));
     background-size: cover;
     border-radius: 10px;
     max-width: 700px;
@@ -146,6 +146,7 @@
   transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out; /* Animacje */
   text-decoration: none;
   text-align: center;
+  margin: 10px;
 }
 
 .gsi-material-button:hover {

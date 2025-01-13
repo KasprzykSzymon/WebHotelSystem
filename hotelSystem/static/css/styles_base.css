@@ -25,6 +25,7 @@ h1 {
     position: sticky;
     top: 0;
     z-index: 10;
+    background-color: #faf4ed;
 }
 
 /* Logo po lewej stronie */
@@ -42,13 +43,15 @@ h1 {
     gap: 30px; 
 }
 
-.prawoNaglowek a p {
+.prawoNaglowek a, .prawoNaglowek a:link p {
     margin: 0;
     padding: 10px;
     font-weight: bold;
     cursor: pointer;
     font-weight: bold;
     cursor: pointer;
+    text-decoration: none; 
+    color: black;
 }
 
 .naglowek img {
