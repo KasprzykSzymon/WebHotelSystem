@@ -1,36 +1,3 @@
-/* Stylowanie napisu "Wyszukaj wydarzenia" */
-.wyszukaj-wydarzenia {
-    font-family: "Red Hat Display", sans-serif;
-    font-weight: 600;
-    font-size: 1.6em; /* Zwiększenie czcionki */
-    color: #000000; /* Kolor tekstu */
-    margin-bottom: 70px; /* Odstęp poniżej napisu */
-    margin-top: 20px; /* Podniesienie napisu */
-    text-align: center; /* Wyśrodkowanie */
-}
-
-/* Stylowanie rozwijanych list */
-select {
-    font-family: "Red Hat Display", sans-serif; /* Czcionka Red Hat Display */
-    font-weight: 500;
-    font-size: 1.2em;
-    padding: 25px 60px; 
-    background-color: transparent; 
-    color: #D2B48C; 
-    border: 2px solid #D2B48C; 
-    border-radius: 0; 
-    width: 250px; 
-    text-align: center;
-    transition: all 0.3s ease;
-}
-
-/* Stylowanie rozwijanej listy po kliknięciu (focus) */
-select:focus {
-    outline: none;
-    border-color: #74573a; 
-    color: #74573a; 
-}
-
 /* Styl dla sekcji wydarzeń */
 .wydarzenia-container {
     display: flex;

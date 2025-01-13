@@ -144,13 +144,14 @@ class Reservation(models.Model):
         verbose_name_plural = "Rezerwacje"
 
 class Event(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)  # Allow user to be null
     name = models.CharField(max_length=200)
     start_date = models.DateField()
     end_date = models.DateField()
     description = models.TextField()
+
     def __str__(self):
         return self.name
+
     class Meta:
         verbose_name = "Wydarzenie"
         verbose_name_plural = "Wydarzenia"

@@ -15,7 +15,7 @@ def calculate_hmac(data, key):
 hmac_hash = calculate_hmac(data_to_hash.encode(), key.encode())
 # Example structure from API doc
 
-def new_payment(data, idempotency_key):
+def new_payment(data, myuuid):
     data = json.dumps(data)
     s = requests.Session()
     print(key)
@@ -23,7 +23,7 @@ def new_payment(data, idempotency_key):
     print(data_to_hash)
     req = requests.Request('POST', "https://api.sandbox.paynow.pl/v1/payments",
                            {'Api-key': key, "Signature": calculate_hmac(data.encode(), data_to_hash.encode()),
-                            'Idempotency-Key': idempotency_key, 'Accept': '*/*', 'Content-Type': 'application/json'},
+                            'Idempotency-Key': str(myuuid), 'Accept': '*/*', 'Content-Type': 'application/json'},
                            data=data).prepare()
     r = s.send(req)
     return (json.loads(r.text))

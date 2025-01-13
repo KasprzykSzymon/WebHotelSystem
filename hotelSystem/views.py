@@ -1,3 +1,4 @@
+from .last_minute import generate_last_minute_offer
 from django.contrib.auth import logout, authenticate, login
 from .forms import UserProfileForm
 from hotelSystem.logic.last_minute import generate_last_minute_offer
@@ -221,31 +222,32 @@ def profile_view(request):
         }
         for reservation in reservations
     ]
-
     # Pobieramy wydarzenia (Event) z bazy danych
-    # events = Event.objects.all()
-    # event_details = [
-    #     {
-    #         'id': event.id,
-    #         'name': event.name,
-    #         'start_date': event.start_date,
-    #         'end_date': event.end_date,
-    #         'description': event.description,
-    #     }
-    #     for event in events
-    # ]
+    events = Event.objects.all()
+    event_details = [
+        {
+            'id': event.id,
+            'name': event.name,
+            'start_date': event.start_date,
+            'end_date': event.end_date,
+            'description': event.description,
+        }
+        for event in events
+    ]
+
+
 
     # Pobieramy reservation_id z URL (jeśli istnieje)
     reservation_id = request.GET.get('reservation_id')
-    # event_id = request.GET.get('event_id')  # Poprawiony sposób dostępu do parametru
+    #event_id = request.GET.get('event_id')  # Poprawiony sposób dostępu do parametru
     reservation_detail = None
     # event_detail = None
     # Jeżeli mamy reservation_id, pobieramy szczegóły tej rezerwacji
     if reservation_id:
         reservation_detail = next((r for r in reservation_details if r['id'] == int(reservation_id)), None)
-        # Jeżeli mamy event_id, pobieramy szczegóły tego wydarzenia
+    # # Jeżeli mamy event_id, pobieramy szczegóły tego wydarzenia
     # if event_id:
-        # event_detail = next((e for e in event_details if e['id'] == int(event_id)), None)
+    #     event_detail = next((e for e in event_details if e['id'] == int(event_id)), None)
     # Renderujemy szablon
     return render(request, 'profile.html', {
         'user': request.user,
