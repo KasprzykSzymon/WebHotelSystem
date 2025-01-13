@@ -84,6 +84,7 @@ class Room(models.Model):
     class Meta:
         verbose_name = "Pokój"
         verbose_name_plural = "Pokoje"
+
 class RoomImage(models.Model):
     room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='images')
     image = models.ImageField(upload_to='room_images/')
@@ -143,7 +144,7 @@ class Reservation(models.Model):
         verbose_name_plural = "Rezerwacje"
 
 class Event(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)  # Allow user to be null
     name = models.CharField(max_length=200)
     start_date = models.DateField()
     end_date = models.DateField()
