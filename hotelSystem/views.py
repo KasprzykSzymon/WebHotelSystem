@@ -1,7 +1,6 @@
-from .last_minute import generate_last_minute_offer
+from .logic.last_minute import generate_last_minute_offer
 from django.contrib.auth import logout, authenticate, login
 from .forms import UserProfileForm
-from hotelSystem.logic.last_minute import generate_last_minute_offer
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
@@ -69,13 +68,6 @@ def last_minute_view(request):
     max_discount = 30
     offers = generate_last_minute_offer(days_to_last_minute=days_to_last_minute, max_discount=max_discount)
     return render(request, 'last_minute.html', {'offers': offers})
-
-def news_view(request):
-    context = {
-        'range_10': range(0, 11),
-        'range_10x': range(1, 11),
-    }
-    return render(request, 'news.html', context)
 
 
 def contact_view(request):
