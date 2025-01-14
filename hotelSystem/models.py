@@ -151,6 +151,7 @@ class Event(models.Model):
     start_date = models.DateField()
     end_date = models.DateField()
     description = models.TextField()
+    users = models.ManyToManyField(User, related_name='reserved_events', blank=True)
 
     def __str__(self):
         return self.name

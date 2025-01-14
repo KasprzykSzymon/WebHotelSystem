@@ -402,3 +402,30 @@ def news_view(request):
             if not events:
                 success_message = "Brak wydarzeń w tym zakresie dat."
     return render(request, 'news.html', {'events': events, 'success_message': success_message})
+
+@login_required
+def reserve_event(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+    event.users.add(request.user)
+    return redirect('my_reservations')
+
+@login_required
+def my_reservations(request):
+    reservations = request.user.reserved_events.all()
+    return render(request, 'news.html', {'reservations': reservations})
+
+def events_list(request):
+    events = Event.objects.all()
+
+    if request.method == 'POST':
+        start_date = request.POST.get('start_date')
+        end_date = request.POST.get('end_date')
+
+        if start_date and end_date:
+            events = events.filter(
+                Q(start_date__gte=start_date) & Q(end_date__lte=end_date)
+            )
+
+    return render(request, 'news.html', {'events': events})
+
+

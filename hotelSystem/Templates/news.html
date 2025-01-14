@@ -49,7 +49,15 @@
                     <h3>{{ event.name }}</h3>
                     <p>Data: {{ event.start_date }} - {{ event.end_date }}</p>
                     <p>Opis: {{ event.description }}</p>
-                    <button class="btn-rezerwuj">ZAREZERWUJ</button>
+                    {% if user.is_authenticated %}
+                        <button class="btn-rezerwuj">
+                            <a href="{% url 'reserve_event' event.id %}">ZAREZERWUJ</a>
+                        </button>
+                    {% else %}
+                        <button class="btn-rezerwuj">
+                            <a href="{% url 'sign_in' %}?next={% url 'events_list' %}">ZAREZERWUJ</a>
+                        </button>
+                    {% endif %}
                 </li>
             {% endfor %}
         </ul>
@@ -59,5 +67,23 @@
         <p>Brak wydarzeń do wyświetlenia.</p>
     </div>
 {% endif %}
+
+<!-- Moje rezerwacje -->
+<div class="my-reservations">
+    <h2>Moje Rezerwacje</h2>
+    {% if reservations %}
+        <ul>
+            {% for event in reservations %}
+                <li>
+                    <h3>{{ event.name }}</h3>
+                    <p>{{ event.description }}</p>
+                    <p>Od: {{ event.start_date }} do: {{ event.end_date }}</p>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Nie masz żadnych zarezerwowanych wydarzeń.</p>
+    {% endif %}
+</div>
 
 {% endblock %}
