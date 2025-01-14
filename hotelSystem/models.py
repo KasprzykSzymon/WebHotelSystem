@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 from datetime import date
-
+from django.core.exceptions import ValidationError
 
 class SocialApp(models.Model):
     PROVIDERS = [
@@ -40,7 +40,7 @@ class Room(models.Model):
     number = models.CharField(max_length=10, unique=True)
     room_type = models.CharField(max_length=20, choices=ROOM_TYPES)
     price_per_night = models.DecimalField(max_digits=6, decimal_places=2)
-    is_available = models.BooleanField(default=True)
+    is_available = models.BooleanField(default=False)
     last_minute_discount = models.DecimalField(max_digits=5, decimal_places=2, default=0)
     capacity = models.IntegerField(default=1)
     single_bed_count = models.IntegerField(default=0)
@@ -138,6 +138,10 @@ class Reservation(models.Model):
             raise ValueError("Brak daty przyjazdu lub odjazdu.")
         super().save(*args, **kwargs)
 
+    def clean(self):
+        super().clean()  # Call the parent class's clean method
+        if self.check_out_date <= self.check_in_date:
+            raise ValidationError("Check-out date must be after check-in date.")
     def __str__(self):
         return f"Reservation for {self.guest} in Room {self.room.number}"
 

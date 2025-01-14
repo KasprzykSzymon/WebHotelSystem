@@ -364,7 +364,7 @@ def order_confirmation(request):
     print(request.GET['reservation'])
     reservation_id = int(request.GET['reservation'])
     reservation = Reservation.objects.get(id=reservation_id)
-      # Obliczanie liczby nocy
+    # Obliczanie liczby nocy
     number_of_nights = (reservation.check_out_date - reservation.check_in_date).days
     # Obliczanie całkowitej kwoty
     total_amount = reservation.room.price_per_night * number_of_nights
