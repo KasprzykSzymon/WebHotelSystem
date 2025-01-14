@@ -49,7 +49,7 @@
             <p><strong>Pokój:</strong> {{ reservation_detail.room_number }}</p>
             <p><strong>Data zameldowania:</strong> {{ reservation_detail.check_in_date }}</p>
             <p><strong>Data wymeldowania:</strong> {{ reservation_detail.check_out_date }}</p>
-            <p><strong>Łączna kwota:</strong> {{ reservation_detail.total_amount }} zł</p>
+            <p><strong>Łączna kwota:</strong> {{ reservation_detail.total_amount|floatformat:2 }} zł</p>
             <p><strong>Status płatności:</strong> {{ reservation_detail.status }}</p>
             <p><strong>Email rezerwacji:</strong> {{ reservation_detail.email }}</p>
             <!-- Przycisk zamknięcia -->
