@@ -2,11 +2,14 @@
 
 {% block header %}
     {% load static %}
+
     <link rel="stylesheet" href="{% static 'css/styles_search_room.css' %}">
     <title>Wyszukiwanie pokoi</title>
+
 {% endblock %}
 
 {% block content %}
+
 <div class="main-container">
     <aside class="filters">
         <h3>Filtry</h3>
@@ -18,7 +21,6 @@
             <input type="hidden" name="room_type" value="{{ room_type }}">
             <input type="hidden" name="min_price" value="{{ min_price }}">
             <input type="hidden" name="max_price" value="{{ max_price }}">
-        
             <label for="sort_order">Sortuj według ceny:</label>
             <select name="sort_order" id="sort_order">
                 <option value="asc" {% if sort_order == 'asc' %}selected{% endif %}>Rosnąco</option>
@@ -53,4 +55,5 @@
         {% endif %}
     </div>
 </div>
+
 {% endblock %}

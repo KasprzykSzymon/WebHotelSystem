@@ -2,11 +2,14 @@
 
 {% block header %}
     {% load static %}
+
     <link rel="stylesheet" href="{% static 'css/styles_make_reservation.css' %}">
     <title>Rezerwacja pokoju</title>
+
 {% endblock %}
 
 {% block content %}
+
 <div class="kontener">
     <h1>Rezerwacja pokoju: {{ room.name }}</h1>
     <form method="POST">
@@ -26,4 +29,5 @@
         <button type="submit" class="lokalizacja-button">Potwierdź rezerwację</button>
     </form>
 </div>
+
 {% endblock %}

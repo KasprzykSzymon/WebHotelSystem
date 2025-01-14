@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block header %}
-    {% load static %}
+
     <link rel="stylesheet" href="{% static 'css/styles_contact.css' %}">
-    
     <!-- Ładowanie czcionek z Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,18 +14,18 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
-    
     <title>Kontakt</title>
+
 {% endblock %}
 
 {% block content %}
+
 <div class="kontakt-container">
     <h1>Kontakt</h1>
     <div class="subheader-wrapper">
         <p class="subheader">Jesteśmy tu dla Ciebie!</p>
     </div>
 </div>
-
 <!-- Sekcja Lokalizacji -->
 <div class="lokalizacja-section">
     <div class="lokalizacja-content">
@@ -42,7 +42,6 @@
         </div>
     </div>
 </div>
-
 <div class="hotel-info">
     <h2>Hotel Scyzoryk</h2>
     <p>ul. Turystyczna 5</p>

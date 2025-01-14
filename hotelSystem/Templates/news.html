@@ -2,8 +2,8 @@
 
 {% block header %}
     {% load static %}
-    <link rel="stylesheet" href="{% static 'css/styles_news.css' %}">
 
+    <link rel="stylesheet" href="{% static 'css/styles_news.css' %}">
     <!-- Ładowanie czcionek z Google Fonts -->
     <link rel="stylesheet" href="{% static 'css/styles_home_page.css' %}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -11,21 +11,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Parisienne&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Parisienne&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
-
     <title>Wydarzenia w hotelu</title>
+
 {% endblock %}
 
 {% block content %}
+
 <div class="wydarzenia-container">
     <h1>Wydarzenia</h1>
     <div class="subheader-wrapper">
         <p class="subheader">Zobacz naszą ofertę!</p>
     </div>
 </div>
-
-<!-- Dodanie napisu "Wyszukaj wydarzenia" z klasą do stylizacji -->
-
-<!-- Formularz wyszukiwania wydarzeń -->
 <form method="POST">
     {% csrf_token %}
     <div class="kalendarz-container">
@@ -33,12 +30,10 @@
             <label for="data-wydarzenia">Data od:</label>
             <input type="date" id="data-wydarzenia" name="start_date" required>
         </div>
-
         <div class="kalendarz">
             <label for="data-wydarzenia-2">Data do:</label>
             <input type="date" id="data-wydarzenia-2" name="end_date" required>
         </div>
-
         <div class="button-container">
             <button type="submit" class="btn-rezerwuj">SZUKAJ</button>
         </div>
@@ -46,22 +41,23 @@
 </form>
 
 {% if events %}
-<div class="events-container">
-    <h2>Wyniki wyszukiwania:</h2>
-    <ul>
-        {% for event in events %}
-        <li>
-            <h3>{{ event.name }}</h3>
-            <p>Data: {{ event.start_date }} - {{ event.end_date }}</p>
-            <p>Opis: {{ event.description }}</p>
-            <button class="btn-rezerwuj">ZAREZERWUJ</button>
-        </li>
-        {% endfor %}
-    </ul>
-</div>
+    <div class="events-container">
+        <h2>Wyniki wyszukiwania:</h2>
+        <ul>
+            {% for event in events %}
+                <li>
+                    <h3>{{ event.name }}</h3>
+                    <p>Data: {{ event.start_date }} - {{ event.end_date }}</p>
+                    <p>Opis: {{ event.description }}</p>
+                    <button class="btn-rezerwuj">ZAREZERWUJ</button>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
 {% else %}
-<div>
-    <p>Brak wydarzeń do wyświetlenia.</p>
-</div>
+    <div>
+        <p>Brak wydarzeń do wyświetlenia.</p>
+    </div>
 {% endif %}
+
 {% endblock %}

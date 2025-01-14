@@ -8,6 +8,7 @@ class UserProfileForm(forms.ModelForm):
         model = User
         fields = ['username', 'first_name', 'last_name', 'email', 'phone_number']
 
+
 class ReservationForm(forms.ModelForm):
     guest = forms.ModelChoiceField(queryset=Guest.objects.all(), required=True)
 

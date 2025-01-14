@@ -2,24 +2,24 @@
 
 {% block header %}
     {% load static %}
+
     <title>Profil użytkownika</title>
     <link rel="stylesheet" href="{% static 'css/styles_profile.css' %}">
+
 {% endblock %}
 
 {% block content %}
+
     <div class="profile-container">
         <h1>Profil użytkownika</h1>
-
         <div class="user-info">
             <p><strong>Nick:</strong> {{ user.username }}</p>
             <p><strong>Imię:</strong> {{ user.first_name }}</p>
             <p><strong>Nazwisko:</strong> {{ user.last_name }}</p>
             <p><strong>Email:</strong> <a href="mailto:{{ user.email }}">{{ user.email }}</a></p>
             <p><strong>Numer telefonu:</strong> {{ user.phone_number }}</p>
-
             <a href="{% url 'edit_profile' %}" class="btn-edit-profile">Zmień dane</a>
         </div>
-
         <div class="reservations">
             <h2>Twoje rezerwacje</h2>
             {% if reservations %}
@@ -38,14 +38,12 @@
             {% endif %}
         </div>
     </div>
-
     <!-- Modal z szczegółami rezerwacji -->
     {% if reservation_detail %}
     <div id="reservationModal" class="modal" style="display:block;">
         <div class="modal-content">
             <!-- Przycisk zamknięcia w lewym górnym rogu -->
             <span class="close" onclick="window.location.href='{% url 'profile' %}'">&times;</span>
-
             <h2>Rezerwacja Szczegóły</h2>
             <p><strong>Rezerwacja ID:</strong> {{ reservation_detail.id }}</p>
             <p><strong>Pokój:</strong> {{ reservation_detail.room_number }}</p>
@@ -54,7 +52,6 @@
             <p><strong>Łączna kwota:</strong> {{ reservation_detail.total_amount }} zł</p>
             <p><strong>Status płatności:</strong> {{ reservation_detail.status }}</p>
             <p><strong>Email rezerwacji:</strong> {{ reservation_detail.email }}</p>
-
             <!-- Przycisk zamknięcia -->
             <button class="close-btn" onclick="window.location.href='{% url 'profile' %}'">Zamknij</button>
         </div>

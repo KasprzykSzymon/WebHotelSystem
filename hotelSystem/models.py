@@ -1,9 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
-from datetime import date, datetime
-from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib import messages
+from datetime import date
+
 
 class SocialApp(models.Model):
     PROVIDERS = [
@@ -25,6 +24,7 @@ class SocialApp(models.Model):
     def __str__(self):
         return f"{self.name} ({self.provider})"
 
+
 class Room(models.Model):
     ROOM_TYPES = [
         ('single', 'Single'),
@@ -37,7 +37,6 @@ class Room(models.Model):
         ('triple', 'Triple'),
         ('triple_marriage', 'Triple Marriage'),
     ]
-
     number = models.CharField(max_length=10, unique=True)
     room_type = models.CharField(max_length=20, choices=ROOM_TYPES)
     price_per_night = models.DecimalField(max_digits=6, decimal_places=2)
@@ -48,9 +47,7 @@ class Room(models.Model):
     double_bed_count = models.IntegerField(default=0)
 
     def is_available(self, arrival_date, departure_date):
-        """
-        Sprawdza, czy pokój jest dostępny w danym zakresie dat.
-        """
+        """Sprawdza, czy pokój jest dostępny w danym zakresie dat."""
         overlapping_reservations = Reservation.objects.filter(
             room=self,
             check_in_date__lt=departure_date,  # Rezerwacje zaczynające się przed datą wyjazdu
@@ -85,6 +82,7 @@ class Room(models.Model):
         verbose_name = "Pokój"
         verbose_name_plural = "Pokoje"
 
+
 class RoomImage(models.Model):
     room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='images')
     image = models.ImageField(upload_to='room_images/')
@@ -92,18 +90,21 @@ class RoomImage(models.Model):
     def __str__(self):
         return f"Image for Room {self.room.number}"
 
+
 class Guest(models.Model):
     username = models.CharField(max_length=50, null=True)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     email = models.EmailField(unique=True)
     phone_number = models.CharField(max_length=15)
+
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 
     class Meta:
         verbose_name = "Klient"
         verbose_name_plural = "Klienci"
+
 
 class Payment(models.Model):
     creation_date = models.DateTimeField(auto_now_add=True)
@@ -114,6 +115,7 @@ class Payment(models.Model):
     request = models.TextField(null=True)
     last_response = models.TextField(null=True)
     last_update = models.DateTimeField(auto_now_add=True)
+
 
 class Reservation(models.Model):
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
@@ -136,13 +138,13 @@ class Reservation(models.Model):
             raise ValueError("Brak daty przyjazdu lub odjazdu.")
         super().save(*args, **kwargs)
 
-
     def __str__(self):
         return f"Reservation for {self.guest} in Room {self.room.number}"
 
     class Meta:
         verbose_name = "Rezerwacja"
         verbose_name_plural = "Rezerwacje"
+
 
 class Event(models.Model):
     name = models.CharField(max_length=200)

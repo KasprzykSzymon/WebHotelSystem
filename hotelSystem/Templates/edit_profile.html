@@ -1,12 +1,16 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block header %}
-{% load static %}
-<link rel="stylesheet" href="{% static 'css/styles_edit_profile.css' %}">
+
+
+    <link rel="stylesheet" href="{% static 'css/styles_edit_profile.css' %}">
     <title>Edytuj profil</title>
+
 {% endblock %}
 
 {% block content %}
+
     <div class="edit-profile-container">
         <form method="POST" class="form-container">
             {% csrf_token %}
@@ -36,4 +40,5 @@
             </div>
             <button type="submit">Zapisz zmiany</button>
         </form>
+
 {% endblock %}
