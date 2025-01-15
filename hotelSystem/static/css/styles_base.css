@@ -1,17 +1,14 @@
-/* Ogólne style dla body */
+/* Ogólne style dla body i html */
 body, html {
+    height: 100%;
+    margin: 0;
     font-family: "Nunito Sans", sans-serif;
     font-weight: 500;
     font-size: 1em;
     background-color: transparent; 
     text-align: center;
-    margin: 0;
-    padding: 0;
-    height: 100%;
-}
-
-h1 {
-    font-family: fantasy;
+    display: flex;
+    flex-direction: column;
 }
 
 /* Styl dla nagłówka */
@@ -31,16 +28,16 @@ h1 {
 /* Logo po lewej stronie */
 .lewoNaglowek {
     flex: 1;
-    text-align: left; 
+    text-align: left;
 }
 
 /* Menu po prawej stronie */
 .prawoNaglowek {
     flex: 3;
     display: flex;
-    justify-content: flex-end; 
+    justify-content: flex-end;
     align-items: center;
-    gap: 30px; 
+    gap: 30px;
 }
 
 .prawoNaglowek a, .prawoNaglowek a:link p {
@@ -48,9 +45,7 @@ h1 {
     padding: 10px;
     font-weight: bold;
     cursor: pointer;
-    font-weight: bold;
-    cursor: pointer;
-    text-decoration: none; 
+    text-decoration: none;
     color: black;
 }
 
@@ -58,7 +53,6 @@ h1 {
     width: 100px;
     height: auto;
 }
-
 
 /* Stylowanie przycisku logowania/wylogowania */
 .prawoNaglowek a p {
@@ -73,23 +67,15 @@ h1 {
     color: white;
 }
 
+/* Styl dla głównej zawartości */
+main.content {
+    flex: 1;
+}
+
+/* Styl dla stopki */
 footer.stopka {
     background-color: #faf4ed;
     padding: 10px;
     text-align: center;
-    position: relative;
-    bottom: 0;
-    width: 100%;
-}
-
-.stopka {
-    background-color: #faf4ed;
-    padding: 20px;
-    text-align: center;
-    margin-top: 50px;
-    font-size: 14px;
-    color: #333;
-    position: relative;
-    bottom: 0;
-    width: 100%;
+    width:auto;
 }

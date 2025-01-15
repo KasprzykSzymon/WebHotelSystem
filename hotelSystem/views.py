@@ -316,26 +316,27 @@ def room_detail(request, pk):
 def place_order(request):
     print(request.POST)
     room_id = int(request.POST['room_id'])
+    cost = int(float(request.POST['total_price']) * 100)  # Convert to cents
     arrival_date_obj = datetime.strptime(request.POST['arrival_date'], '%Y-%m-%d').date()
     departure_date_obj = datetime.strptime(request.POST['departure_date'], '%Y-%m-%d').date()
     desc = request.POST['item_name']
     room = Room.objects.get(id=room_id)
     time = (departure_date_obj - arrival_date_obj).days
     print(time)
-    cost = time * room.price_per_night
-    cost = int(cost*100)
+    
     payment = Payment()
-    payment.amount=cost
+    payment.amount = cost
     payment.save()
+
     reservation = Reservation()
-    reservation.room=room
-    print("USER", request.user)
+    reservation.room = room
     reservation.user = request.user
     reservation.check_in_date = arrival_date_obj
     reservation.check_out_date = departure_date_obj
     reservation.total_price = cost
     reservation.payment = payment
     reservation.save()
+
     myuuid = uuid.uuid4()
     paynow = new_payment({
         "amount": cost,
@@ -356,8 +357,10 @@ def place_order(request):
     payment.redirect_url = paynow['redirectUrl']
     payment.last_update = datetime.now()
     payment.save()
+
     print(paynow)
     return HttpResponseRedirect(paynow['redirectUrl'])
+
 
 
 def order_confirmation(request):
@@ -367,7 +370,7 @@ def order_confirmation(request):
       # Obliczanie liczby nocy
     number_of_nights = (reservation.check_out_date - reservation.check_in_date).days
     # Obliczanie całkowitej kwoty
-    total_amount = reservation.room.price_per_night * number_of_nights
+    total_amount = reservation.payment.amount / 100
     # Inne obliczenia związane z płatnością
     payment = reservation.payment
     check = check_payment(payment.paynow_id)
