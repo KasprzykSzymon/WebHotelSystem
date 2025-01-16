@@ -5,11 +5,12 @@
 
     <title>Profil użytkownika</title>
     <link rel="stylesheet" href="{% static 'css/styles_profile.css' %}">
-
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000&display=swap" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
-
     <div class="profile-container">
         <h1>Profil użytkownika</h1>
         <div class="user-info">
@@ -26,7 +27,6 @@
                 <div class="reservation-list">
                     {% for reservation in reservations %}
                         <div class="reservation-item">
-                            <!-- Kliknięcie przenosi do tego samego widoku, ale z parametrem reservation_id -->
                             <a href="?reservation_id={{ reservation.id }}">
                                 <p><strong>Rezerwacja ID:</strong> {{ reservation.id }}</p>
                             </a>
@@ -42,7 +42,6 @@
     {% if reservation_detail %}
     <div id="reservationModal" class="modal" style="display:block;">
         <div class="modal-content">
-            <!-- Przycisk zamknięcia w lewym górnym rogu -->
             <span class="close" onclick="window.location.href='{% url 'profile' %}'">&times;</span>
             <h2>Rezerwacja Szczegóły</h2>
             <p><strong>Rezerwacja ID:</strong> {{ reservation_detail.id }}</p>
@@ -52,7 +51,6 @@
             <p><strong>Łączna kwota:</strong> {{ reservation_detail.total_amount }} zł</p>
             <p><strong>Status płatności:</strong> {{ reservation_detail.status }}</p>
             <p><strong>Email rezerwacji:</strong> {{ reservation_detail.email }}</p>
-            <!-- Przycisk zamknięcia -->
             <button class="close-btn" onclick="window.location.href='{% url 'profile' %}'">Zamknij</button>
         </div>
     </div>

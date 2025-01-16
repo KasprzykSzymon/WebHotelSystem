@@ -9,14 +9,14 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Parisienne&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Parisienne&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000&display=swap" rel="stylesheet">
     <title>Wydarzenia w hotelu</title>
 
 {% endblock %}
 
 {% block content %}
-
 <div class="wydarzenia-container">
     <h1>Wydarzenia</h1>
     <div class="subheader-wrapper">
@@ -48,27 +48,26 @@
                 <li>
                     <h3>{{ event.name }}</h3>
                     <p>Data: {{ event.start_date }} - {{ event.end_date }}</p>
-                    <p>Opis: {{ event.description }}</p>
+                    <p>{{ event.description }}</p>
                     {% if user.is_authenticated %}
-                        <button class="btn-rezerwuj">
-                            <a href="{% url 'reserve_event' event.id %}">ZAREZERWUJ</a>
-                        </button>
-                    {% else %}
-                        <button class="btn-rezerwuj">
-                            <a href="{% url 'sign_in' %}?next={% url 'events_list' %}">ZAREZERWUJ</a>
-                        </button>
+                    <form method="get" action="{% url 'reserve_event' event.id %}">
+                        <button type="submit" class="btn-rezerwuj">ZAREZERWUJ</button>
+                    </form>
+                {% else %}
+                    <form method="get" action="{% url 'sign_in' %}">
+                        <input type="hidden" name="next" value="{% url 'events_list' %}">
+                        <button type="submit" class="btn-rezerwuj">ZAREZERWUJ</button>
+                    </form>
                     {% endif %}
                 </li>
             {% endfor %}
         </ul>
     </div>
 {% else %}
-    <div>
-        <p>Brak wydarzeń do wyświetlenia.</p>
-    </div>
 {% endif %}
 
-<!-- Moje rezerwacje -->
+<!-- Moje rezerwacje (widoczne tylko dla zalogowanych użytkowników) -->
+{% if user.is_authenticated %}
 <div class="my-reservations">
     <h2>Moje Rezerwacje</h2>
     {% if reservations %}
@@ -77,13 +76,26 @@
                 <li>
                     <h3>{{ event.name }}</h3>
                     <p>{{ event.description }}</p>
-                    <p>Od: {{ event.start_date }} do: {{ event.end_date }}</p>
                 </li>
             {% endfor %}
         </ul>
-    {% else %}
-        <p>Nie masz żadnych zarezerwowanych wydarzeń.</p>
+        {% else %}
+        <p class="no-reservations">Nie masz żadnych zarezerwowanych wydarzeń.</p>
     {% endif %}
 </div>
 
+{% for reservation in reservations %}
+<div class="reservation-item">
+    <h3>{{ reservation.event.name }}</h3>
+    <p>{{ reservation.event.description }}</p>
+
+    <!-- Formularz do anulowania rezerwacji -->
+    <form method="post" action="{% url 'my_reservations' %}">
+        {% csrf_token %}
+        <input type="hidden" name="reservation_id" value="{{ reservation.id }}">
+        <button type="submit">ANULUJ</button>
+    </form>
+</div>
+{% endfor %}
+{% endif %}
 {% endblock %}

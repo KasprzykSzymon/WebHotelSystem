@@ -2,14 +2,15 @@
 
 {% block header %}
     {% load static %}
-
+    
     <link rel="stylesheet" href="{% static 'css/styles_search_room.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000&display=swap" rel="stylesheet">
     <title>Wyszukiwanie pokoi</title>
-
 {% endblock %}
 
 {% block content %}
-
 <div class="main-container">
     <aside class="filters">
         <h3>Filtry</h3>
@@ -26,14 +27,12 @@
                 <option value="asc" {% if sort_order == 'asc' %}selected{% endif %}>Rosnąco</option>
                 <option value="desc" {% if sort_order == 'desc' %}selected{% endif %}>Malejąco</option>
             </select>
-        
-            <button type="submit">Filtruj</button>
+            <button type="submit" class="btn">Filtruj</button>
         </form>
-        
     </aside>
 
     <div class="rooms-list">
-        <h1>Wyniki wyszukiwania pokoi</h1>
+        <h1 class="search-results-header">Wyniki wyszukiwania pokoi</h1>
         {% if rooms %}
             {% for room in rooms %}
             <div class="room">
@@ -46,7 +45,7 @@
                     <h3>Pokój {{ room.number }} - {{ room.get_room_type_display }}</h3>
                     <p><strong>Cena za noc: </strong>{{ room.price_per_night }} zł</p>
                     <p><strong>Pojemność: </strong>{{ room.capacity }} osób</p>
-                    <a href="{% url 'room_detail' room.id %}?arrival_date={{ arrival_date }}&departure_date={{ departure_date }}&adults={{ adults }}&children={{ children }}&room_type={{ room_type }}&min_price={{ min_price }}&max_price={{ max_price }}&sort_order={{ sort_order }}" class="lokalizacja-button">Zobacz szczegóły</a>
+                    <a href="{% url 'room_detail' room.id %}?arrival_date={{ arrival_date }}&departure_date={{ departure_date }}&adults={{ adults }}&children={{ children }}&room_type={{ room_type }}&min_price={{ min_price }}&max_price={{ max_price }}&sort_order={{ sort_order }}" class="btn">Zobacz szczegóły</a>
                 </div>
             </div>
             {% endfor %}

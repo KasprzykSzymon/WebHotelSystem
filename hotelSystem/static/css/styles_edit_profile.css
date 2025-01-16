@@ -1,24 +1,21 @@
 .form-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background-color: #fff;
-    padding: 40px 30px;
+    text-align: center;
+    margin: 60px auto;
+    padding: 40px 20px;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7));
+    background-size: cover;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 50%;
-    margin: 50px auto 0;
-    transition: padding 0.3s ease;
+    max-width: 700px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }
 
 .form-container h1 {
     font-family: "Playfair Display", serif;
-    font-size: 2.5em;
+    font-weight: 900;
+    font-size: 3em;
     color: #333;
     margin-bottom: 20px;
-    text-align: center; 
-    width: 100%; 
-    max-width: 600px;
+    text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
 }
 
 .form-container div {
@@ -31,38 +28,37 @@
 }
 
 .form-container label {
-    font-family: "Red Hat Display", sans-serif;
+    display: block;
+    font-family: "Nunito Sans", sans-serif;
+    font-weight: 400;
     font-size: 1.2em;
-    margin-bottom: 8px; 
-    color: #333;
-    text-align: left;
-    width: 100%; 
+    color: #555;
+    margin-bottom: 5px; 
 }
 
 .form-container input {
-    font-family: "Red Hat Display", sans-serif;
-    font-size: 1.1em;
-    padding: 12px;
-    border: 2px solid #D2B48C;
+    width: 80%;
+    padding: 10px;
+    font-size: 1em;
+    border: 1px solid #ddd;
     border-radius: 5px;
-    width: 100%;
-    max-width: 600px;
-    background-color: #f7f7f7;
-    transition: all 0.3s ease;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: border 0.3s, box-shadow 0.3s;
 }
 
 .form-container button {
-    font-family: "Red Hat Display", sans-serif;
-    font-weight: 500;
-    font-size: 1.2em;
-    padding: 15px 50px;
+    font-family: "Nunito Sans", sans-serif;
+    font-weight: 400;
+    padding: 15px 30px;
     background-color: #D2B48C;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 20px;
-    width: 100%;
-    max-width: 600px; 
-    transition: all 0.3s ease;
+    color: white;
+    font-size: 1.2em;
+    display: inline-block;
+    margin-top: 40px;
+    padding: 20px 65px; /* padding 20px góra-dół, 60px lewo-prawo */
+    background-color: transparent; /* Przycisk pusty w środku */
+    color: #D2B48C; /* Kolor tekstu */
+    text-decoration: none;
+    border: 2px solid #D2B48C; /* Cienka ramka */
+    text-align: center;
 }

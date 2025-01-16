@@ -5,6 +5,9 @@
 
 
     <link rel="stylesheet" href="{% static 'css/styles_edit_profile.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000&display=swap" rel="stylesheet">
     <title>Edytuj profil</title>
 
 {% endblock %}
@@ -25,20 +28,20 @@
                 {{ form.email }}
             </div>
             <div>
-                <label for="{{ form.first_name.id_for_label }}">First Name</label>
+                <label for="{{ form.first_name.id_for_label }}">Imię</label>
                 {{ form.first_name }}
             </div>
             <div>
-                <label for="{{ form.last_name.id_for_label }}">Last Name</label>
+                <label for="{{ form.last_name.id_for_label }}">Nazwisko</label>
                 {{ form.last_name }}
             </div>
             <div>
                 <div>
-                    <label for="{{ form.phone_number.id_for_label }}">Phone Number</label>
+                    <label for="{{ form.phone_number.id_for_label }}">Numer telefonu</label>
                     {{ form.phone_number }}
                 </div>
             </div>
-            <button type="submit">Zapisz zmiany</button>
+            <button type="submit">ZAPISZ</button>
         </form>
 
 {% endblock %}

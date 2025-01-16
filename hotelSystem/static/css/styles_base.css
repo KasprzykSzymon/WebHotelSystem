@@ -1,7 +1,7 @@
 /* Ogólne style dla body */
 body, html {
     font-family: "Nunito Sans", sans-serif;
-    font-weight: 500;
+    font-weight: 400;
     font-size: 1em;
     background-color: transparent; 
     text-align: center;
@@ -11,7 +11,8 @@ body, html {
 }
 
 h1 {
-    font-family: fantasy;
+    font-family: "Nunito Sans", sans-serif; /* Zmieniono czcionkę */
+    font-weight: 400; /* Ustawiono wagę czcionki na 400 */
 }
 
 /* Styl dla nagłówka */
@@ -46,23 +47,15 @@ h1 {
 .prawoNaglowek a, .prawoNaglowek a:link p {
     margin: 0;
     padding: 10px;
-    font-weight: bold;
-    cursor: pointer;
-    font-weight: bold;
+    font-weight: 400; /* Zmieniono wagę czcionki */
     cursor: pointer;
     text-decoration: none; 
     color: black;
 }
 
-.naglowek img {
-    width: 100px;
-    height: auto;
-}
-
-
-/* Stylowanie przycisku logowania/wylogowania */
+/* Usunięcie ramki z przycisków */
 .prawoNaglowek a p {
-    border: 2px solid #D2B48C;
+    border: none;
     padding: 10px 20px;
     border-radius: 5px;
     text-decoration: none;
@@ -92,4 +85,9 @@ footer.stopka {
     position: relative;
     bottom: 0;
     width: 100%;
+}
+
+.naglowek img {
+    width: 100px;  /* Zmniejszenie szerokości loga */
+    height: auto;
 }

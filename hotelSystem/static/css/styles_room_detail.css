@@ -1,47 +1,84 @@
-/* Stylizacje dla szczegółów pokoju */
+/* Stylizacja kontenera dla szczegółów pokoju */
 .kontener {
     padding: 40px;
-    background-color: #fbf8f4;
+    background-color: #ffffff;
+    max-width: 1200px;  /* Maksymalna szerokość */
+    margin: 0 auto;     /* Wyśrodkowanie */
 }
 
+/* Stylizacja głównego kontenera szczegółów pokoju */
 .room-detail {
     display: flex;
-    gap: 20px;
-    align-items: flex-start;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 70vh; /* Pełna wysokość widoku */
+    background-color: #FFFFFF;
+    text-align: center;
 }
 
+/* Stylizacja obrazu pokoju */
 .room-detail img {
-    max-width: 300px;
-    border-radius: 10px;
+    max-width: 500px;
+    border-radius: 0px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;  /* Odstęp od tekstu */
 }
 
+/* Stylizacja informacji o pokoju */
 .room-info {
     flex: 1;
-    text-align: left;
+    text-align: center;
+    max-width: 600px; /* Szerokość dla tekstu */
 }
 
-.room-info p {
-    font-family: "Red Hat Display", sans-serif;
-    margin: 10px 0;
-    color: #000;
-}
-
+/* Stylizacja nagłówka w szczegółach pokoju */
 .room-info h1 {
     font-family: "Playfair Display", serif;
     color: #333;
+    font-weight: 600;
+    font-size: 2.5em;
     margin-bottom: 20px;
+    text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
 }
 
-.room-info .lokalizacja-button {
-    display: inline-block;
-    margin-top: 20px;
+/* Stylizacja opisów szczegółów pokoju */
+.room-info p {
+    font-family: "Nunito Sans", sans-serif;
+    font-weight: 400;
+    font-size: 1.2em;
+    color: #333;
+    margin: 10px 0;
 }
 
-/* Ikony łóżek w tym samym wierszu co tekst */
+/* Stylizacja przycisku "Zamawiam z obowiązkiem zapłaty" */
+.room-info input[type="submit"] {
+    font-family: "Nunito Sans", sans-serif;
+    font-weight: 500;
+    font-size: 1.2em;
+    padding: 12px 40px;
+    background-color: transparent;
+    color: #D2B48C;
+    text-decoration: none;
+    border: 2px solid #D2B48C;
+    text-align: center;
+    transition: all 0.3s;
+    width: max-content;
+    margin: 20px auto 0 auto;
+    display: block;
+}
+
+.room-info input[type="submit"]:hover {
+    background-color: transparent;
+    color: #74573a;
+    border-color: #74573a;
+}
+
+/* Stylizacja kontenera dla ikon łóżek */
 .icon-container {
     display: inline-block;
     vertical-align: middle;
-    margin-right: 10px; /* Opcjonalne - odstęp między ikonami */
+    margin-right: 10px;
 }
 
 .bed-description {

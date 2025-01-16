@@ -4,8 +4,9 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
+    path('my_reservations/', views.my_reservations, name='my_reservations'),
+    path('news/', views.news_view, name='news_view'),
     path('reserve/<int:event_id>/', views.reserve_event, name='reserve_event'),
-    path('my-reservations/', views.my_reservations, name='my_reservations'),
     path('events/', views.events_list, name='events_list'),
     path('', views.home_page_view, name='home_page'),
     path('lastminute/', views.last_minute_view, name='last_minute'),

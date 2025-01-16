@@ -2,7 +2,6 @@
 .login-container {
     text-align: center;
     margin: 60px auto;
-    font-family: 'Nunito Sans', sans-serif;
     padding: 40px 20px;
     background: linear-gradient(to bottom, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7));
     background-size: cover;
@@ -38,8 +37,8 @@
 .input-container label {
     display: block;
     font-family: "Nunito Sans", sans-serif;
-    font-weight: 600;
-    font-size: 1em;
+    font-weight: 400;
+    font-size: 1.2em;
     color: #555;
     margin-bottom: 5px;
 }
@@ -67,13 +66,15 @@
 }
 
 .btn-login {
+    font-family: "Nunito Sans", sans-serif;
+    font-weight: 400;
     padding: 15px 30px;
     background-color: #D2B48C;
     color: white;
     font-size: 1.2em;
     display: inline-block;
     margin-top: 40px;
-    padding: 20px 60px; /* padding 20px góra-dół, 60px lewo-prawo */
+    padding: 20px 65px; /* padding 20px góra-dół, 60px lewo-prawo */
     background-color: transparent; /* Przycisk pusty w środku */
     color: #D2B48C; /* Kolor tekstu */
     text-decoration: none;
@@ -82,7 +83,7 @@
 }
 
 .btn-login:hover {
-    background-color: #ebd8bf;
+    background-color: transparent;
     transform: translateY(-3px);
     box-shadow: 0 10px 20px rgba(210, 180, 140, 0.4);
 }
@@ -91,8 +92,9 @@
 .login-container .register-link {
     margin-top: 50px;
     font-family: "Nunito Sans", sans-serif;
-    font-size: 0.9em;
-    color: #555;
+    font-weight: 400;
+    font-size: 1em;
+    color: #000000;
 }
 
 .login-container .register-link a {
@@ -136,9 +138,9 @@
   border: 1px solid #3c4043; /* Subtelny obrys */
   border-radius: 4px; /* Zaokrąglone rogi */
   color: #fff; /* Biały tekst */
-  font-family: 'Roboto', arial, sans-serif; /* Czcionka Roboto */
+  font-family: "Nunito Sans", sans-serif;
+  font-weight: 400;
   font-size: 14px; /* Rozmiar tekstu */
-  font-weight: 500; /* Pogrubiony tekst */
   height: 40px; /* Stała wysokość przycisku */
   padding: 0 16px; /* Marginesy wewnętrzne */
   width: 250px; /* Szerokość przycisku */

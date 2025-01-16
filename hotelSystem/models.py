@@ -151,7 +151,6 @@ class Event(models.Model):
     start_date = models.DateField()
     end_date = models.DateField()
     description = models.TextField()
-    users = models.ManyToManyField(User, related_name='reserved_events', blank=True)
 
     def __str__(self):
         return self.name
@@ -159,3 +158,16 @@ class Event(models.Model):
     class Meta:
         verbose_name = "Wydarzenie"
         verbose_name_plural = "Wydarzenia"
+
+class ReservationEvent(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    reservation_date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Rezerwacja użytkownika {self.user.username} na wydarzenie {self.event.name}"
+
+    class Meta:
+        verbose_name = "Rezerwacja Wydarzenia"
+        verbose_name_plural = "Rezerwacje Wydarzeń"
+        unique_together = ('user', 'event')

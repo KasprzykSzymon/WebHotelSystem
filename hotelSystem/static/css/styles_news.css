@@ -31,13 +31,14 @@
     margin-bottom: 200px; 
 }
 
-/* Kalendarz i przycisk */
+/* Kalendarz */
 .kalendarz-container {
     display: flex;
     justify-content: center;
-    align-items: flex-start; /* Wyrównanie do góry, aby etykiety były na swoim miejscu */
+    align-items: flex-start;
     gap: 20px; /* Odstęp między kalendarzami */
     margin-top: 20px;
+    flex-wrap: wrap; /* Pozwala na zawijanie w przypadku węższych ekranów */
 }
 
 .kalendarz {
@@ -45,12 +46,12 @@
     font-weight: 500; 
     font-size: 1.2em;
     display: flex;
-    flex-direction: column; /* Ustawienie elementów w kolumnie */
-    align-items: center; /* Wyśrodkowanie tekstu */
+    flex-direction: column;
+    align-items: center;
 }
 
 .kalendarz label {
-    margin-bottom: 10px; /* Odstęp między etykietą a kalendarzem */
+    margin-bottom: 10px;
     font-size: 1.1em;
     color: #333;
     font-family: "Red Hat Display", sans-serif;
@@ -68,26 +69,27 @@
     transition: all 0.3s;
 }
 
-/* Efekt po kliknięciu na kalendarz */
 .kalendarz input[type="date"]:focus {
-    border-color: #74573a; /* Kolor ramki po kliknięciu */
-    color: #74573a; /* Kolor tekstu po kliknięciu */
+    border-color: #74573a; 
+    color: #74573a;
     outline: none;
 }
 
-/* Przycisk */
+/* Nowy kontener dla przycisku, żeby był poniżej kalendarzy */
 .button-container {
+    width: 100%;
     display: flex;
-    justify-content: center;
-    align-items: center;
+    justify-content: center; /* Wyśrodkowanie przycisku */
+    margin-top: 30px; /* Odstęp od kalendarzy */
 }
 
+/* Przycisk */
 .btn-rezerwuj {
     font-family: "Red Hat Display", sans-serif; 
     font-weight: 500; 
     font-size: 1.2em;
     display: inline-block;
-    padding: 25px 60px; /* Padding 20px góra-dół, 60px lewo-prawo */
+    padding: 25px 60px;
     background-color: transparent; 
     color: #D2B48C; 
     text-decoration: none;
@@ -105,16 +107,20 @@
 /* Stylowanie wyników wyszukiwania */
 .events-container {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 30px;
+    flex-direction: column; /* Zmieniamy na wyświetlanie obok siebie */
+    flex-wrap: wrap; /* Pozwala na zawijanie w przypadku mniejszych ekranów */
+    justify-content: center; /* Wyśrodkowanie kontenera */
+    gap: 20px; /* Odstęp między wydarzeniami */
+    margin-top: 50px;
 }
 
 .events-container h2 {
     font-family: "Playfair Display", serif;
-    color: #333;
+    font-weight: 800;
     font-size: 2.5em;
-    margin-bottom: 20px;
+    color: #333;
+    margin-bottom: 50px;
+    text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
 }
 
 .events-container ul {
@@ -123,23 +129,80 @@
 }
 
 .events-container li {
-    background-color: #f5f5f5;
+    background-color: #ffffff;
     margin: 10px 0;
     padding: 20px;
-    width: 80%;
+    width: 500px; /* Szerokość dla poszczególnych wydarzeń */
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .events-container li h3 {
     font-family: "Playfair Display", serif;
+    font-weight: 600;
+    font-size: 1.8em;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.events-container li p {
+    font-family: "Nunito Sans", sans-serif;
+    font-weight: 400;
+    color: #333;
+    font-size: 1.2em;
+}
+
+
+/* Stylowanie nagłówka Moje Rezerwacje */
+.my-reservations h2 {
+    font-family: "Playfair Display", serif;
+    font-weight: 800;
+    font-size: 2.5em;
+    color: #333;
+    margin-bottom: 20px;
+    text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Stylowanie kontenera dla rezerwacji */
+.my-reservations .reservation-item {
+    justify-content: space-between;
+    text-align: center;
+    margin: 60px auto;
+    padding: 40px 20px;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7));
+    background-size: cover;
+    border-radius: 10px;
+    max-width: 700px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Stylowanie tytułów rezerwacji */
+.my-reservations .reservation-item h3 {
+    font-family: "Nunito Sans", sans-serif;
+    font-weight: 400;
     font-size: 1.8em;
     color: #74573a;
     margin-bottom: 10px;
 }
 
-.events-container li p {
-    font-family: "Red Hat Display", sans-serif;
+/* Stylowanie szczegółów rezerwacji */
+.my-reservations .reservation-item p {
+    font-family: "Nunito Sans", sans-serif;
+    font-weight: 400;
     color: #333;
     font-size: 1.2em;
+}
+
+/* Stylowanie komunikatu, gdy brak rezerwacji */
+.my-reservations .no-reservations {
+    font-family: "Nunito Sans", sans-serif;
+    font-weight: 400;
+    font-size: 1.2em;
+    color: #555;
+    margin-bottom: 30px;
+}
+
+/* Stylowanie formularza w rezerwacjach */
+.my-reservations .reservation-item form {
+    margin-top: 10px;
 }

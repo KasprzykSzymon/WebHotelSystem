@@ -2,77 +2,66 @@
 {% load static %}
 
 {% block header %}
-
     <link rel="stylesheet" href="{% static 'css/styles_last_minute.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Parisienne&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
     <title>Last Minute</title>
-
 {% endblock %}
 
 {% block content %}
-
-    <div class="last-minute-container">
-    <h1>Last Minute</h1>
+<div class="last-minute-container">
+    <h1 class="main-header">Last Minute</h1>
+    <div class="subheader-wrapper">
+        <p class="subheader">Pokoje dla ciebie w przystępnej cenie</p>
+    </div>
     {% if offers %}
         <div class="offer-cards">
             {% for offer in offers %}
                 <div class="offer-card">
+                    <!-- Główny obraz pokoju -->
+                    <div class="room-main-image">
+                        {% if offer.image_urls %}
+                            <img src="{{ offer.image_urls.0 }}" alt="Zdjęcie pokoju {{ offer.room.number }}" onclick="openModal('{{ offer.image_urls.0 }}', {{ offer.image_urls|safe }})">
+                        {% else %}
+                            <p>Brak zdjęć pokoju.</p>
+                        {% endif %}
+                    </div>
                     <!-- Nagłówek karty -->
                     <div class="room-header">
                         <h2>{{ offer.room.get_room_type_display }} - Pokój nr {{ offer.room.number }}</h2>
-                        <p>Dostępny od {{ offer.today }} do {{ offer.availability_end_date }} ({{ offer.available_days }} nocy)</p>
-                        <!-- Przycisk do rozwijania sekcji ze szczegółami -->
-                        <button class="toggle-details-btn" type="button"
-                                onclick="toggleOfferDetails('details-{{ forloop.counter }}')">
-                            Pokaż więcej
-                        </button>
+                        <p>Dostępny od {{ offer.today|date:"Y-m-d" }} do {{ offer.availability_end_date|date:"Y-m-d" }} ({{ offer.available_days }} nocy)</p>
+                        <p><strong>Cena po rabacie: </strong>{{ offer.total_price }} PLN</p>
                     </div>
-                    <!-- Sekcja ze szczegółami, ukryta domyślnie (CSS: display: none) -->
-                    <div id="details-{{ forloop.counter }}" class="room-details" style="display: none;">
-                        <p><strong>Cena przed rabatem:</strong> {{ offer.original_price }} PLN</p>
-                        <p><strong>Cena po rabacie:</strong> {{ offer.discounted_price }} PLN ({{ offer.discount }}% taniej)</p>
-                        <!-- Galeria zdjęć -->
-                        <div class="room-images-gallery">
-                            {% for image_url in offer.image_urls %}
-                                <img src="{{ image_url }}" alt="Zdjęcie pokoju {{ offer.room.number }}"
-                                     onclick="openModal('{{ image_url }}', {{ offer.image_urls|safe }})">
-                            {% empty %}
-                                <p>Brak zdjęć pokoju.</p>
-                            {% endfor %}
-                        </div>
-                        <!-- Przejście do ekranu rezerwacji (np. widok: 'book_room') -->
-                        <div class="reservation-link">
-                            <!--
-                                Możemy przekazać ID pokoju i aktualny rabat jako parametry w URL,
-                                żeby widok rezerwacji wiedział, że to last minute nie zapomniec wsadzic
-                            -->
-                        </div>
-                    </div>
+                    <!-- Formularz zamówienia -->
+                    {% if user.is_authenticated %}
+                        <form action="{% url 'place_order' %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="item_name" value="Usługa noclegowa - Pokój {{ offer.room.number }}">
+                            <input type="hidden" name="room_id" value="{{ offer.room.id }}">
+                            <input type="hidden" name="arrival_date" value="{{ offer.today|date:"Y-m-d" }}">
+                            <input type="hidden" name="departure_date" value="{{ offer.availability_end_date|date:"Y-m-d" }}">
+                            <input type="hidden" name="total_price" value="{{ offer.total_price|floatformat:2 }}">
+                            <input type="submit" class="order-button" value="Zamawiam z obowiązkiem zapłaty">
+                        </form>
+                    {% else %}
+                        <p class="login-prompt">Zaloguj się, aby zamówić ten pokój.</p>
+                    {% endif %}
                 </div>
             {% endfor %}
         </div>
     {% else %}
-        <p>Brak dostępnych ofert Last minute. Odwiedź nas za jakiś czas.</p>
+        <p>Brak dostępnych ofert Last Minute. Odwiedź nas za jakiś czas.</p>
     {% endif %}
 </div>
-<!-- Modal do wyświetlania powiększonego zdjęcia -->
+
 <div id="image-modal" class="modal" style="display: none;">
     <span class="modal-close" onclick="closeModal()">&times;</span>
     <img class="modal-content" id="modal-img">
     <button class="prev-image-btn" onclick="prevImage()">Poprzednie</button>
     <button class="next-image-btn" onclick="nextImage()">Następne</button>
 </div>
-<!-- JavaScript -->
+
 <script>
-    // Funkcja pokazująca/ukrywająca sekcję szczegółów
-    function toggleOfferDetails(detailsId) {
-        const elem = document.getElementById(detailsId);
-        if (elem.style.display === 'none') {
-            elem.style.display = 'block';
-        } else {
-            elem.style.display = 'none';
-        }
-    }
-    // Funkcje obsługujące otwarcie i zamknięcie powiększonego zdjęcia w modalu
     let currentImageIndex = 0;
     let imageUrls = [];
 
@@ -98,6 +87,3 @@
     }
 </script>
 {% endblock %}
-
-
-

@@ -7,7 +7,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .models import Room, Reservation, Payment, Event
+from .models import Room, Reservation, Payment, Event, ReservationEvent
 from django.urls import reverse
 from django.contrib.auth.models import User
 import json
@@ -384,34 +384,75 @@ def order_confirmation(request):
 
 
 def news_view(request):
-    events = None
-    success_message = None
-    if request.method == "POST":
+    events = None  # Na początku brak wydarzeń
+    reservations = None
+
+    # Pobieranie rezerwacji użytkownika
+    if request.user.is_authenticated:
+        reservations = ReservationEvent.objects.filter(user=request.user).select_related('event')
+
+    # Obsługa wyszukiwania wydarzeń
+    if request.method == "POST" and 'start_date' in request.POST and 'end_date' in request.POST:
         start_date = request.POST.get('start_date')
         end_date = request.POST.get('end_date')
         if start_date and end_date:
-            # Zamiana dat na obiekt typu datetime
             start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
             end_date = datetime.strptime(end_date, "%Y-%m-%d").date()
-            # Filtrowanie wydarzeń na podstawie nakładających się dat
             events = Event.objects.filter(
-                start_date__lte=end_date,  # Jeśli początek wydarzenia jest przed końcem zakresu
-                end_date__gte=start_date  # Jeśli koniec wydarzenia jest po rozpoczęciu zakresu
+                start_date__lte=end_date,
+                end_date__gte=start_date
             )
-            # Sprawdzanie czy są wyniki
-            if not events:
-                success_message = "Brak wydarzeń w tym zakresie dat."
-    return render(request, 'news.html', {'events': events, 'success_message': success_message})
+
+    return render(request, 'news.html', {
+        'events': events,
+        'reservations': reservations
+    })
 
 @login_required
 def reserve_event(request, event_id):
     event = get_object_or_404(Event, id=event_id)
-    event.users.add(request.user)
-    return redirect('my_reservations')
+
+    # Sprawdzenie, czy rezerwacja już istnieje
+    if not ReservationEvent.objects.filter(user=request.user, event=event).exists():
+        ReservationEvent.objects.create(user=request.user, event=event)
+
+    return redirect('news')
 
 @login_required
 def my_reservations(request):
-    reservations = request.user.reserved_events.all()
+    reservations = ReservationEvent.objects.filter(user=request.user).select_related('event')
+    events = None
+    success_message = None
+
+    if request.method == 'POST':
+        # Obsługa anulowania rezerwacji
+        reservation_id = request.POST.get('reservation_id')
+        if reservation_id:
+            try:
+                reservation = ReservationEvent.objects.get(id=reservation_id, user=request.user)
+                reservation.delete()
+            except ReservationEvent.DoesNotExist:
+                pass
+
+        # Odczytanie dat, jeśli są w formularzu
+        start_date = request.POST.get('start_date')
+        end_date = request.POST.get('end_date')
+        if start_date and end_date:
+            start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
+            end_date = datetime.strptime(end_date, "%Y-%m-%d").date()
+            events = Event.objects.filter(
+                start_date__lte=end_date,
+                end_date__gte=start_date
+            )
+            if not events:
+                success_message = "Brak wydarzeń w tym zakresie dat."
+
+        return render(request, 'news.html', {
+            'reservations': reservations,
+            'events': events,
+            'success_message': success_message
+        })
+
     return render(request, 'news.html', {'reservations': reservations})
 
 def events_list(request):
@@ -423,9 +464,8 @@ def events_list(request):
 
         if start_date and end_date:
             events = events.filter(
-                Q(start_date__gte=start_date) & Q(end_date__lte=end_date)
+                start_date__lte=end_date,
+                end_date__gte=start_date
             )
 
     return render(request, 'news.html', {'events': events})
-
-

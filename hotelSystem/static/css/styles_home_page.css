@@ -36,7 +36,8 @@
 }
 
 .reservation-form-container h2 {
-    font-family: 'Playfair Display', serif;
+    font-family: "Nunito Sans", sans-serif;
+    font-weight: 400; 
     font-size: 2.5em;
     margin-bottom: 20px;
     color: #333;
@@ -48,7 +49,8 @@
 
 .form-group label {
     font-size: 1.2em;
-    font-family: 'Nunito Sans', sans-serif;
+    font-family: "Nunito Sans", sans-serif;
+    font-weight: 400; 
     display: block;
     margin-bottom: 5px;
     color: #333;
@@ -93,11 +95,12 @@ button:hover {
 
 /* Styl dla nagłówka formularza */
 .reservation-form-container h2 {
-    font-family: 'Playfair Display', serif;
-    font-size: 2em;
-    font-weight: 100;
+    font-family: "Playfair Display", serif;
+    font-weight: 700;
+    font-size: 2.5em;
     color: #333;
-    margin-bottom: 70px;
+    margin-bottom: 50px;
+    text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
 }
 
 /* Kontener formularza */
@@ -110,8 +113,8 @@ button:hover {
 
 /* Stylowanie pól daty */
 input[type="date"] {
-    font-family: "Red Hat Display", sans-serif; 
-    font-weight: 500; 
+    font-family: "Nunito Sans", sans-serif;
+    font-weight: 400; 
     font-size: 1.2em;
     padding: 25px 60px; 
     background-color: transparent; 
@@ -123,8 +126,8 @@ input[type="date"] {
 
 /* Stylowanie przycisku formularza */
 button[type="submit"] {
-    font-family: "Red Hat Display", sans-serif; 
-    font-weight: 500; 
+    font-family: "Nunito Sans", sans-serif;
+    font-weight: 400;
     font-size: 1.2em;
     display: inline-block;
     padding: 25px 60px; /* Nowy padding dla przycisku */
@@ -157,8 +160,8 @@ button[type="submit"]:hover {
 
 /* Stylowanie rozwijanych list */
 select {
-    font-family: "Red Hat Display", sans-serif;
-    font-weight: 500;
+    font-family: "Nunito Sans", sans-serif;
+    font-weight: 400;
     font-size: 1.2em;
     padding: 25px 60px; 
     background-color: transparent; 
@@ -175,4 +178,32 @@ select:focus {
     outline: none;
     border-color: #74573a; 
     color: #74573a; 
+}
+
+/* Kontener dla przycisku Zarezerwuj, aby był pod formularzem */
+.reservation-form-container .button-container {
+    width: 100%;
+    display: flex;
+    justify-content: center; /* Wyśrodkowanie przycisku */
+}
+
+/* Stylowanie przycisku Zarezerwuj */
+button[type="submit"] {
+    font-family: "Nunito Sans", sans-serif;
+    font-weight: 400; 
+    font-size: 1.2em;
+    display: inline-block;
+    padding: 25px 60px;
+    background-color: transparent; 
+    color: #D2B48C; 
+    text-decoration: none;
+    border: 2px solid #D2B48C; 
+    text-align: center;
+    transition: all 0.3s;
+}
+
+button[type="submit"]:hover {
+    background-color: transparent;
+    color: #74573a;
+    border-color: #74573a; 
 }
