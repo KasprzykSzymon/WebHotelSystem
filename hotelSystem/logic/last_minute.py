@@ -38,7 +38,7 @@ def generate_last_minute_offer(days_to_last_minute, max_discount):
             continue  # Wyklucz pokój, jeśli nie spełnia warunku last minute
 
         available_days = days_until_reservation
-        availability_end_date = nearest_reservation_date - timedelta(days=1)  # Dzień przed rezerwacją
+        availability_end_date = nearest_reservation_date  # Dzień przed rezerwacją
 
         # Oblicz dynamiczną zniżkę
         base_discount = 10  # Podstawowa zniżka
@@ -51,7 +51,6 @@ def generate_last_minute_offer(days_to_last_minute, max_discount):
         # Oblicz cenę po zniżce
         original_price = Decimal(room.price_per_night * available_days)  # Konwersja na Decimal
         discounted_price = original_price * (Decimal(1) - Decimal(discount) / Decimal(100))
-
         # Pobierz wszystkie obrazy pokoju
         room_images = room.images.all()
         image_urls = [image.image.url for image in room_images]  # Lista URL obrazów
@@ -60,12 +59,14 @@ def generate_last_minute_offer(days_to_last_minute, max_discount):
         offers.append({
             'room': room,
             'original_price': round(original_price, 2),
-            'discounted_price': round(discounted_price, 2),
+            'total_price': round(discounted_price, 2),
             'discount': round(discount, 2),  # Zaokrąglona wartość zniżki
             'available_days': available_days,
+            'arrival_date': today,
             'availability_end_date': availability_end_date,
             'today': today,
             'image_urls': image_urls,  # Lista URL obrazów
+
         })
 
     return offers
